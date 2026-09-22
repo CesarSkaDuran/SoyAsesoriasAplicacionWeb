@@ -1,0 +1,2784 @@
+> Building...
+√ Building...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  85.02 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 423.17 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-PZOJBOD7.js    | routes               |  92.66 kB | 
+chunk-TVYQBUYY.js    | servicios-page       |  63.00 kB | 
+chunk-F4IAW4BW.js    | empleado-detail-page |  58.39 kB | 
+chunk-3PQNAZYO.js    | empresa-detail-page  |  56.73 kB | 
+chunk-7DFY722N.js    | pagos-page           |  55.07 kB | 
+chunk-QEIQWI25.js    | usuarios-page        |  49.66 kB | 
+chunk-OEFLAS2F.js    | solicitudes-page     |  46.35 kB | 
+chunk-N2B355XF.js    | gastos-page          |  44.60 kB | 
+chunk-KBK3FSF4.js    | nominas-page         |  44.41 kB | 
+chunk-JD234GDB.js    | planillas-page       |  43.60 kB | 
+chunk-WPGCQT5E.js    | soporte-page         |  43.17 kB | 
+chunk-UBROXASY.js    | nomina-detail-page   |  41.33 kB | 
+chunk-EGHJH5OA.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-XFZ5B4CF.js    | empleados-page       |  33.98 kB | 
+chunk-GQHVRPI2.js    | -                    |  32.28 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-VIHUVQSB.mjs   | routes               |  92.65 kB | 
+chunk-S5TSG2CF.mjs   | servicios-page       |  62.99 kB | 
+chunk-HW4RJHP2.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-QN57VZVP.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-Y6OVL3XI.mjs   | pagos-page           |  55.06 kB | 
+chunk-XL4H7P2A.mjs   | usuarios-page        |  49.65 kB | 
+chunk-WZAZWTKS.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-VLL5NIFJ.mjs   | gastos-page          |  44.59 kB | 
+chunk-JSDCUXIM.mjs   | nominas-page         |  44.40 kB | 
+chunk-B6OCOMVZ.mjs   | planillas-page       |  43.59 kB | 
+chunk-336B5H54.mjs   | soporte-page         |  43.16 kB | 
+chunk-ZNZHJ4HG.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-2AIUL2IZ.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-Y7NV3J7I.mjs   | empleados-page       |  33.97 kB | 
+chunk-HRULGU4N.mjs   | -                    |  32.27 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [11.130 seconds] - 2026-09-20T22:59:15.602Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+[2m5:59:16 p. m.[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because vite config has changed
+[2m5:59:16 p. m.[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m Re-optimizing dependencies because vite config has changed
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m
+[2m5:59:17 p. m.[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m5:59:17 p. m.[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [optimizer] bundling dependencies...
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empleados?page=1&per_page=25&status=todos',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empleados?page=1&per_page=25&status=todos: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empleados?page=1&per_page=25&status=todos',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empleados?page=1&per_page=25&status=todos: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas/334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas/334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empleados?page=1&per_page=25&empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empleados?page=1&per_page=25&empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/nominas?page=1&per_page=25&empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/nominas?page=1&per_page=25&empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/documentos?empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/documentos?empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+uncaughtException HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empleados?page=1&per_page=25&empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empleados?page=1&per_page=25&empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+uncaughtException HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/nominas?page=1&per_page=25&empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/nominas?page=1&per_page=25&empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+uncaughtException HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/documentos?empresa_id=334',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/documentos?empresa_id=334: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names  | Raw size
+styles.css          | styles | 86.44 kB | 
+
+Application bundle generation complete. [0.771 seconds] - 2026-09-21T01:09:13.548Z
+
+Stylesheet update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                     |  Raw size
+main.js             | main                      | 320.35 kB | 
+styles.css          | styles                    |  88.74 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-MROMG2VE.js   | routes                    |  92.66 kB | 
+chunk-DU7T4D47.js   | servicios-page            |  63.00 kB | 
+chunk-IKY3GR2G.js   | empleado-detail-page      |  58.39 kB | 
+chunk-EXLCUOEP.js   | empresa-detail-page       |  56.73 kB | 
+chunk-ZUKJIJTX.js   | pagos-page                |  55.07 kB | 
+chunk-QFJBHSWN.js   | usuarios-page             |  49.66 kB | 
+chunk-RL4GZJAP.js   | solicitudes-page          |  46.35 kB | 
+chunk-6IWR2K24.js   | gastos-page               |  44.60 kB | 
+chunk-V5AP4OT4.js   | nominas-page              |  44.41 kB | 
+chunk-YEHOTA2V.js   | planillas-page            |  43.60 kB | 
+chunk-RX2JG66D.js   | soporte-page              |  43.17 kB | 
+chunk-PWB2CBBP.js   | nomina-liquidar-page      |  37.96 kB | 
+chunk-FF57D6GY.js   | empleados-page            |  33.98 kB | 
+chunk-GSJ5LDMI.js   | -                         |  32.28 kB | 
+chunk-6AC3UJTT.js   | independiente-detail-page |  28.93 kB | 
+...and 19 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                     |  Raw size
+main.server.mjs     | main.server               | 321.56 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-4BEHWEKF.mjs  | routes                    |  92.65 kB | 
+chunk-LYWKD67W.mjs  | servicios-page            |  62.99 kB | 
+chunk-G5GDZ5C2.mjs  | empleado-detail-page      |  58.38 kB | 
+chunk-UYNRAXJ6.mjs  | empresa-detail-page       |  56.72 kB | 
+chunk-RKQBUDGP.mjs  | pagos-page                |  55.06 kB | 
+chunk-WGZLAX4Y.mjs  | usuarios-page             |  49.65 kB | 
+chunk-WLEJZPS3.mjs  | solicitudes-page          |  46.34 kB | 
+chunk-QIEW5YJZ.mjs  | gastos-page               |  44.59 kB | 
+chunk-EMKAMWXX.mjs  | nominas-page              |  44.40 kB | 
+chunk-2TMLFZHK.mjs  | planillas-page            |  43.59 kB | 
+chunk-3ZWXLHBQ.mjs  | soporte-page              |  43.16 kB | 
+chunk-ODFTCHHL.mjs  | nomina-liquidar-page      |  37.95 kB | 
+chunk-2BBMLYBD.mjs  | empleados-page            |  33.97 kB | 
+chunk-KNWAODML.mjs  | -                         |  32.27 kB | 
+chunk-UZMPXCNA.mjs  | independiente-detail-page |  28.93 kB | 
+...and 19 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [5.396 seconds] - 2026-09-21T01:09:26.048Z
+
+Stylesheet update sent to client(s).
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+styles.css          | styles               |  89.17 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-ES32RR4U.js   | routes               |  92.66 kB | 
+chunk-EOYSZSBB.js   | empleado-detail-page |  58.39 kB | 
+chunk-UYSNJO4N.js   | empresa-detail-page  |  56.73 kB | 
+chunk-55SXAVPI.js   | empleados-page       |  33.98 kB | 
+chunk-CVAXFQG7.js   | -                    |  32.67 kB | 
+chunk-WNINH4MQ.js   | routes               | 900 bytes | 
+chunk-VDTWWJH6.js   | routes               | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-7GDWCSNZ.mjs  | routes               |  92.65 kB | 
+chunk-65Z32INJ.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-C4OAUVYZ.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-ZHT52KUQ.mjs  | empleados-page       |  33.97 kB | 
+chunk-OEBKPHDW.mjs  | -                    |  32.66 kB | 
+chunk-B7PRAHAX.mjs  | routes               | 886 bytes | 
+chunk-462T3PTF.mjs  | routes               | 679 bytes | 
+
+Application bundle generation complete. [1.401 seconds] - 2026-09-21T01:09:31.114Z
+
+Stylesheet update sent to client(s).
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+styles.css          | styles               |  89.24 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-P75JTO7W.js   | routes               |  92.66 kB | 
+chunk-KELNQJCS.js   | empleado-detail-page |  58.39 kB | 
+chunk-V5FYSC43.js   | empresa-detail-page  |  56.73 kB | 
+chunk-6QNRTFJ6.js   | empleados-page       |  33.98 kB | 
+chunk-7H6KSLN4.js   | -                    |  33.05 kB | 
+chunk-6GDPN2DV.js   | routes               | 900 bytes | 
+chunk-ZC7UD4DO.js   | routes               | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-G7RDDMLT.mjs  | routes               |  92.65 kB | 
+chunk-R2QXKS3V.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-NAXWOJM4.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-OCT3LC77.mjs  | empleados-page       |  33.97 kB | 
+chunk-4CLWBWI7.mjs  | -                    |  33.04 kB | 
+chunk-EXWNXKAJ.mjs  | routes               | 886 bytes | 
+chunk-5ALQMTXD.mjs  | routes               | 679 bytes | 
+
+Application bundle generation complete. [1.493 seconds] - 2026-09-21T01:09:40.620Z
+
+Stylesheet update sent to client(s).
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-GT2E366J.js   | routes               |  92.66 kB | 
+chunk-F57AYE6R.js   | empleado-detail-page |  58.39 kB | 
+chunk-RHNMM6TY.js   | empresa-detail-page  |  56.73 kB | 
+chunk-DEXNTQSF.js   | empleados-page       |  33.98 kB | 
+chunk-XVIZZIXP.js   | -                    |  33.17 kB | 
+chunk-H25UD6TA.js   | routes               | 900 bytes | 
+chunk-KBPPWTSH.js   | routes               | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-AZWH6ETG.mjs  | routes               |  92.65 kB | 
+chunk-3NLRZCZV.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-KW75UNYZ.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-7K3UQVLO.mjs  | empleados-page       |  33.97 kB | 
+chunk-YN24OA6E.mjs  | -                    |  33.16 kB | 
+chunk-TJ65KSXK.mjs  | routes               | 886 bytes | 
+chunk-J2PB4DYR.mjs  | routes               | 679 bytes | 
+
+Application bundle generation complete. [1.564 seconds] - 2026-09-21T01:09:46.797Z
+
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-TM44AE6B.js   | routes               |  92.66 kB | 
+chunk-WK3TKQWR.js   | servicios-page       |  63.00 kB | 
+chunk-YXFHDMHC.js   | empleado-detail-page |  58.39 kB | 
+chunk-73637TJE.js   | empresa-detail-page  |  56.73 kB | 
+chunk-OLR2CSHU.js   | pagos-page           |  55.07 kB | 
+chunk-EA35V7N2.js   | usuarios-page        |  49.66 kB | 
+chunk-5ZR5JERL.js   | solicitudes-page     |  46.35 kB | 
+chunk-U5WYZE25.js   | gastos-page          |  44.60 kB | 
+chunk-QHWGJ2IY.js   | nominas-page         |  44.41 kB | 
+chunk-ORC23UCX.js   | planillas-page       |  43.60 kB | 
+chunk-7AGPWPK3.js   | soporte-page         |  43.17 kB | 
+chunk-WPAMW3NV.js   | nomina-detail-page   |  41.33 kB | 
+chunk-NBCLUF57.js   | nomina-liquidar-page |  37.96 kB | 
+chunk-UZDA4I4T.js   | empleados-page       |  33.98 kB | 
+chunk-WPYZO5MP.js   | -                    |  33.17 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-A7SHQ47X.mjs  | routes               |  92.65 kB | 
+chunk-XA7UIQB4.mjs  | servicios-page       |  62.99 kB | 
+chunk-4BTM32KQ.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-MHWXQXEI.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-NPFYJSMK.mjs  | pagos-page           |  55.06 kB | 
+chunk-7KNRJQOW.mjs  | usuarios-page        |  49.65 kB | 
+chunk-WW375H64.mjs  | solicitudes-page     |  46.34 kB | 
+chunk-W7XSCMIR.mjs  | gastos-page          |  44.59 kB | 
+chunk-K7JWVGWC.mjs  | nominas-page         |  44.40 kB | 
+chunk-CBQT6YXS.mjs  | planillas-page       |  43.59 kB | 
+chunk-D7ULTYKJ.mjs  | soporte-page         |  43.16 kB | 
+chunk-LD45O2MT.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-5BWWGYXG.mjs  | nomina-liquidar-page |  37.95 kB | 
+chunk-VHWRW4M5.mjs  | empleados-page       |  33.97 kB | 
+chunk-X3L3SV34.mjs  | -                    |  33.16 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.756 seconds] - 2026-09-21T01:11:26.779Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-ZCZUIGZT.js   | routes               |  92.66 kB | 
+chunk-DOUCU66C.js   | servicios-page       |  63.00 kB | 
+chunk-BFBOULZY.js   | empleado-detail-page |  58.39 kB | 
+chunk-NAMBDGUE.js   | empresa-detail-page  |  56.73 kB | 
+chunk-EPFR2FHL.js   | pagos-page           |  55.07 kB | 
+chunk-GNJIX6LQ.js   | usuarios-page        |  49.66 kB | 
+chunk-VJLHIZF3.js   | solicitudes-page     |  46.35 kB | 
+chunk-GRWXB6XR.js   | gastos-page          |  44.60 kB | 
+chunk-J7I462VT.js   | nominas-page         |  44.41 kB | 
+chunk-BFNNBCFC.js   | planillas-page       |  43.60 kB | 
+chunk-AM45GE2U.js   | soporte-page         |  43.17 kB | 
+chunk-5V5CGEOR.js   | nomina-detail-page   |  41.33 kB | 
+chunk-63CKIWPW.js   | nomina-liquidar-page |  37.96 kB | 
+chunk-CKKJGUT5.js   | empleados-page       |  33.98 kB | 
+chunk-OS2WJWYB.js   | -                    |  33.17 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-DRTHIGQI.mjs  | routes               |  92.65 kB | 
+chunk-MOS6Q5QR.mjs  | servicios-page       |  62.99 kB | 
+chunk-7NVXVJAJ.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-N552QHQE.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-I5C45F45.mjs  | pagos-page           |  55.06 kB | 
+chunk-25BHG2M5.mjs  | usuarios-page        |  49.65 kB | 
+chunk-XML6PILN.mjs  | solicitudes-page     |  46.34 kB | 
+chunk-HKYC2TOQ.mjs  | gastos-page          |  44.59 kB | 
+chunk-B6OHBGTI.mjs  | nominas-page         |  44.40 kB | 
+chunk-YSP63I3M.mjs  | planillas-page       |  43.59 kB | 
+chunk-3KGJL36B.mjs  | soporte-page         |  43.16 kB | 
+chunk-BHKDXN3Q.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-ZJAU233C.mjs  | nomina-liquidar-page |  37.95 kB | 
+chunk-5H2ZELAJ.mjs  | empleados-page       |  33.97 kB | 
+chunk-MKKETFKE.mjs  | -                    |  33.16 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.494 seconds] - 2026-09-21T01:11:43.001Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-NYBFCEJ6.js   | routes               |  92.66 kB | 
+chunk-6ZLF4VXR.js   | servicios-page       |  63.00 kB | 
+chunk-UXIU6LOT.js   | empleado-detail-page |  58.39 kB | 
+chunk-6A5OVVIM.js   | empresa-detail-page  |  56.73 kB | 
+chunk-7GCQWAW3.js   | pagos-page           |  55.07 kB | 
+chunk-BXBFBCQF.js   | usuarios-page        |  49.66 kB | 
+chunk-2AHLBZTP.js   | solicitudes-page     |  46.35 kB | 
+chunk-VHJGX7VJ.js   | gastos-page          |  44.60 kB | 
+chunk-DXPTCCXC.js   | nominas-page         |  44.41 kB | 
+chunk-B5CMOEPR.js   | planillas-page       |  43.60 kB | 
+chunk-QYSI4NRU.js   | soporte-page         |  43.17 kB | 
+chunk-3W3BJVK2.js   | nomina-detail-page   |  41.33 kB | 
+chunk-MCB4TR2F.js   | nomina-liquidar-page |  37.96 kB | 
+chunk-TFVDFF2I.js   | empleados-page       |  33.98 kB | 
+chunk-NBWCVMGU.js   | -                    |  33.17 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-HI2LMCI3.mjs  | routes               |  92.65 kB | 
+chunk-AZ25F542.mjs  | servicios-page       |  62.99 kB | 
+chunk-YBYRYDPT.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-FB3TSC37.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-6OTMHQF7.mjs  | pagos-page           |  55.06 kB | 
+chunk-NX2UIUTW.mjs  | usuarios-page        |  49.65 kB | 
+chunk-OS3M2VAB.mjs  | solicitudes-page     |  46.34 kB | 
+chunk-6FDV6DWK.mjs  | gastos-page          |  44.59 kB | 
+chunk-NOLL5FKZ.mjs  | nominas-page         |  44.40 kB | 
+chunk-EN46RZAM.mjs  | planillas-page       |  43.59 kB | 
+chunk-SI55KGSP.mjs  | soporte-page         |  43.16 kB | 
+chunk-PTE7Q7UN.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-SCDP2XGT.mjs  | nomina-liquidar-page |  37.95 kB | 
+chunk-7DLBQ5RK.mjs  | empleados-page       |  33.97 kB | 
+chunk-XSPXCVLF.mjs  | -                    |  33.16 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.554 seconds] - 2026-09-21T01:11:53.886Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-WCXDU4L6.js   | routes               |  92.66 kB | 
+chunk-RHYNFKPD.js   | servicios-page       |  63.00 kB | 
+chunk-UBBIAPNG.js   | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js   | empresa-detail-page  |  56.73 kB | 
+chunk-BL677G77.js   | pagos-page           |  55.07 kB | 
+chunk-QCPQIRLW.js   | usuarios-page        |  49.66 kB | 
+chunk-B4RK3UV6.js   | solicitudes-page     |  46.35 kB | 
+chunk-4HEWB6P6.js   | gastos-page          |  44.60 kB | 
+chunk-KUX5SJ5Z.js   | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js   | planillas-page       |  43.60 kB | 
+chunk-AAPTV5PY.js   | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js   | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js   | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js   | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js   | -                    |  33.17 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-5UDIXVJC.mjs  | routes               |  92.65 kB | 
+chunk-WOSF4P6A.mjs  | servicios-page       |  62.99 kB | 
+chunk-Y5YWCF25.mjs  | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-BZEXJFV4.mjs  | pagos-page           |  55.06 kB | 
+chunk-S55GZIK7.mjs  | usuarios-page        |  49.65 kB | 
+chunk-MZWGL5R7.mjs  | solicitudes-page     |  46.34 kB | 
+chunk-5XQFDNAW.mjs  | gastos-page          |  44.59 kB | 
+chunk-P4FLEFUP.mjs  | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs  | planillas-page       |  43.59 kB | 
+chunk-Y6C35WZR.mjs  | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs  | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs  | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs  | -                    |  33.16 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.921 seconds] - 2026-09-21T01:12:09.143Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-4RXG5PKO.js   | routes        |  92.66 kB | 
+chunk-CIM4GBCA.js   | empresas-page |  24.84 kB | 
+chunk-JK7HXHSG.js   | routes        | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-TT3SWCP6.mjs  | routes        |  92.65 kB | 
+chunk-DQCGYRKK.mjs  | empresas-page |  24.83 kB | 
+chunk-Q57KWQKX.mjs  | routes        | 886 bytes | 
+
+Application bundle generation complete. [1.467 seconds] - 2026-09-21T01:12:18.237Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-R2THTGFY.js   | routes        |  92.66 kB | 
+chunk-OWDMWXDD.js   | empresas-page |  24.84 kB | 
+chunk-7R5A4ZWW.js   | routes        | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-2I3LG6MA.mjs  | routes        |  92.65 kB | 
+chunk-IXZH55A5.mjs  | empresas-page |  24.83 kB | 
+chunk-QLG4RWHC.mjs  | routes        | 886 bytes | 
+
+Application bundle generation complete. [1.341 seconds] - 2026-09-21T01:12:25.116Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-P4B3FXN4.js   | routes        |  92.66 kB | 
+chunk-I4M5DRCE.js   | empresas-page |  25.84 kB | 
+chunk-UZUMLQBX.js   | routes        | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-KTV7DDEO.mjs  | routes        |  92.65 kB | 
+chunk-B4WM2SNJ.mjs  | empresas-page |  25.83 kB | 
+chunk-I6ERYHPY.mjs  | routes        | 886 bytes | 
+
+Application bundle generation complete. [1.472 seconds] - 2026-09-21T01:12:30.840Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/empresas?page=1&per_page=20',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/empresas?page=1&per_page=20: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.333 seconds] - 2026-09-21T01:12:47.965Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'statusControl' does not exist on type 'EmpresasPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/empresas/features/empresas.page.ts:73:37:
+[37m      73 │           <mat-select [formControl]="[32mstatusControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'desdeControl' does not exist on type 'EmpresasPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/empresas/features/empresas.page.ts:86:67:
+[37m      86 │ ...matInput [matDatepicker]="dpDesde" [formControl]="[32mdesdeControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'hastaControl' does not exist on type 'EmpresasPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/empresas/features/empresas.page.ts:96:67:
+[37m      96 │ ...matInput [matDatepicker]="dpHasta" [formControl]="[32mhastaControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  89.24 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 427.39 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-GYAVNXGF.js    | routes               |  92.66 kB | 
+chunk-RHYNFKPD.js    | servicios-page       |  63.00 kB | 
+chunk-UBBIAPNG.js    | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js    | empresa-detail-page  |  56.73 kB | 
+chunk-BL677G77.js    | pagos-page           |  55.07 kB | 
+chunk-QCPQIRLW.js    | usuarios-page        |  49.66 kB | 
+chunk-B4RK3UV6.js    | solicitudes-page     |  46.35 kB | 
+chunk-4HEWB6P6.js    | gastos-page          |  44.60 kB | 
+chunk-KUX5SJ5Z.js    | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js    | planillas-page       |  43.60 kB | 
+chunk-AAPTV5PY.js    | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js    | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js    | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js    | -                    |  33.17 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-5OOODP6L.mjs   | routes               |  92.65 kB | 
+chunk-WOSF4P6A.mjs   | servicios-page       |  62.99 kB | 
+chunk-Y5YWCF25.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-BZEXJFV4.mjs   | pagos-page           |  55.06 kB | 
+chunk-S55GZIK7.mjs   | usuarios-page        |  49.65 kB | 
+chunk-MZWGL5R7.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-5XQFDNAW.mjs   | gastos-page          |  44.59 kB | 
+chunk-P4FLEFUP.mjs   | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs   | planillas-page       |  43.59 kB | 
+chunk-Y6C35WZR.mjs   | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs   | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs   | -                    |  33.16 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.334 seconds] - 2026-09-21T01:12:53.599Z
+
+Page reload sent to client(s).
+ERROR ɵNotFound: NG0201: No provider found for `InjectionToken THEME_CONFIG`. Source: Standalone[_AdminLayout]. Path: _Theming -> InjectionToken THEME_CONFIG. Find more at https://v22.angular.dev/errors/NG0201
+    at createRuntimeError (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1271:16)
+    at NullInjector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1517:18)
+    at R3Injector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1778:24)
+    at R3Injector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1778:24)
+    at R3Injector.retrieve (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1706:16)
+    at injectInjectorOnly (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1352:33)
+    at ɵɵinject (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1362:58)
+    at inject (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1371:9)
+    at <instance_members_initializer> (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:353:49)
+    at new _Theming (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:397:14) {
+  code: -201,
+  ngErrorCode: -201,
+  ngErrorMessage: 'No provider found for `InjectionToken THEME_CONFIG`.',
+  ngTokenPath: [ '_Theming', 'InjectionToken THEME_CONFIG' ]
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-57SO3WNU.js   | routes        |  92.66 kB | 
+chunk-MZWOCVTK.js   | empresas-page |  30.04 kB | 
+chunk-ZLB6QIEK.js   | routes        | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-Y6G5ASIK.mjs  | routes        |  92.65 kB | 
+chunk-WXNDKATY.mjs  | empresas-page |  30.03 kB | 
+chunk-6DZ2XALP.mjs  | routes        | 886 bytes | 
+
+Application bundle generation complete. [1.779 seconds] - 2026-09-21T01:13:39.413Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/personas?page=1&per_page=25',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/personas?page=1&per_page=25: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.326 seconds] - 2026-09-21T01:13:46.820Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'fmt' does not exist on type 'EmpresasPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/empresas/features/empresas.page.ts:252:13:
+[37m      252 │         this.[32mfmt[37m(this.desdeControl.value),
+          ╵              [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'fmt' does not exist on type 'EmpresasPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/empresas/features/empresas.page.ts:253:13:
+[37m      253 │         this.[32mfmt[37m(this.hastaControl.value)
+          ╵              [32m~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  89.24 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 427.39 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-YQECRM4B.js    | routes               |  92.66 kB | 
+chunk-RHYNFKPD.js    | servicios-page       |  63.00 kB | 
+chunk-UBBIAPNG.js    | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js    | empresa-detail-page  |  56.73 kB | 
+chunk-BL677G77.js    | pagos-page           |  55.07 kB | 
+chunk-QCPQIRLW.js    | usuarios-page        |  49.66 kB | 
+chunk-B4RK3UV6.js    | solicitudes-page     |  46.35 kB | 
+chunk-4HEWB6P6.js    | gastos-page          |  44.60 kB | 
+chunk-KUX5SJ5Z.js    | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js    | planillas-page       |  43.60 kB | 
+chunk-AAPTV5PY.js    | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js    | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js    | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js    | -                    |  33.17 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-JWVGQNFB.mjs   | routes               |  92.65 kB | 
+chunk-WOSF4P6A.mjs   | servicios-page       |  62.99 kB | 
+chunk-Y5YWCF25.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-BZEXJFV4.mjs   | pagos-page           |  55.06 kB | 
+chunk-S55GZIK7.mjs   | usuarios-page        |  49.65 kB | 
+chunk-MZWGL5R7.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-5XQFDNAW.mjs   | gastos-page          |  44.59 kB | 
+chunk-P4FLEFUP.mjs   | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs   | planillas-page       |  43.59 kB | 
+chunk-Y6C35WZR.mjs   | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs   | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs   | -                    |  33.16 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.368 seconds] - 2026-09-21T01:13:52.200Z
+
+Page reload sent to client(s).
+ERROR ɵNotFound: NG0201: No provider found for `InjectionToken THEME_CONFIG`. Source: Standalone[_AdminLayout]. Path: _Theming -> InjectionToken THEME_CONFIG. Find more at https://v22.angular.dev/errors/NG0201
+    at createRuntimeError (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1271:16)
+    at NullInjector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1517:18)
+    at R3Injector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1778:24)
+    at R3Injector.get (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1778:24)
+    at R3Injector.retrieve (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1706:16)
+    at injectInjectorOnly (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1352:33)
+    at ɵɵinject (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1362:58)
+    at inject (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:1371:9)
+    at <instance_members_initializer> (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:353:49)
+    at new _Theming (eval at runInlinedModule (file:///H:/Angular/SOY%20ASESORIAS/soyasesorias-web/node_modules/vite/dist/node/module-runner.js:1005:9), <anonymous>:397:14) {
+  code: -201,
+  ngErrorCode: -201,
+  ngErrorMessage: 'No provider found for `InjectionToken THEME_CONFIG`.',
+  ngTokenPath: [ '_Theming', 'InjectionToken THEME_CONFIG' ]
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                     |  Raw size
+main.js             | main                      | 320.35 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-KEWTJR4K.js   | routes                    |  92.66 kB | 
+chunk-LGKDULZL.js   | servicios-page            |  63.00 kB | 
+chunk-X2HSDRDI.js   | pagos-page                |  55.07 kB | 
+chunk-R2P4GXN6.js   | gastos-page               |  44.60 kB | 
+chunk-YXVGLRLO.js   | soporte-page              |  43.17 kB | 
+chunk-R4HBUKUH.js   | independiente-detail-page |  28.93 kB | 
+chunk-B5MS6TCK.js   | routes                    |   2.08 kB | 
+chunk-XTUUWABP.js   | -                         |   1.77 kB | 
+chunk-2VSOMXZF.js   | routes                    | 718 bytes | 
+chunk-NQAGJP4S.js   | routes                    | 480 bytes | 
+chunk-HLK75IKN.js   | routes                    | 477 bytes | 
+chunk-ZEZRWVAT.js   | routes                    | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                     |  Raw size
+main.server.mjs     | main.server               | 321.56 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-KLMMFNTZ.mjs  | routes                    |  92.65 kB | 
+chunk-LU4I5FSV.mjs  | servicios-page            |  62.99 kB | 
+chunk-HFVPX7WL.mjs  | pagos-page                |  55.06 kB | 
+chunk-L2LO43JL.mjs  | gastos-page               |  44.59 kB | 
+chunk-O6CP3TGE.mjs  | soporte-page              |  43.16 kB | 
+chunk-42SRHEFH.mjs  | independiente-detail-page |  28.93 kB | 
+chunk-C7SR6UF3.mjs  | routes                    |   2.07 kB | 
+chunk-NSIB3DVO.mjs  | -                         |   1.76 kB | 
+chunk-PI5MPVX4.mjs  | routes                    | 704 bytes | 
+chunk-QAUDWBQQ.mjs  | routes                    | 466 bytes | 
+chunk-QI2IPYIO.mjs  | routes                    | 463 bytes | 
+chunk-OPCFUUBW.mjs  | routes                    | 460 bytes | 
+
+Application bundle generation complete. [1.371 seconds] - 2026-09-21T01:13:59.952Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-QMHAIM7G.js   | routes              |  92.66 kB | 
+chunk-AIZOY5VF.js   | independientes-page |  20.23 kB | 
+chunk-SE2ANYHE.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-XIQAUTIR.mjs  | routes              |  92.65 kB | 
+chunk-JOPP2J6F.mjs  | independientes-page |  20.23 kB | 
+chunk-XENY6W2X.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [1.268 seconds] - 2026-09-21T01:14:07.914Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-JRTZUZVA.js   | routes              |  92.66 kB | 
+chunk-VGALAGAD.js   | independientes-page |  20.23 kB | 
+chunk-GFC6UWAH.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-VW5NASXT.mjs  | routes              |  92.65 kB | 
+chunk-Y5DGWSUI.mjs  | independientes-page |  20.23 kB | 
+chunk-TIQOXPAF.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [1.146 seconds] - 2026-09-21T01:14:14.447Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-E2E2EX7W.js   | routes              |  92.66 kB | 
+chunk-PPLOZDFX.js   | independientes-page |  20.23 kB | 
+chunk-B7MBRV5Y.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-JKWVVA7K.mjs  | routes              |  92.65 kB | 
+chunk-E4VRNVVZ.mjs  | independientes-page |  20.23 kB | 
+chunk-SYA4UZBL.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [1.103 seconds] - 2026-09-21T01:14:20.924Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-VZECFKQ3.js   | routes              |  92.66 kB | 
+chunk-4JRBVMQE.js   | independientes-page |  21.23 kB | 
+chunk-HR4HHGCT.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-WJXCH7JL.mjs  | routes              |  92.65 kB | 
+chunk-NFYK6CO2.mjs  | independientes-page |  21.23 kB | 
+chunk-4LIYCIIR.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [1.155 seconds] - 2026-09-21T01:14:29.698Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-R6WFLRLQ.js   | routes              |  92.66 kB | 
+chunk-KYKOLECI.js   | independientes-page |  21.32 kB | 
+chunk-32RSOM4B.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-PYVAWV3V.mjs  | routes              |  92.65 kB | 
+chunk-3QJRVAY2.mjs  | independientes-page |  21.31 kB | 
+chunk-EWLZK3MG.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [0.901 seconds] - 2026-09-21T01:14:35.452Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: DatePipe is not used within the template of IndependientesPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:35:4:
+[37m      35 │     [32mDatePipe[37m,
+         ╵     [32m~~~~~~~~[0m
+
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.199 seconds] - 2026-09-21T01:14:47.778Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: DatePipe is not used within the template of IndependientesPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:35:4:
+[37m      35 │     [32mDatePipe[37m,
+         ╵     [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'statusControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:72:37:
+[37m      72 │           <mat-select [formControl]="[32mstatusControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'desdeControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:85:67:
+[37m      85 │ ...matInput [matDatepicker]="dpDesde" [formControl]="[32mdesdeControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'hastaControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:95:67:
+[37m      95 │ ...matInput [matDatepicker]="dpHasta" [formControl]="[32mhastaControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.168 seconds] - 2026-09-21T01:14:56.720Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'statusControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:72:37:
+[37m      72 │           <mat-select [formControl]="[32mstatusControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'desdeControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:85:67:
+[37m      85 │ ...matInput [matDatepicker]="dpDesde" [formControl]="[32mdesdeControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'hastaControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:95:67:
+[37m      95 │ ...matInput [matDatepicker]="dpHasta" [formControl]="[32mhastaControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [0.952 seconds] - 2026-09-21T01:15:05.564Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'statusControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:72:37:
+[37m      72 │           <mat-select [formControl]="[32mstatusControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'desdeControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:85:67:
+[37m      85 │ ...matInput [matDatepicker]="dpDesde" [formControl]="[32mdesdeControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'hastaControl' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:95:67:
+[37m      95 │ ...matInput [matDatepicker]="dpHasta" [formControl]="[32mhastaControl[37m" />
+         ╵                                                      [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'openEdit' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:161:47:
+[37m      161 │ ...      <button matIconButton (click)="[32mopenEdit[37m(p)" title="Editar">
+          ╵                                         [32m~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [0.966 seconds] - 2026-09-21T01:15:13.350Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'openEdit' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:161:47:
+[37m      161 │ ...      <button matIconButton (click)="[32mopenEdit[37m(p)" title="Editar">
+          ╵                                         [32m~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.528 seconds] - 2026-09-21T01:15:20.969Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'openEdit' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:161:47:
+[37m      161 │ ...      <button matIconButton (click)="[32mopenEdit[37m(p)" title="Editar">
+          ╵                                         [32m~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [0.899 seconds] - 2026-09-21T01:15:27.508Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'openEdit' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:161:47:
+[37m      161 │ ...      <button matIconButton (click)="[32mopenEdit[37m(p)" title="Editar">
+          ╵                                         [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'fmt' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:222:20:
+[37m      222 │         desde: this.[32mfmt[37m(this.desdeControl.value),
+          ╵                     [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'fmt' does not exist on type 'IndependientesPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/independientes/features/independientes.page.ts:223:20:
+[37m      223 │         hasta: this.[32mfmt[37m(this.hastaControl.value),
+          ╵                     [32m~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  89.24 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 427.39 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-ZFPESNIN.js    | routes               |  92.66 kB | 
+chunk-LGKDULZL.js    | servicios-page       |  63.00 kB | 
+chunk-UBBIAPNG.js    | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js    | empresa-detail-page  |  56.73 kB | 
+chunk-X2HSDRDI.js    | pagos-page           |  55.07 kB | 
+chunk-QCPQIRLW.js    | usuarios-page        |  49.66 kB | 
+chunk-B4RK3UV6.js    | solicitudes-page     |  46.35 kB | 
+chunk-R2P4GXN6.js    | gastos-page          |  44.60 kB | 
+chunk-KUX5SJ5Z.js    | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js    | planillas-page       |  43.60 kB | 
+chunk-YXVGLRLO.js    | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js    | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js    | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js    | -                    |  33.17 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-LHRRZHYC.mjs   | routes               |  92.65 kB | 
+chunk-LU4I5FSV.mjs   | servicios-page       |  62.99 kB | 
+chunk-Y5YWCF25.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-HFVPX7WL.mjs   | pagos-page           |  55.06 kB | 
+chunk-S55GZIK7.mjs   | usuarios-page        |  49.65 kB | 
+chunk-MZWGL5R7.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-L2LO43JL.mjs   | gastos-page          |  44.59 kB | 
+chunk-P4FLEFUP.mjs   | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs   | planillas-page       |  43.59 kB | 
+chunk-O6CP3TGE.mjs   | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs   | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs   | -                    |  33.16 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.231 seconds] - 2026-09-21T01:15:35.196Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-LXLYP26R.js   | routes      |  92.66 kB | 
+chunk-LRCSDKDQ.js   | pagos-page  |  55.07 kB | 
+chunk-VL72N4XF.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-LRUQM2T5.mjs  | routes      |  92.65 kB | 
+chunk-B6TQPKSO.mjs  | pagos-page  |  55.06 kB | 
+chunk-M7PA5QRG.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.223 seconds] - 2026-09-21T01:15:43.988Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.380 seconds] - 2026-09-21T01:16:03.376Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'conceptoControl' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:115:37:
+[37m      115 │           <mat-select [formControl]="[32mconceptoControl[37m">
+          ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'conceptos' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:117:30:
+[37m      117 │             @for (concepto of [32mconceptos[37m; track concepto) {
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursalControl' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:128:37:
+[37m      128 │           <mat-select [formControl]="[32msucursalControl[37m">
+          ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursales' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:130:30:
+[37m      130 │             @for (sucursal of [32msucursales[37m(); track sucursal.id) {
+          ╵                               [32m~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.370 seconds] - 2026-09-21T01:16:11.232Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'conceptoControl' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:115:37:
+[37m      115 │           <mat-select [formControl]="[32mconceptoControl[37m">
+          ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'conceptos' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:117:30:
+[37m      117 │             @for (concepto of [32mconceptos[37m; track concepto) {
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursalControl' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:128:37:
+[37m      128 │           <mat-select [formControl]="[32msucursalControl[37m">
+          ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.007 seconds] - 2026-09-21T01:16:23.754Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'conceptos' does not exist on type 'PagosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/pagos/features/pagos.page.ts:117:30:
+[37m      117 │             @for (concepto of [32mconceptos[37m; track concepto) {
+          ╵                               [32m~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  89.30 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 427.45 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-YGXUM4OD.js    | routes               |  92.66 kB | 
+chunk-LGKDULZL.js    | servicios-page       |  63.00 kB | 
+chunk-JQP3EKB5.js    | pagos-page           |  58.89 kB | 
+chunk-UBBIAPNG.js    | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js    | empresa-detail-page  |  56.73 kB | 
+chunk-QCPQIRLW.js    | usuarios-page        |  49.66 kB | 
+chunk-B4RK3UV6.js    | solicitudes-page     |  46.35 kB | 
+chunk-R2P4GXN6.js    | gastos-page          |  44.60 kB | 
+chunk-KUX5SJ5Z.js    | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js    | planillas-page       |  43.60 kB | 
+chunk-YXVGLRLO.js    | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js    | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js    | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js    | -                    |  33.17 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-7QSC5KRD.mjs   | routes               |  92.65 kB | 
+chunk-LU4I5FSV.mjs   | servicios-page       |  62.99 kB | 
+chunk-TIS4SE77.mjs   | pagos-page           |  58.88 kB | 
+chunk-Y5YWCF25.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-S55GZIK7.mjs   | usuarios-page        |  49.65 kB | 
+chunk-MZWGL5R7.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-L2LO43JL.mjs   | gastos-page          |  44.59 kB | 
+chunk-P4FLEFUP.mjs   | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs   | planillas-page       |  43.59 kB | 
+chunk-O6CP3TGE.mjs   | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs   | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs   | -                    |  33.16 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.287 seconds] - 2026-09-21T01:16:33.299Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-MU7ORNFV.js   | routes      |  92.66 kB | 
+chunk-ROPRMUZY.js   | pagos-page  |  59.00 kB | 
+chunk-AMRIQHA7.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-E3TUDWS7.mjs  | routes      |  92.65 kB | 
+chunk-D2EXJ76Q.mjs  | pagos-page  |  58.99 kB | 
+chunk-RKB3XLSW.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.276 seconds] - 2026-09-21T01:16:45.972Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-2OIIFM3F.js   | routes      |  92.66 kB | 
+chunk-K5PQUWNN.js   | pagos-page  |  59.22 kB | 
+chunk-4X343I2Y.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-6SUCBXUL.mjs  | routes      |  92.65 kB | 
+chunk-JD7QYRBO.mjs  | pagos-page  |  59.21 kB | 
+chunk-DWY7EKB2.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.107 seconds] - 2026-09-21T01:17:06.541Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-7YEBGBQN.js   | routes      |  92.66 kB | 
+chunk-OTT5KPYH.js   | pagos-page  |  59.33 kB | 
+chunk-R5WPLQAM.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-TBKVGU2V.mjs  | routes      |  92.65 kB | 
+chunk-OBYWPHTR.mjs  | pagos-page  |  59.32 kB | 
+chunk-VVLZ6FJX.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.306 seconds] - 2026-09-21T01:17:17.564Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-GPRU7MXB.js   | routes      |  92.66 kB | 
+chunk-T3KXXXP2.js   | gastos-page |  44.60 kB | 
+chunk-PPNXCCWP.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-IQOHLTWD.mjs  | routes      |  92.65 kB | 
+chunk-I345UFBE.mjs  | gastos-page |  44.59 kB | 
+chunk-HHVWT2NQ.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [1.325 seconds] - 2026-09-21T01:17:28.608Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.176 seconds] - 2026-09-21T01:17:44.697Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursalControl' does not exist on type 'GastosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/gastos/features/gastos.page.ts:95:37:
+[37m      95 │           <mat-select [formControl]="[32msucursalControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursales' does not exist on type 'GastosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/gastos/features/gastos.page.ts:97:30:
+[37m      97 │             @for (sucursal of [32msucursales[37m(); track sucursal.id) {
+         ╵                               [32m~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [1.004 seconds] - 2026-09-21T01:17:54.562Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'sucursalControl' does not exist on type 'GastosPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/domains/admin/modules/gastos/features/gastos.page.ts:95:37:
+[37m      95 │           <mat-select [formControl]="[32msucursalControl[37m">
+         ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles     
+Initial chunk files  | Names                |  Raw size
+main.js              | main                 | 320.35 kB | 
+styles.css           | styles               |  89.30 kB | 
+chunk-Q4Z7UIRJ.js    | -                    |  14.60 kB | 
+chunk-DAX33DS5.js    | -                    |   2.21 kB | 
+chunk-VUJOFXKG.js    | -                    | 987 bytes | 
+
+                     | Initial total        | 427.45 kB
+
+Lazy chunk files     | Names                |  Raw size
+chunk-IZEEDTUZ.js    | routes               |  92.66 kB | 
+chunk-LGKDULZL.js    | servicios-page       |  63.00 kB | 
+chunk-OTT5KPYH.js    | pagos-page           |  59.33 kB | 
+chunk-UBBIAPNG.js    | empleado-detail-page |  58.39 kB | 
+chunk-NEMALKFM.js    | empresa-detail-page  |  56.73 kB | 
+chunk-QCPQIRLW.js    | usuarios-page        |  49.66 kB | 
+chunk-J3L4WGHX.js    | gastos-page          |  46.61 kB | 
+chunk-B4RK3UV6.js    | solicitudes-page     |  46.35 kB | 
+chunk-KUX5SJ5Z.js    | nominas-page         |  44.41 kB | 
+chunk-HMNQ7AZG.js    | planillas-page       |  43.60 kB | 
+chunk-YXVGLRLO.js    | soporte-page         |  43.17 kB | 
+chunk-VCIMUUWF.js    | nomina-detail-page   |  41.33 kB | 
+chunk-BYQZJQ7Y.js    | nomina-liquidar-page |  37.96 kB | 
+chunk-4CHWEN2E.js    | empleados-page       |  33.98 kB | 
+chunk-4OI3HSCS.js    | -                    |  33.17 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles      
+Initial chunk files  | Names                |  Raw size
+main.server.mjs      | main.server          | 321.56 kB | 
+chunk-2LI3LO4G.mjs   | -                    |  14.54 kB | 
+chunk-WEDWPM3F.mjs   | -                    |   2.20 kB | 
+server.mjs           | server               |   1.92 kB | 
+chunk-54EZUNS5.mjs   | -                    | 972 bytes | 
+polyfills.server.mjs | polyfills.server     | 268 bytes | 
+
+Lazy chunk files     | Names                |  Raw size
+chunk-3WQPITEW.mjs   | routes               |  92.65 kB | 
+chunk-LU4I5FSV.mjs   | servicios-page       |  62.99 kB | 
+chunk-OBYWPHTR.mjs   | pagos-page           |  59.32 kB | 
+chunk-Y5YWCF25.mjs   | empleado-detail-page |  58.38 kB | 
+chunk-M2JSNCHN.mjs   | empresa-detail-page  |  56.72 kB | 
+chunk-S55GZIK7.mjs   | usuarios-page        |  49.65 kB | 
+chunk-A6H2N67F.mjs   | gastos-page          |  46.60 kB | 
+chunk-MZWGL5R7.mjs   | solicitudes-page     |  46.34 kB | 
+chunk-P4FLEFUP.mjs   | nominas-page         |  44.40 kB | 
+chunk-KGBHIPL2.mjs   | planillas-page       |  43.59 kB | 
+chunk-O6CP3TGE.mjs   | soporte-page         |  43.16 kB | 
+chunk-S46SDK4N.mjs   | nomina-detail-page   |  41.31 kB | 
+chunk-4AOC2MVP.mjs   | nomina-liquidar-page |  37.95 kB | 
+chunk-L5ROLMJF.mjs   | empleados-page       |  33.97 kB | 
+chunk-QH3GIGQ6.mjs   | -                    |  33.16 kB | 
+...and 34 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.404 seconds] - 2026-09-21T01:18:01.936Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-A5KFMLFC.js   | routes      |  92.66 kB | 
+chunk-ENFQ746A.js   | gastos-page |  46.73 kB | 
+chunk-JQJWCMJZ.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-PVDY3B4E.mjs  | routes      |  92.65 kB | 
+chunk-XVSAOMOT.mjs  | gastos-page |  46.72 kB | 
+chunk-QF6R66DN.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [1.040 seconds] - 2026-09-21T01:18:10.917Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-FQU4O2YL.js   | routes      |  92.66 kB | 
+chunk-XCRWQGF4.js   | gastos-page |  46.84 kB | 
+chunk-AXDHIKJG.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-FKG3CCBE.mjs  | routes      |  92.65 kB | 
+chunk-VQFG3ME6.mjs  | gastos-page |  46.83 kB | 
+chunk-VI4LBNJN.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [1.245 seconds] - 2026-09-21T01:18:16.747Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-6CNII5HY.js   | routes      |  92.66 kB | 
+chunk-UGZ6LVJG.js   | gastos-page |  46.89 kB | 
+chunk-WMJ73HI3.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-IXHCQXMW.mjs  | routes      |  92.65 kB | 
+chunk-PGR7GTUN.mjs  | gastos-page |  46.88 kB | 
+chunk-HHOEGLND.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [1.086 seconds] - 2026-09-21T01:18:22.659Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names          |  Raw size
+main.js             | main           | 320.35 kB | 
+
+Lazy chunk files    | Names          |  Raw size
+chunk-DS6MWJMM.js   | routes         |  92.66 kB | 
+chunk-Q24TK7JW.js   | empleados-page |  33.98 kB | 
+chunk-OLSJRLZA.js   | routes         | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names          |  Raw size
+main.server.mjs     | main.server    | 321.56 kB | 
+
+Lazy chunk files    | Names          |  Raw size
+chunk-6KW3C2YX.mjs  | routes         |  92.65 kB | 
+chunk-4M52IN7U.mjs  | empleados-page |  33.97 kB | 
+chunk-LLKN2RIC.mjs  | routes         | 679 bytes | 
+
+Application bundle generation complete. [1.697 seconds] - 2026-09-21T01:18:30.922Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-MWIOV276.js   | routes               |  92.66 kB | 
+chunk-FXDZ2FLB.js   | empleado-detail-page |  58.45 kB | 
+chunk-5R5GHMPH.js   | empresa-detail-page  |  56.73 kB | 
+chunk-DLV66BK4.js   | routes               | 900 bytes | 
+chunk-L3CRKN64.js   | routes               | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-SMD3CNTS.mjs  | routes               |  92.65 kB | 
+chunk-JGWPOGNL.mjs  | empleado-detail-page |  58.44 kB | 
+chunk-AVMZ56MC.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-2XV2DD3X.mjs  | routes               | 886 bytes | 
+chunk-Q3WWRVPK.mjs  | routes               | 679 bytes | 
+
+Application bundle generation complete. [1.518 seconds] - 2026-09-21T01:18:32.785Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names          |  Raw size
+main.js             | main           | 320.35 kB | 
+styles.css          | styles         |  89.43 kB | 
+
+Lazy chunk files    | Names          |  Raw size
+chunk-57OB46CC.js   | routes         |  92.66 kB | 
+chunk-SJJYZQHO.js   | empleados-page |  34.22 kB | 
+chunk-3KVSYUC6.js   | routes         | 693 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names          |  Raw size
+main.server.mjs     | main.server    | 321.56 kB | 
+
+Lazy chunk files    | Names          |  Raw size
+chunk-QS3D6OGO.mjs  | routes         |  92.65 kB | 
+chunk-OZHP23OL.mjs  | empleados-page |  34.21 kB | 
+chunk-PLOZL6JA.mjs  | routes         | 679 bytes | 
+
+Application bundle generation complete. [1.586 seconds] - 2026-09-21T01:18:54.861Z
+
+Stylesheet update sent to client(s).
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-5LTV3ZW6.js   | routes      |  92.66 kB | 
+chunk-4MENBUTZ.js   | pagos-page  |  59.56 kB | 
+chunk-RCVCNPBQ.js   | gastos-page |  47.13 kB | 
+chunk-43OD3MNI.js   | routes      | 477 bytes | 
+chunk-LK27RORJ.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-KRBORRAK.mjs  | routes      |  92.65 kB | 
+chunk-YQHPH4LY.mjs  | pagos-page  |  59.55 kB | 
+chunk-57UYNQBI.mjs  | gastos-page |  47.12 kB | 
+chunk-SZUGTOVB.mjs  | routes      | 463 bytes | 
+chunk-J7JJCSLH.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.740 seconds] - 2026-09-21T01:18:56.808Z
+
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-WRRLULXA.js   | routes              |  92.66 kB | 
+chunk-GHEPNEUP.js   | empresas-page       |  30.46 kB | 
+chunk-B7JAMZOI.js   | independientes-page |  29.74 kB | 
+chunk-N5F32C7A.js   | routes              | 900 bytes | 
+chunk-I7ABDSTF.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-BN3MY3VU.mjs  | routes              |  92.65 kB | 
+chunk-P6WX7L6L.mjs  | empresas-page       |  30.45 kB | 
+chunk-UXXKAMW5.mjs  | independientes-page |  29.73 kB | 
+chunk-6VTZCP2N.mjs  | routes              | 886 bytes | 
+chunk-C5BCR6TF.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [2.018 seconds] - 2026-09-21T01:18:59.013Z
+
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-C3UAC62B.js   | routes        |  92.66 kB | 
+chunk-7J37HI32.js   | usuarios-page |  49.89 kB | 
+chunk-AHMSYY3X.js   | nominas-page  |  44.64 kB | 
+chunk-JODM5LTP.js   | soporte-page  |  43.40 kB | 
+chunk-RSPTREZB.js   | routes        | 897 bytes | 
+chunk-JQ6WBONH.js   | routes        | 483 bytes | 
+chunk-6M5Y4EGV.js   | routes        | 480 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-J6HDPIOD.mjs  | routes        |  92.65 kB | 
+chunk-KGJDVUD5.mjs  | usuarios-page |  49.88 kB | 
+chunk-MZRVBMVC.mjs  | nominas-page  |  44.63 kB | 
+chunk-YDYSVWAT.mjs  | soporte-page  |  43.39 kB | 
+chunk-GFIZLNP4.mjs  | routes        | 883 bytes | 
+chunk-ZTQHJABD.mjs  | routes        | 469 bytes | 
+chunk-OS4KZ5M4.mjs  | routes        | 466 bytes | 
+
+Application bundle generation complete. [2.558 seconds] - 2026-09-21T01:19:01.722Z
+
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names            |  Raw size
+main.js             | main             | 320.35 kB | 
+
+Lazy chunk files    | Names            |  Raw size
+chunk-L35FE2UG.js   | routes           |  92.66 kB | 
+chunk-4ABRZGCW.js   | servicios-page   |  63.23 kB | 
+chunk-CKEEBK3B.js   | solicitudes-page |  46.58 kB | 
+chunk-QYLSRP3V.js   | routes           |   2.08 kB | 
+chunk-GF4TQHAX.js   | routes           | 492 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names            |  Raw size
+main.server.mjs     | main.server      | 321.56 kB | 
+
+Lazy chunk files    | Names            |  Raw size
+chunk-LTSITOS4.mjs  | routes           |  92.65 kB | 
+chunk-5NCOOQGL.mjs  | servicios-page   |  63.22 kB | 
+chunk-G33XJQNU.mjs  | solicitudes-page |  46.57 kB | 
+chunk-SKSA7D5J.mjs  | routes           |   2.07 kB | 
+chunk-GVPFEB7C.mjs  | routes           | 478 bytes | 
+
+Application bundle generation complete. [1.790 seconds] - 2026-09-21T01:19:03.631Z
+
+Component update sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-I2E3GXPH.js   | routes      |  92.66 kB | 
+chunk-3NUU5Z3S.js   | pagos-page  |  71.09 kB | 
+chunk-527KGENM.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-CJRZPLEZ.mjs  | routes      |  92.65 kB | 
+chunk-OBXVMQ6W.mjs  | pagos-page  |  71.08 kB | 
+chunk-3SMKIDM5.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [3.226 seconds] - 2026-09-21T01:21:45.463Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-2YT374UJ.js   | routes      |  92.66 kB | 
+chunk-XORF5KNB.js   | pagos-page  |  71.13 kB | 
+chunk-PJ7Z2V47.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-HZLRG4FD.mjs  | routes      |  92.65 kB | 
+chunk-HOWA4AFZ.mjs  | pagos-page  |  71.12 kB | 
+chunk-V5C2TXMK.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.793 seconds] - 2026-09-21T01:21:56.682Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-DR6I5YWN.js   | routes      |  92.66 kB | 
+chunk-O7KC7RVM.js   | pagos-page  |  71.16 kB | 
+chunk-AIYMZWVB.js   | routes      | 474 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-TT2YHPJE.mjs  | routes      |  92.65 kB | 
+chunk-BGWFX7ZF.mjs  | pagos-page  |  71.15 kB | 
+chunk-FHSVYV2Z.mjs  | routes      | 460 bytes | 
+
+Application bundle generation complete. [1.454 seconds] - 2026-09-21T01:22:03.588Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-SQ6HZLR7.js   | routes      |  92.66 kB | 
+chunk-TQIWOXIY.js   | gastos-page |  60.07 kB | 
+chunk-XPRHJJ5S.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-HJSTONXX.mjs  | routes      |  92.65 kB | 
+chunk-NZMXEYWG.mjs  | gastos-page |  60.06 kB | 
+chunk-XJNLXBHP.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [2.042 seconds] - 2026-09-21T01:22:31.288Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-EVG74ZHX.js   | routes      |  92.66 kB | 
+chunk-GD32DZBY.js   | gastos-page |  60.09 kB | 
+chunk-PQAT6YNL.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-TK5GTRIT.mjs  | routes      |  92.65 kB | 
+chunk-PXIIY4P4.mjs  | gastos-page |  60.08 kB | 
+chunk-XNH7A2PF.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [2.087 seconds] - 2026-09-21T01:22:37.689Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-ERQSPJQN.js   | routes      |  92.66 kB | 
+chunk-ZGNITJKG.js   | gastos-page |  60.13 kB | 
+chunk-NRNBZDID.js   | routes      | 477 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-HOR6FE5F.mjs  | routes      |  92.65 kB | 
+chunk-CUSQDVUN.mjs  | gastos-page |  60.12 kB | 
+chunk-UYVTEQOG.mjs  | routes      | 463 bytes | 
+
+Application bundle generation complete. [1.869 seconds] - 2026-09-21T01:22:39.682Z
+
+Page reload sent to client(s).
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/personas?page=1&per_page=25',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/personas?page=1&per_page=25: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+[ErrorHandlerInterceptor] Request error HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'vary' => [Array],
+      'x-powered-by' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'vary' => 'vary',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:3000/api/personas?page=1&per_page=25',
+  ok: false,
+  type: undefined,
+  redirected: false,
+  responseType: 'basic',
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:3000/api/personas?page=1&per_page=25: 401 Unauthorized',
+  error: { error: 'Token requerido' }
+}
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Application bundle generation complete. [1.739 seconds] - 2026-09-21T01:24:57.628Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names       |  Raw size
+main.js             | main        | 320.35 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-PN6I5B7M.js   | routes      |  92.66 kB | 
+chunk-RZBVZU6Q.js   | home-page   |  12.66 kB | 
+chunk-DNWEXKR6.js   | routes      | 471 bytes | 
+chunk-U3BMLMV6.js   | -           | 269 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names       |  Raw size
+main.server.mjs     | main.server | 321.56 kB | 
+
+Lazy chunk files    | Names       |  Raw size
+chunk-T6S7ARQL.mjs  | routes      |  92.65 kB | 
+chunk-UQZZC2CT.mjs  | home-page   |  12.65 kB | 
+chunk-AXFD6MQ4.mjs  | routes      | 457 bytes | 
+chunk-5PTZL2ES.mjs  | -           | 255 bytes | 
+
+Application bundle generation complete. [1.673 seconds] - 2026-09-21T01:38:12.164Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+styles.css          | styles              |  89.62 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-45BKYZBT.js   | routes              |  92.66 kB | 
+chunk-L6NU73B2.js   | empresa-detail-page |  56.73 kB | 
+chunk-6JWNJCVV.js   | -                   |  31.52 kB | 
+chunk-CFXM4ODO.js   | empresas-page       |  30.46 kB | 
+chunk-ADAJTLYH.js   | routes              | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-JPKFHJSD.mjs  | routes              |  92.65 kB | 
+chunk-RAYE4V4Y.mjs  | empresa-detail-page |  56.72 kB | 
+chunk-R4EP6OWQ.mjs  | -                   |  31.50 kB | 
+chunk-4LNWOTBS.mjs  | empresas-page       |  30.45 kB | 
+chunk-32XQJ35T.mjs  | routes              | 886 bytes | 
+
+Application bundle generation complete. [2.068 seconds] - 2026-09-21T01:39:20.314Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names         |  Raw size
+main.js             | main          | 320.35 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-YJWXIQN7.js   | routes        |  92.66 kB | 
+chunk-V32RUWVG.js   | empresas-page |  30.47 kB | 
+chunk-7DVDF6TR.js   | routes        | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names         |  Raw size
+main.server.mjs     | main.server   | 321.56 kB | 
+
+Lazy chunk files    | Names         |  Raw size
+chunk-UNQJH23G.mjs  | routes        |  92.65 kB | 
+chunk-23LTAW34.mjs  | empresas-page |  30.46 kB | 
+chunk-MCM6PZH2.mjs  | routes        | 886 bytes | 
+
+Application bundle generation complete. [1.953 seconds] - 2026-09-21T01:39:29.179Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-OBZBXVES.js   | routes              |  92.66 kB | 
+chunk-F5PBV5Y5.js   | empresa-detail-page |  56.73 kB | 
+chunk-GQRPA755.js   | routes              | 900 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-SYFAHOVH.mjs  | routes              |  92.65 kB | 
+chunk-EOFGPLRM.mjs  | empresa-detail-page |  56.72 kB | 
+chunk-BV37X3TK.mjs  | routes              | 886 bytes | 
+
+Application bundle generation complete. [1.519 seconds] - 2026-09-21T01:39:39.851Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                     |  Raw size
+main.js             | main                      | 320.35 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-BXNFIB2O.js   | routes                    |  92.66 kB | 
+chunk-7N4HNV6H.js   | independientes-page       |  29.74 kB | 
+chunk-LK2SVZUW.js   | independiente-detail-page |  28.93 kB | 
+chunk-OMLWT3FU.js   | -                         |  20.00 kB | 
+chunk-7BUT4OKV.js   | routes                    | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names                     |  Raw size
+main.server.mjs     | main.server               | 321.56 kB | 
+
+Lazy chunk files    | Names                     |  Raw size
+chunk-DA4ED3FC.mjs  | routes                    |  92.65 kB | 
+chunk-AKINPBX4.mjs  | independientes-page       |  29.73 kB | 
+chunk-IIDEQHFN.mjs  | independiente-detail-page |  28.93 kB | 
+chunk-J6RJGPLX.mjs  | -                         |  19.98 kB | 
+chunk-IV62RKBI.mjs  | routes                    | 704 bytes | 
+
+Application bundle generation complete. [1.668 seconds] - 2026-09-21T01:40:15.959Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names               |  Raw size
+main.js             | main                | 320.35 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-AD3SYV4D.js   | routes              |  92.66 kB | 
+chunk-AWJNKPHL.js   | independientes-page |  29.75 kB | 
+chunk-7O5PNZQI.js   | routes              | 718 bytes | 
+
+
+Server bundles     
+Initial chunk files | Names               |  Raw size
+main.server.mjs     | main.server         | 321.56 kB | 
+
+Lazy chunk files    | Names               |  Raw size
+chunk-GMI44FHR.mjs  | routes              |  92.65 kB | 
+chunk-ZV6O75SA.mjs  | independientes-page |  29.74 kB | 
+chunk-TOAARKDC.mjs  | routes              | 704 bytes | 
+
+Application bundle generation complete. [1.799 seconds] - 2026-09-21T01:40:23.399Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-LVK6LQC4.js   | routes               |  92.66 kB | 
+chunk-HMAHNXL6.js   | pagos-page           |  71.16 kB | 
+chunk-X47ZUNTR.js   | servicios-page       |  63.23 kB | 
+chunk-HZIF2DWH.js   | gastos-page          |  60.13 kB | 
+chunk-XNRQTOJQ.js   | empleado-detail-page |  58.45 kB | 
+chunk-B6ZF26QS.js   | empresa-detail-page  |  56.73 kB | 
+chunk-G33GDDF3.js   | usuarios-page        |  49.89 kB | 
+chunk-TWFFUOFD.js   | solicitudes-page     |  46.58 kB | 
+chunk-T7HCYO6U.js   | nominas-page         |  44.64 kB | 
+chunk-H6QZBVQZ.js   | planillas-page       |  43.60 kB | 
+chunk-LKDB6QJK.js   | soporte-page         |  43.40 kB | 
+chunk-MXHZT5IR.js   | nomina-detail-page   |  41.33 kB | 
+chunk-NO57EFA2.js   | nomina-liquidar-page |  37.96 kB | 
+chunk-S44GPPL7.js   | empleados-page       |  34.22 kB | 
+chunk-OF2WLE3I.js   | -                    |  33.17 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-OV7HJ34I.mjs  | routes               |  92.65 kB | 
+chunk-TAMO7RLH.mjs  | pagos-page           |  71.15 kB | 
+chunk-PHBBIKFN.mjs  | servicios-page       |  63.22 kB | 
+chunk-BCISN23M.mjs  | gastos-page          |  60.12 kB | 
+chunk-SNPMVEAD.mjs  | empleado-detail-page |  58.44 kB | 
+chunk-SSJHWC62.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-LXGN52B6.mjs  | usuarios-page        |  49.88 kB | 
+chunk-VHWRCRKA.mjs  | solicitudes-page     |  46.57 kB | 
+chunk-HUZQJMZK.mjs  | nominas-page         |  44.63 kB | 
+chunk-ZUKSKT3L.mjs  | planillas-page       |  43.59 kB | 
+chunk-42EXBU75.mjs  | soporte-page         |  43.39 kB | 
+chunk-WBIYMXN6.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-GPUK7OCN.mjs  | nomina-liquidar-page |  37.95 kB | 
+chunk-E33NDWZM.mjs  | empleados-page       |  34.21 kB | 
+chunk-DGXJ3ARI.mjs  | -                    |  33.16 kB | 
+...and 24 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [1.540 seconds] - 2026-09-21T01:41:35.805Z
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Browser bundles    
+Initial chunk files | Names                |  Raw size
+main.js             | main                 | 320.35 kB | 
+styles.css          | styles               |  97.69 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-C552JKE3.js   | routes               |  92.66 kB | 
+chunk-7BQFRF7G.js   | pagos-page           |  71.16 kB | 
+chunk-XUMETLHC.js   | servicios-page       |  63.23 kB | 
+chunk-GEZH6KRU.js   | empleado-detail-page |  58.45 kB | 
+chunk-BQXYFTPY.js   | empresa-detail-page  |  56.73 kB | 
+chunk-JNCFNF3J.js   | home-page            |  50.80 kB | 
+chunk-HB2CGYOJ.js   | solicitudes-page     |  46.58 kB | 
+chunk-RHOHKPCI.js   | nominas-page         |  44.64 kB | 
+chunk-NX3IK3OZ.js   | planillas-page       |  43.60 kB | 
+chunk-6BIK25FL.js   | soporte-page         |  43.40 kB | 
+chunk-D3DTN7WX.js   | nomina-detail-page   |  41.33 kB | 
+chunk-ZWZLWGO7.js   | empleados-page       |  34.22 kB | 
+chunk-5C4RN2HS.js   | -                    |  31.52 kB | 
+chunk-JTGAB442.js   | empresas-page        |  30.47 kB | 
+chunk-4DWNDG65.js   | independientes-page  |  29.75 kB | 
+...and 16 more lazy chunks files. Use "--verbose" to show all the files.
+
+
+Server bundles     
+Initial chunk files | Names                |  Raw size
+main.server.mjs     | main.server          | 321.56 kB | 
+
+Lazy chunk files    | Names                |  Raw size
+chunk-XTKMYULF.mjs  | routes               |  92.65 kB | 
+chunk-U5H4L73O.mjs  | pagos-page           |  71.15 kB | 
+chunk-B3K676Q2.mjs  | servicios-page       |  63.22 kB | 
+chunk-NOXAAEQ5.mjs  | empleado-detail-page |  58.44 kB | 
+chunk-UXPCD77L.mjs  | empresa-detail-page  |  56.72 kB | 
+chunk-IY3IC262.mjs  | home-page            |  50.79 kB | 
+chunk-27W45H3J.mjs  | solicitudes-page     |  46.57 kB | 
+chunk-OIJVIWTG.mjs  | nominas-page         |  44.63 kB | 
+chunk-E4EOML34.mjs  | planillas-page       |  43.59 kB | 
+chunk-Z35TYUTQ.mjs  | soporte-page         |  43.39 kB | 
+chunk-I3PPRW6V.mjs  | nomina-detail-page   |  41.31 kB | 
+chunk-A4BKCS2W.mjs  | empleados-page       |  34.21 kB | 
+chunk-J3ZYSITA.mjs  | -                    |  31.50 kB | 
+chunk-DOX4YK3D.mjs  | empresas-page        |  30.46 kB | 
+chunk-ART6SOHD.mjs  | independientes-page  |  29.74 kB | 
+...and 16 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [3.202 seconds] - 2026-09-21T01:43:02.405Z
+
+Page reload sent to client(s).

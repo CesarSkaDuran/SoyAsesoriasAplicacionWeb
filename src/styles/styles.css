@@ -1,0 +1,102 @@
+/* -------------------------------------------------------------------------- */
+/* Tailwind CSS                                                               */
+/* -------------------------------------------------------------------------- */
+@import 'tailwindcss' important;
+@import './tailwind/variants.css';
+@import './tailwind/theme.css';
+@import './tailwind/utilities.css';
+
+/* -------------------------------------------------------------------------- */
+/* Angular CDK                                                                */
+/* -------------------------------------------------------------------------- */
+@import '@angular/cdk/overlay-prebuilt.css';
+
+/* -------------------------------------------------------------------------- */
+/* Base                                                                       */
+/* -------------------------------------------------------------------------- */
+@import './base/base.css';
+@import './base/typography.css';
+
+/* -------------------------------------------------------------------------- */
+/* Components                                                                 */
+/* -------------------------------------------------------------------------- */
+@import './components/a.css';
+@import './components/input.css';
+@import './components/kbd.css';
+@import './components/material.css';
+
+/* -------------------------------------------------------------------------- */
+/* Third Party                                                                */
+/* -------------------------------------------------------------------------- */
+@import './third-party/lucide-icons.css';
+
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  max-width: calc(100vw - 2rem) !important;
+}
+
+.mat-mdc-dialog-surface {
+  overflow: hidden !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 24px 64px rgb(15 23 42 / 0.28) !important;
+}
+
+.mat-mdc-dialog-component-host {
+  display: flex !important;
+  min-width: 0;
+  max-width: 100%;
+  max-height: min(90vh, 850px);
+  flex-direction: column;
+}
+
+.mat-mdc-dialog-content {
+  min-width: 0;
+  max-height: none !important;
+  flex: 1 1 auto;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 0.5rem 1.5rem 1rem !important;
+  background: #f8fafc;
+}
+
+.mat-mdc-dialog-content form,
+.mat-mdc-dialog-content .mat-mdc-form-field {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.mat-mdc-dialog-content .mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-dialog-actions {
+  min-height: 4.5rem !important;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem !important;
+  background: white;
+}
+
+.dark .mat-mdc-dialog-content {
+  background: #171717;
+}
+
+.dark .mat-mdc-dialog-actions {
+  border-top-color: #404040;
+  background: #262626;
+}
+
+@media (max-width: 639px) {
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
+
+  .mat-mdc-dialog-content {
+    padding-inline: 1rem !important;
+  }
+
+  .mat-mdc-dialog-actions {
+    padding-inline: 1rem !important;
+  }
+}

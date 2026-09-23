@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { ServicioCatalogo } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 
@@ -26,6 +27,7 @@ import { Empresa } from '@/app/models/user.model';
     MatInputModule,
     MatSelectModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header title="Nueva solicitud" />
@@ -36,24 +38,20 @@ import { Empresa } from '@/app/models/user.model';
         class="grid grid-cols-1 gap-x-4 pt-2"
       >
         @if (isAdmin) {
-          <mat-form-field appearance="outline">
-            <mat-label>Empresa</mat-label>
-            <mat-select formControlName="empresa_id">
-              @for (e of data.empresas || []; track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Empresa"
+            [items]="data.empresas || []"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
         }
 
-        <mat-form-field appearance="outline">
-          <mat-label>Servicio</mat-label>
-          <mat-select formControlName="servicio_id">
-            @for (s of servicios(); track s.id) {
-              <mat-option [value]="s.id">{{ s.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          label="Servicio"
+          [items]="servicios()"
+          displayKey="nombre"
+          formControlName="servicio_id"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>Descripción</mat-label>
@@ -91,7 +89,7 @@ export class SolicitudDialog {
   private ref = inject(MatDialogRef<SolicitudDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ empresas?: Empresa[] }>(MAT_DIALOG_DATA);
+  data = inject<{ empresas?: Empresa[] }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { empresas?: Empresa[] };
 
   isAdmin = this.creds.isAdmin();
   saving = false;

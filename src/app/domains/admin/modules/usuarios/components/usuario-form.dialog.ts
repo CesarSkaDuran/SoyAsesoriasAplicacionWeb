@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Persona, Usuario } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 
@@ -30,6 +31,7 @@ const MODULOS: { key: string; label: string }[] = [
   { key: 'soportes', label: 'Soporte' },
   { key: 'gastos', label: 'Gastos' },
   { key: 'informes', label: 'Informes' },
+  { key: 'diagnosticos', label: 'Diagnósticos' },
 ];
 
 @Component({
@@ -43,6 +45,7 @@ const MODULOS: { key: string; label: string }[] = [
     MatSelectModule,
     MatCheckboxModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="isEdit ? 'Editar usuario' : 'Nuevo usuario'" />
@@ -93,26 +96,20 @@ const MODULOS: { key: string; label: string }[] = [
           </mat-form-field>
 
           @if (form.value.role === 'empresa') {
-            <mat-form-field appearance="outline">
-              <mat-label>Empresa</mat-label>
-              <mat-select formControlName="empresa_id">
-                @for (e of empresas(); track e.id) {
-                  <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            <searchable-select
+              label="Empresa"
+              [items]="empresas()"
+              displayKey="razon_social"
+              formControlName="empresa_id"
+            />
           }
           @if (form.value.role === 'independiente') {
-            <mat-form-field appearance="outline">
-              <mat-label>Persona</mat-label>
-              <mat-select formControlName="persona_id">
-                @for (p of personas(); track p.id) {
-                  <mat-option [value]="p.id">
-                    {{ p.primer_nombre }} {{ p.primer_apellido }}
-                  </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            <searchable-select
+              label="Persona"
+              [items]="personas()"
+              displayKey="nombre_completo"
+              formControlName="persona_id"
+            />
           }
         }
       </form>
@@ -149,13 +146,13 @@ export class UsuarioFormDialog {
   private ref = inject(MatDialogRef<UsuarioFormDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ usuario?: Usuario }>(MAT_DIALOG_DATA);
+  data = inject<{ usuario?: Usuario }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { usuario?: Usuario };
 
   modulos = MODULOS;
   isEdit = !!this.data.usuario;
   saving = false;
   empresas = signal<Empresa[]>([]);
-  personas = signal<Persona[]>([]);
+  personas = signal<(Persona & { nombre_completo: string })[]>([]);
 
   form = this.fb.group({
     name: [this.data.usuario?.name || '', Validators.required],
@@ -170,7 +167,14 @@ export class UsuarioFormDialog {
 
   constructor() {
     this.api.empresas().subscribe((r) => this.empresas.set(r.data));
-    this.api.personas({}).subscribe((r) => this.personas.set(r.data));
+    this.api.personas({}).subscribe((r) =>
+      this.personas.set(
+        r.data.map((p) => ({
+          ...p,
+          nombre_completo: `${p.primer_nombre ?? ''} ${p.primer_apellido ?? ''}`.trim(),
+        }))
+      )
+    );
   }
 
   save() {

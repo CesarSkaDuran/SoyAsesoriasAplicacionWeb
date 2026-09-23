@@ -13,6 +13,7 @@ export interface UserModulos {
   usuarios?: boolean;
   informes?: boolean;
   soporte?: boolean;
+  diagnosticos?: boolean;
 }
 
 export interface Empresa {

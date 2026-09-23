@@ -273,7 +273,7 @@ export default class UsuariosPage {
 
   openCreate() {
     this.dialog
-      .open(UsuarioFormDialog, { width: '640px' })
+      .open(UsuarioFormDialog, { width: '640px', data: {} })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
   }

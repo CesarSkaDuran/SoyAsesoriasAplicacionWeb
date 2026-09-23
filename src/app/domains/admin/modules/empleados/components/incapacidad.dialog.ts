@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem, Empleado } from '@/app/models/empleado.model';
 
 @Component({
@@ -26,6 +27,7 @@ import { CatalogoItem, Empleado } from '@/app/models/empleado.model';
     MatSelectModule,
     MatDatepickerModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header title="Reportar incapacidad" />
@@ -35,14 +37,13 @@ import { CatalogoItem, Empleado } from '@/app/models/empleado.model';
         [formGroup]="form"
         class="grid grid-cols-2 gap-x-4 pt-2"
       >
-        <mat-form-field class="col-span-2" appearance="outline">
-          <mat-label>EPS</mat-label>
-          <mat-select formControlName="eps_id">
-            @for (e of eps(); track e.id) {
-              <mat-option [value]="e.id">{{ e.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          class="col-span-2"
+          label="EPS"
+          [items]="eps()"
+          displayKey="nombre"
+          formControlName="eps_id"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>Fecha inicio</mat-label>
@@ -114,7 +115,7 @@ export class IncapacidadDialog {
   private ref = inject(MatDialogRef<IncapacidadDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ empleado: Empleado }>(MAT_DIALOG_DATA);
+  data = inject<{ empleado: Empleado }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { empleado: Empleado };
   eps = signal<CatalogoItem[]>([]);
   saving = false;
 

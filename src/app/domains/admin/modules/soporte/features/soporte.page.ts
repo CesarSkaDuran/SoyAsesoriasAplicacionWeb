@@ -230,7 +230,7 @@ export default class SoportePage {
   total = signal(0);
   page = signal(1);
   loading = signal(true);
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
 
   searchControl = new FormControl('');
   statusControl = new FormControl<number | null>(null);
@@ -287,7 +287,7 @@ export default class SoportePage {
 
   openCreate() {
     this.dialog
-      .open(SoporteDialog, { width: '520px' })
+      .open(SoporteDialog, { width: '520px', data: {} })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
   }

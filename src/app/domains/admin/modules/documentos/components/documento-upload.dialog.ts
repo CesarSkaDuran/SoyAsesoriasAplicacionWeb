@@ -103,7 +103,7 @@ export class DocumentoUploadDialog {
   private api = inject(ApiService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<DocumentoUploadDialog>);
-  private data = inject<DocumentoUploadData>(MAT_DIALOG_DATA);
+  private data = inject<DocumentoUploadData>(MAT_DIALOG_DATA, { optional: true }) ?? {} as DocumentoUploadData;
 
   protected file = signal<File | null>(null);
   protected uploading = signal(false);

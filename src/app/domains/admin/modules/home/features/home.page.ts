@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal, ViewChild, AfterViewInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { userFullName } from '@/app/models/user.model';
@@ -38,8 +39,8 @@ interface DashboardData {
     MatMenuModule,
     MatTabsModule,
     MatTableModule,
-    CurrencyPipe,
     DatePipe,
+    NgApexchartsModule,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -119,48 +120,41 @@ interface DashboardData {
           <!-- Monthly Income Chart -->
           <div class="rounded-2xl border bg-white p-6 shadow-sm dark:bg-neutral-900">
             <h3 class="mb-4 text-lg font-bold text-neutral-800 dark:text-neutral-200">Ingresos mensuales</h3>
-            <div class="flex flex-col gap-2">
-              @for (m of d.ingresos_mensuales; track m.mes) {
-                <div class="flex items-center gap-3">
-                  <span class="w-16 text-xs font-medium text-neutral-500">{{ formatMonth(m.mes) }}</span>
-                  <div class="flex-1">
-                    <div class="h-6 rounded-full bg-blue-100 dark:bg-blue-950">
-                      <div class="flex h-6 items-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-2 text-xs font-bold text-white"
-                           [style.width.%]="getBarWidth(m.total, d.ingresos_mensuales)">
-                        {{ m.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }
-              @if (!d.ingresos_mensuales.length) {
-                <p class="py-6 text-center text-neutral-400">Sin datos de ingresos recientes</p>
-              }
-            </div>
+            @if (d.ingresos_mensuales.length) {
+              <apx-chart
+                [series]="[{ name: 'Ingresos', data: d.ingresos_mensuales.map(m => m.total) }]"
+                [chart]="{ type: 'area', height: 260, toolbar: { show: false }, fontFamily: 'inherit' }"
+                [xaxis]="{ categories: d.ingresos_mensuales.map(m => formatMonth(m.mes)) }"
+                [stroke]="{ curve: 'smooth', width: 2 }"
+                [fill]="{ type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } }"
+                [dataLabels]="{ enabled: false }"
+                [colors]="['#3b82f6']"
+                [yaxis]="{ labels: { formatter: copShort } }"
+                [tooltip]="{ y: { formatter: copFull } }"
+                [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+              />
+            } @else {
+              <p class="py-6 text-center text-neutral-400">Sin datos de ingresos recientes</p>
+            }
           </div>
 
-          <!-- Services by Type - Donut style -->
+          <!-- Services by Type - Donut -->
           <div class="rounded-2xl border bg-white p-6 shadow-sm dark:bg-neutral-900">
             <h3 class="mb-4 text-lg font-bold text-neutral-800 dark:text-neutral-200">Servicios por tipo</h3>
-            <div class="flex flex-col gap-3">
-              @for (s of d.servicios_por_tipo; track s.nombre; let i = $index) {
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="size-3 rounded-full" [style.background-color]="chartColors[i % chartColors.length]"></div>
-                    <span class="text-sm text-neutral-700 dark:text-neutral-300">{{ s.nombre }}</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="h-2 w-24 rounded-full bg-neutral-100 dark:bg-neutral-800">
-                      <div class="h-2 rounded-full" [style.width.%]="getTypePercent(s.total, d.servicios_por_tipo)" [style.background-color]="chartColors[i % chartColors.length]"></div>
-                    </div>
-                    <span class="w-10 text-right text-sm font-bold text-neutral-600 dark:text-neutral-400">{{ s.total }}</span>
-                  </div>
-                </div>
-              }
-              @if (!d.servicios_por_tipo.length) {
-                <p class="py-6 text-center text-neutral-400">Sin datos de servicios</p>
-              }
-            </div>
+            @if (d.servicios_por_tipo.length) {
+              <apx-chart
+                [series]="d.servicios_por_tipo.map(s => s.total)"
+                [labels]="d.servicios_por_tipo.map(s => s.nombre)"
+                [chart]="{ type: 'donut', height: 240, fontFamily: 'inherit' }"
+                [colors]="chartColors"
+                [legend]="{ position: 'bottom', fontSize: '12px' }"
+                [dataLabels]="{ enabled: false }"
+                [stroke]="{ width: 2 }"
+                [plotOptions]="{ pie: { donut: { size: '68%' } } }"
+              />
+            } @else {
+              <p class="py-6 text-center text-neutral-400">Sin datos de servicios</p>
+            }
 
             <!-- Services by Status below -->
             <h3 class="mb-3 mt-6 border-t pt-4 text-lg font-bold text-neutral-800 dark:text-neutral-200">Estado de servicios</h3>
@@ -292,6 +286,11 @@ export default class HomePage {
 
   chartColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
+  copShort = (v: number) =>
+    new Intl.NumberFormat('es-CO', { notation: 'compact', maximumFractionDigits: 1 }).format(v);
+  copFull = (v: number) =>
+    new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+
   constructor() {
     if (!isPlatformBrowser(this.platformId)) return;
     if (this.credentialsService.isAdmin()) {
@@ -341,16 +340,6 @@ export default class HomePage {
     const [y, m] = mes.split('-');
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     return `${months[parseInt(m) - 1]} ${y.slice(2)}`;
-  }
-
-  getBarWidth(total: number, data: { total: number }[]): number {
-    const max = Math.max(...data.map(d => d.total), 1);
-    return Math.max((total / max) * 100, 8);
-  }
-
-  getTypePercent(total: number, data: { total: number }[]): number {
-    const max = Math.max(...data.map(d => d.total), 1);
-    return (total / max) * 100;
   }
 
   statusBg(estado: string): string {

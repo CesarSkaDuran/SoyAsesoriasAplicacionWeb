@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import {
   SERVICIO_CATEGORIAS,
   ServicioRegistro,
@@ -29,6 +30,7 @@ import { Empresa } from '@/app/models/user.model';
     MatInputModule,
     MatSelectModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header
@@ -41,24 +43,23 @@ import { Empresa } from '@/app/models/user.model';
         class="grid grid-cols-2 gap-x-4 pt-2"
       >
         @if (isAdmin) {
-          <mat-form-field class="col-span-2" appearance="outline">
-            <mat-label>Empresa</mat-label>
-            <mat-select formControlName="empresa_id">
-              @for (e of data.empresas || []; track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            class="col-span-2"
+            label="Empresa"
+            [items]="data.empresas || []"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
         }
 
-        <mat-form-field class="col-span-2" appearance="outline">
-          <mat-label>Servicio</mat-label>
-          <mat-select formControlName="nombre">
-            @for (c of categorias; track c.nombre) {
-              <mat-option [value]="c.nombre">{{ c.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          class="col-span-2"
+          label="Servicio"
+          [items]="categorias"
+          displayKey="label"
+          valueKey="nombre"
+          formControlName="nombre"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>Detalle / paquete</mat-label>
@@ -133,7 +134,11 @@ export class ServicioRegistroDialog {
     registro?: ServicioRegistro;
     categoria?: string;
     empresas?: Empresa[];
-  }>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as {
+    registro?: ServicioRegistro;
+    categoria?: string;
+    empresas?: Empresa[];
+  };
 
   categorias = SERVICIO_CATEGORIAS;
   isEdit = !!this.data.registro;

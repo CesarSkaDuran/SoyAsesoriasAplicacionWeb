@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem } from '@/app/models/empleado.model';
 import {
   CUENTA_STATUS,
@@ -42,6 +43,7 @@ import { GastoDialog } from '../components/gasto.dialog';
     DatePipe,
     NgClass,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -86,19 +88,14 @@ import { GastoDialog } from '../components/gasto.dialog';
             <mat-option [value]="5">Rechazado</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field
+        <searchable-select
           class="w-52"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Sucursal</mat-label>
-          <mat-select [formControl]="sucursalControl">
-            <mat-option [value]="null">Todas</mat-option>
-            @for (sucursal of sucursales(); track sucursal.id) {
-              <mat-option [value]="sucursal.id">{{ sucursal.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+          label="Sucursal"
+          nullLabel="Todas"
+          [items]="sucursales()"
+          displayKey="nombre"
+          [formControl]="sucursalControl"
+        />
         <mat-form-field
           class="w-44"
           appearance="outline"
@@ -290,7 +287,7 @@ export default class GastosPage {
 
   openCreate() {
     this.dialog
-      .open(GastoDialog, { width: '760px', maxWidth: '95vw' })
+      .open(GastoDialog, { width: '760px', maxWidth: '95vw', data: {} })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
   }

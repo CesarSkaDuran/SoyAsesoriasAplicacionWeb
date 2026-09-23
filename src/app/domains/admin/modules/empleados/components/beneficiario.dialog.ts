@@ -94,7 +94,7 @@ export class BeneficiarioDialog {
   private ref = inject(MatDialogRef<BeneficiarioDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ empleado: Empleado }>(MAT_DIALOG_DATA);
+  data = inject<{ empleado: Empleado }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { empleado: Empleado };
   parentescos = PARENTESCOS;
   saving = false;
 

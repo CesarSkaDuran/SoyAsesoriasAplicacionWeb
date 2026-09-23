@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
@@ -8,9 +8,14 @@ import { Credentials, CredentialsService } from './credentials.service';
 
 const routes = {
   login: () => `/auth/login`,
+  refresh: () => `/auth/refresh`,
   logout: () => `/auth/logout`,
   me: () => `/auth/me`,
 };
+
+// Marca para que el jwtInterceptor no intente refrescar sobre la propia
+// llamada de refresh (evita bucle infinito).
+export const SKIP_AUTH_RETRY = new HttpContextToken<boolean>(() => false);
 
 export interface LoginContext {
   email: string;
@@ -20,6 +25,7 @@ export interface LoginContext {
 
 interface LoginResponse {
   token: string;
+  refresh_token: string;
   user: User;
 }
 
@@ -38,6 +44,7 @@ export class AuthenticationService {
     return this.httpClient.post<LoginResponse>(routes.login(), context).pipe(
       map((response) => ({
         access_token: response.token,
+        refresh_token: response.refresh_token,
         user: response.user,
       })),
       tap((credentials) => this.credentialsService.setCredentials(credentials))
@@ -45,10 +52,38 @@ export class AuthenticationService {
   }
 
   /**
+   * Renueva el par access+refresh. El backend rota el refresh token:
+   * el viejo queda revocado en cada uso.
+   */
+  refresh(): Observable<Credentials> {
+    const refreshToken = this.credentialsService.credentials?.refresh_token;
+    return this.httpClient
+      .post<LoginResponse>(
+        routes.refresh(),
+        { refresh_token: refreshToken },
+        { context: new HttpContext().set(SKIP_AUTH_RETRY, true) }
+      )
+      .pipe(
+        map((response) => ({
+          access_token: response.token,
+          refresh_token: response.refresh_token,
+          user: response.user,
+        })),
+        tap((credentials) => this.credentialsService.setCredentials(credentials))
+      );
+  }
+
+  /**
    * Logs out the user and clears credentials.
    */
   logout(): Observable<boolean> {
+    const refreshToken = this.credentialsService.credentials?.refresh_token;
     this.credentialsService.setCredentials();
+    if (refreshToken) {
+      this.httpClient
+        .post(routes.logout(), { refresh_token: refreshToken })
+        .subscribe({ error: () => {} });
+    }
     return of(true);
   }
 

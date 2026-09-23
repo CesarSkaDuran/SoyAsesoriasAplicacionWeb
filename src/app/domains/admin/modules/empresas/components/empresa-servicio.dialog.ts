@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { ServicioCatalogo } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 
@@ -27,6 +28,7 @@ import { Empresa } from '@/app/models/user.model';
     MatSelectModule,
     MatDatepickerModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header title="Asignar servicio" />
@@ -36,20 +38,13 @@ import { Empresa } from '@/app/models/user.model';
         [formGroup]="form"
         class="flex flex-col gap-y-1 pt-2"
       >
-        <mat-form-field appearance="outline">
-          <mat-label>Servicio</mat-label>
-          <mat-select
-            formControlName="servicio_id"
-            (selectionChange)="onServicio($event.value)"
-          >
-            @for (s of catalogo(); track s.id) {
-              <mat-option [value]="s.id">
-                {{ s.nombre }}
-                <span class="text-neutral-400">({{ s.tipo }})</span>
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          label="Servicio"
+          [items]="catalogo()"
+          displayKey="nombre"
+          formControlName="servicio_id"
+          (selectionChange)="onServicio($event)"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>Valor mensual</mat-label>
@@ -91,7 +86,7 @@ export class EmpresaServicioDialog {
   private ref = inject(MatDialogRef<EmpresaServicioDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ empresa: Empresa }>(MAT_DIALOG_DATA);
+  data = inject<{ empresa: Empresa }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { empresa: Empresa };
   catalogo = signal<ServicioCatalogo[]>([]);
   saving = false;
 

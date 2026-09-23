@@ -77,13 +77,89 @@
   background: white;
 }
 
-.dark .mat-mdc-dialog-content {
+.scheme-dark .mat-mdc-dialog-content {
   background: #171717;
 }
 
-.dark .mat-mdc-dialog-actions {
+.scheme-dark .mat-mdc-dialog-actions {
   border-top-color: #404040;
   background: #262626;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dark scheme                                                                */
+/* -------------------------------------------------------------------------- */
+
+/* Activa light-dark() en todos los tokens (Material, base, tipografía)
+   y el estilado nativo oscuro de formularios/scrollbars. */
+.scheme-light {
+  color-scheme: light;
+}
+.scheme-dark {
+  color-scheme: dark;
+}
+
+/* Fallbacks para utilidades claras usadas sin variante dark: explícita.
+   El :not([class*="dark:*-"]) respeta los elementos que ya declaran
+   su propio color oscuro. */
+.scheme-dark .bg-white:not([class*="dark:bg-"]) {
+  background-color: #171717;
+}
+.scheme-dark .bg-neutral-50:not([class*="dark:bg-"]),
+.scheme-dark .bg-slate-50:not([class*="dark:bg-"]),
+.scheme-dark .bg-neutral-100:not([class*="dark:bg-"]),
+.scheme-dark .bg-slate-100:not([class*="dark:bg-"]) {
+  background-color: #262626;
+}
+.scheme-dark .bg-neutral-200:not([class*="dark:bg-"]) {
+  background-color: #333333;
+}
+.scheme-dark .bg-neutral-300:not([class*="dark:bg-"]) {
+  background-color: #404040;
+}
+.scheme-dark .bg-neutral-400:not([class*="dark:bg-"]) {
+  background-color: #525252;
+}
+
+.scheme-dark .text-neutral-950:not([class*="dark:text-"]),
+.scheme-dark .text-neutral-900:not([class*="dark:text-"]),
+.scheme-dark .text-slate-900:not([class*="dark:text-"]),
+.scheme-dark .text-neutral-800:not([class*="dark:text-"]),
+.scheme-dark .text-slate-800:not([class*="dark:text-"]) {
+  color: #e5e5e5;
+}
+.scheme-dark .text-neutral-700:not([class*="dark:text-"]),
+.scheme-dark .text-slate-700:not([class*="dark:text-"]) {
+  color: #d4d4d4;
+}
+.scheme-dark .text-neutral-600:not([class*="dark:text-"]),
+.scheme-dark .text-slate-600:not([class*="dark:text-"]),
+.scheme-dark .text-slate-500:not([class*="dark:text-"]) {
+  color: #a3a3a3;
+}
+
+.scheme-dark .border-neutral-100:not([class*="dark:border-"]),
+.scheme-dark .border-neutral-200:not([class*="dark:border-"]),
+.scheme-dark .border-slate-100:not([class*="dark:border-"]),
+.scheme-dark .border-slate-200:not([class*="dark:border-"]) {
+  border-color: #404040;
+}
+.scheme-dark .border-neutral-300:not([class*="dark:border-"]) {
+  border-color: #525252;
+}
+
+.scheme-dark [class*="divide-"]:not([class*="dark:divide-"]) > * + * {
+  border-color: #404040;
+}
+
+.scheme-dark .hover\:bg-white:not([class*="dark:bg-"]):hover {
+  background-color: #1f1f1f;
+}
+.scheme-dark .hover\:bg-neutral-50:not([class*="dark:bg-"]):hover,
+.scheme-dark .hover\:bg-slate-50:not([class*="dark:bg-"]):hover,
+.scheme-dark .hover\:bg-neutral-100:not([class*="dark:bg-"]):hover,
+.scheme-dark .hover\:bg-slate-100:not([class*="dark:bg-"]):hover {
+  background-color: #2a2a2a;
 }
 
 @media (max-width: 639px) {

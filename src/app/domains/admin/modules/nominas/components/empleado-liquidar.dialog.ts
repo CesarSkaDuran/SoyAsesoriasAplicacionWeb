@@ -122,7 +122,17 @@ export class EmpleadoLiquidarDialog {
       deducciones?: number;
       indemnizacion?: number;
     };
-  }>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as {
+    empleado: Empleado;
+    input?: {
+      dias_laborados?: number;
+      horas_extras?: number;
+      otros_ingresos?: number;
+      ingreso_noc?: number;
+      deducciones?: number;
+      indemnizacion?: number;
+    };
+  };
 
   form = this.fb.group({
     dias_laborados: [this.data.input?.dias_laborados ?? 30],

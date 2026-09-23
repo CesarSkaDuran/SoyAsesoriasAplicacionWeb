@@ -17,6 +17,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem } from '@/app/models/empleado.model';
 import {
   CUENTA_STATUS,
@@ -44,6 +45,7 @@ import { CuentaCobroDialog } from '../components/cuenta-cobro.dialog';
     DatePipe,
     NgClass,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -77,19 +79,14 @@ import { CuentaCobroDialog } from '../components/cuenta-cobro.dialog';
           />
         </mat-form-field>
         @if (isAdmin()) {
-          <mat-form-field
+          <searchable-select
             class="w-64"
-            appearance="outline"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Empresa</mat-label>
-            <mat-select [formControl]="empresaControl">
-              <mat-option [value]="null">Todas</mat-option>
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
         }
         <mat-form-field
           class="w-44"
@@ -119,19 +116,14 @@ import { CuentaCobroDialog } from '../components/cuenta-cobro.dialog';
             }
           </mat-select>
         </mat-form-field>
-        <mat-form-field
+        <searchable-select
           class="w-52"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Sucursal</mat-label>
-          <mat-select [formControl]="sucursalControl">
-            <mat-option [value]="null">Todas</mat-option>
-            @for (sucursal of sucursales(); track sucursal.id) {
-              <mat-option [value]="sucursal.id">{{ sucursal.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+          label="Sucursal"
+          nullLabel="Todas"
+          [items]="sucursales()"
+          displayKey="nombre"
+          [formControl]="sucursalControl"
+        />
         <mat-form-field
           class="w-44"
           appearance="outline"
@@ -288,7 +280,7 @@ export default class PagosPage {
   total = signal(0);
   page = signal(1);
   loading = signal(true);
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
 
   searchControl = new FormControl('');
   statusControl = new FormControl<number | null>(null);

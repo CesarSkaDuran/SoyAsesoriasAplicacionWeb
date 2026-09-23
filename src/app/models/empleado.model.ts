@@ -113,3 +113,25 @@ export interface Paginated<T> {
   page: number;
   per_page: number;
 }
+
+// ── Maestros parametrizables (modulo Configuracion) ──────────────────────────
+export interface MaestroField {
+  key: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'boolean' | 'textarea';
+  required?: boolean;
+  default?: any;
+  /** Para type 'select': catalogo origen (departamentos, empresas, ciudades...) */
+  source?: string;
+  /** Para type 'select' con opciones fijas */
+  options?: { value: any; label: string }[];
+}
+
+export interface MaestroMeta {
+  key: string;
+  label: string;
+  singular?: string;
+  icon: string;
+  fields: MaestroField[];
+  total: number;
+}

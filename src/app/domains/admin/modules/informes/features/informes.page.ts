@@ -10,6 +10,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { ApiService } from '@/app/core/api/api.service';
 import { PageHeader } from '@/app/core/ui/page-header';
 
@@ -41,6 +42,7 @@ interface FilaInforme {
     CurrencyPipe,
     DatePipe,
     PageHeader,
+    NgApexchartsModule,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -105,6 +107,43 @@ interface FilaInforme {
           Consultar
         </button>
       </div>
+
+      <!-- Gráfica dinámica -->
+      @if (!loading() && filas().length) {
+        <div
+          class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm"
+        >
+          <h3 class="mb-2 font-bold text-neutral-700">
+            {{ chartTitle() }}
+          </h3>
+          @if (chartIsTime()) {
+            <apx-chart
+              [series]="[{ name: 'Total', data: filas().map(f => f.total) }]"
+              [chart]="{ type: 'area', height: 240, toolbar: { show: false }, fontFamily: 'inherit' }"
+              [xaxis]="{ categories: diaCategories() }"
+              [stroke]="{ curve: 'smooth', width: 2 }"
+              [fill]="{ type: 'gradient', gradient: { opacityFrom: 0.35, opacityTo: 0.05 } }"
+              [dataLabels]="{ enabled: false }"
+              [colors]="[chartColor()]"
+              [yaxis]="{ labels: { formatter: copShort } }"
+              [tooltip]="{ y: { formatter: copFull } }"
+              [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+            />
+          } @else {
+            <apx-chart
+              [series]="barSeries()"
+              [chart]="{ type: 'bar', height: chartHeight(), stacked: showPagado(), toolbar: { show: false }, fontFamily: 'inherit' }"
+              [xaxis]="{ categories: filas().map(f => f.grupo), labels: { formatter: copShort } }"
+              [plotOptions]="{ bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } }"
+              [dataLabels]="{ enabled: false }"
+              [colors]="barColors()"
+              [tooltip]="{ y: { formatter: copFull } }"
+              [legend]="{ show: showPagado(), position: 'top' }"
+              [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+            />
+          }
+        </div>
+      }
 
       <!-- Resultado -->
       @if (loading()) {
@@ -227,6 +266,38 @@ export default class InformesPage {
   showPagado = () =>
     (this.tab() === 'ingresos' && this.agrupar() !== 'dia') ||
     this.tab() === 'servicios';
+
+  // ---- Gráfica ----
+  chartIsTime = () => this.agrupar() === 'dia' && this.tab() !== 'servicios';
+
+  chartTitle = () => {
+    const t = this.tab() === 'ingresos' ? 'Ingresos' : this.tab() === 'egresos' ? 'Egresos' : 'Servicios';
+    const g = this.chartIsTime() ? 'por día' : this.tab() === 'servicios' ? 'por categoría' : `por ${this.agrupar()}`;
+    return `${t} ${g}`;
+  };
+
+  chartColor = () => (this.tab() === 'egresos' ? '#ef4444' : this.tab() === 'servicios' ? '#8b5cf6' : '#3b82f6');
+
+  chartHeight = () => Math.min(120 + this.filas().length * 34, 480);
+
+  barSeries = () =>
+    this.showPagado()
+      ? [
+          { name: 'Pagado', data: this.filas().map((f) => f.pagado ?? 0) },
+          { name: 'Pendiente', data: this.filas().map((f) => f.pendiente ?? 0) },
+        ]
+      : [{ name: 'Total', data: this.filas().map((f) => f.total) }];
+
+  barColors = () => (this.showPagado() ? ['#10b981', '#f59e0b'] : [this.chartColor()]);
+
+  private datePipe = new DatePipe('es-CO');
+  diaCategories = () =>
+    this.filas().map((f) => this.datePipe.transform(f.grupo, 'dd MMM') ?? f.grupo);
+
+  copShort = (v: number) =>
+    new Intl.NumberFormat('es-CO', { notation: 'compact', maximumFractionDigits: 1 }).format(v);
+  copFull = (v: number) =>
+    new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
 
   onTab(i: number) {
     this.tabIndex.set(i);

@@ -241,7 +241,7 @@ export default class EmpleadoDetailPage {
   documentos = signal<Documento[]>([]);
   incapacidades = signal<any[]>([]);
   loading = signal(true);
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
   empleadoId = '';
 
   constructor() {

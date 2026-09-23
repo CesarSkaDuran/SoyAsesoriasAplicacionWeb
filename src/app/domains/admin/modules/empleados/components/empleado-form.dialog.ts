@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem, Empleado } from '@/app/models/empleado.model';
 
 export interface EmpleadoFormData {
@@ -31,6 +32,7 @@ export interface EmpleadoFormData {
     MatDatepickerModule,
     MatButtonModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="editing ? 'Editar empleado' : 'Nuevo empleado'" />
@@ -159,14 +161,12 @@ export interface EmpleadoFormData {
             <mat-option value="semanal">Semanal</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label>Cargo</mat-label>
-          <mat-select formControlName="cargo_id">
-            @for (c of cargos(); track c.id) {
-              <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          label="Cargo"
+          [items]="cargos()"
+          displayKey="nombre"
+          formControlName="cargo_id"
+        />
         <mat-form-field>
           <mat-label>Riesgo ARL</mat-label>
           <mat-select formControlName="riesgo">
@@ -201,38 +201,30 @@ export interface EmpleadoFormData {
           <span class="size-2 rounded-full bg-[#12377a]"></span>
           Seguridad social
         </div>
-        <mat-form-field>
-          <mat-label>EPS</mat-label>
-          <mat-select formControlName="eps_id">
-            @for (e of eps(); track e.id) {
-              <mat-option [value]="e.id">{{ e.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>ARL</mat-label>
-          <mat-select formControlName="arl_id">
-            @for (a of arl(); track a.id) {
-              <mat-option [value]="a.id">{{ a.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Fondo de pensiones</mat-label>
-          <mat-select formControlName="pension_id">
-            @for (p of pensiones(); track p.id) {
-              <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Caja de compensación</mat-label>
-          <mat-select formControlName="caja_cf_id">
-            @for (c of cajas(); track c.id) {
-              <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          label="EPS"
+          [items]="eps()"
+          displayKey="nombre"
+          formControlName="eps_id"
+        />
+        <searchable-select
+          label="ARL"
+          [items]="arl()"
+          displayKey="nombre"
+          formControlName="arl_id"
+        />
+        <searchable-select
+          label="Fondo de pensiones"
+          [items]="pensiones()"
+          displayKey="nombre"
+          formControlName="pension_id"
+        />
+        <searchable-select
+          label="Caja de compensación"
+          [items]="cajas()"
+          displayKey="nombre"
+          formControlName="caja_cf_id"
+        />
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -257,7 +249,7 @@ export class EmpleadoFormDialog {
   private api = inject(ApiService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<EmpleadoFormDialog>);
-  private data = inject<EmpleadoFormData>(MAT_DIALOG_DATA);
+  private data = inject<EmpleadoFormData>(MAT_DIALOG_DATA, { optional: true }) ?? {} as EmpleadoFormData;
 
   protected editing = !!this.data.empleado;
   protected saving = signal(false);

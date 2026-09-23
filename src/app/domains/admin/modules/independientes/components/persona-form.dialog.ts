@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem, Catalogos } from '@/app/models/empleado.model';
 import { Persona } from '@/app/models/negocio.model';
 
@@ -25,6 +26,7 @@ import { Persona } from '@/app/models/negocio.model';
     MatInputModule,
     MatSelectModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="isEdit ? 'Editar independiente' : 'Nuevo independiente'" />
@@ -92,22 +94,18 @@ import { Persona } from '@/app/models/negocio.model';
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Departamento</mat-label>
-            <mat-select formControlName="departamento_id">
-              @for (d of departamentos(); track d.id) {
-                <mat-option [value]="d.id">{{ d.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Ciudad</mat-label>
-            <mat-select formControlName="ciudad_id">
-              @for (c of ciudadesFiltradas(); track c.id) {
-                <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Departamento"
+            [items]="departamentos()"
+            displayKey="nombre"
+            formControlName="departamento_id"
+          />
+          <searchable-select
+            label="Ciudad"
+            [items]="ciudadesFiltradas()"
+            displayKey="nombre"
+            formControlName="ciudad_id"
+          />
         </div>
 
         <mat-form-field appearance="outline">
@@ -131,7 +129,7 @@ export class PersonaFormDialog {
   private ref = inject(MatDialogRef<PersonaFormDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ persona?: Persona }>(MAT_DIALOG_DATA, { optional: true }) ?? {};
+  data = inject<{ persona?: Persona }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { persona?: Persona };
 
   isEdit = !!this.data.persona;
   saving = false;

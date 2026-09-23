@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Empresa } from '@/app/models/user.model';
 
 const MESES = [
@@ -27,6 +28,7 @@ const MESES = [
     MatInputModule,
     MatSelectModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header title="Nueva nómina" />
@@ -37,14 +39,12 @@ const MESES = [
         class="flex flex-col gap-y-1 pt-2"
       >
         @if (isAdmin()) {
-          <mat-form-field appearance="outline">
-            <mat-label>Empresa</mat-label>
-            <mat-select formControlName="empresa_id">
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Empresa"
+            [items]="empresas()"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
         }
 
         <div class="grid grid-cols-2 gap-x-4">

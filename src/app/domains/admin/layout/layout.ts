@@ -42,9 +42,9 @@ import { AdminSidebar } from '@/app/domains/admin/layout/ui/sidebar';
         <admin-sidebar />
       </mat-sidenav>
 
-      <mat-sidenav-content class="flex flex-col lg:h-dvh lg:overflow-hidden">
+      <mat-sidenav-content class="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
         <!-- Toolbar -->
-        <div class="flex items-center border-b px-4 py-2.5">
+        <div class="relative z-10 flex items-center border-b border-slate-200 bg-white px-4 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
           <button
             matIconButton
             (click)="sidenav.toggle()"
@@ -68,9 +68,9 @@ import { AdminSidebar } from '@/app/domains/admin/layout/ui/sidebar';
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col lg:min-h-0 lg:flex-auto lg:overflow-auto">
+        <main class="flex min-h-0 flex-auto flex-col overflow-auto bg-slate-100 dark:bg-neutral-950">
           <router-outlet />
-        </div>
+        </main>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,

@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Documento } from '@/app/models/empleado.model';
 import { Empresa } from '@/app/models/user.model';
 import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
@@ -27,6 +28,7 @@ import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
     MatSnackBarModule,
     DatePipe,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -35,18 +37,13 @@ import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
         subtitle="Archivos compartidos"
       >
         @if (isAdmin()) {
-          <mat-form-field
+          <searchable-select
             class="w-64"
-            appearance="outline"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Empresa</mat-label>
-            <mat-select [formControl]="empresaControl">
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            label="Empresa"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
         }
         <button
           matButton="filled"

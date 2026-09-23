@@ -1029,8 +1029,8 @@
     var(--color-neutral-950)
   );
   --mat-sidenav-content-background-color: light-dark(
-    var(--color-white),
-    var(--color-neutral-900)
+    var(--color-neutral-100),
+    var(--color-neutral-950)
   );
 
   --mat-sidenav-container-text-color: light-dark(

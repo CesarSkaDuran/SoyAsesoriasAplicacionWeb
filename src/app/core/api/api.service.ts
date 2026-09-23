@@ -7,14 +7,25 @@ import {
   Catalogos,
   Documento,
   Empleado,
+  MaestroMeta,
   Nomina,
   NominaDetalle,
   Paginated,
 } from '@/app/models/empleado.model';
 import {
   CuentaCobro,
+  Diagnostico,
+  DiagnosticoDocConfig,
+  DiagnosticoDocumento,
+  DiagnosticoPregunta,
+  Embudo,
+  EmbudoResumen,
+  EmbudoTablero,
   EmpresaServicio,
+  Etapa,
   Gasto,
+  Lead,
+  LeadHistorial,
   Persona,
   Planilla,
   ServicioCatalogo,
@@ -643,5 +654,231 @@ export class ApiService {
     let params = new HttpParams();
     Object.entries(filters).forEach(([k, v]) => v && (params = params.set(k, v)));
     return this.http.get<{ data: any[] }>('/informes/servicios', { params });
+  }
+
+  // ── Maestros / Configuracion (admin) ───────────────────────────────────────
+  maestros(): Observable<MaestroMeta[]> {
+    return this.http.get<MaestroMeta[]>('/maestros');
+  }
+
+  maestroItems(
+    catalogo: string,
+    filters: { search?: string; page?: number; per_page?: number } = {}
+  ): Observable<Paginated<Record<string, any>>> {
+    let params = new HttpParams()
+      .set('page', filters.page ?? 1)
+      .set('per_page', filters.per_page ?? 25);
+    if (filters.search) params = params.set('search', filters.search);
+    return this.http.get<Paginated<Record<string, any>>>(
+      `/maestros/${catalogo}`,
+      { params }
+    );
+  }
+
+  createMaestroItem(
+    catalogo: string,
+    data: Record<string, any>
+  ): Observable<Record<string, any>> {
+    return this.http.post<Record<string, any>>(`/maestros/${catalogo}`, data);
+  }
+
+  updateMaestroItem(
+    catalogo: string,
+    id: number | string,
+    data: Record<string, any>
+  ): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/maestros/${catalogo}/${id}`, data);
+  }
+
+  deleteMaestroItem(
+    catalogo: string,
+    id: number | string
+  ): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/maestros/${catalogo}/${id}`);
+  }
+
+  // ── Ventas / Comercial (embudos y leads) ────────────────────────────────────
+  ventasEmbudos(): Observable<EmbudoResumen[]> {
+    return this.http.get<EmbudoResumen[]>('/ventas');
+  }
+
+  ventasEmbudo(slug: string | number, search?: string): Observable<EmbudoTablero> {
+    let params = new HttpParams();
+    if (search) params = params.set('search', search);
+    return this.http.get<EmbudoTablero>(`/ventas/embudo/${slug}`, { params });
+  }
+
+  ventasLead(id: number): Observable<{ lead: Lead; historial: LeadHistorial[] }> {
+    return this.http.get<{ lead: Lead; historial: LeadHistorial[] }>(
+      `/ventas/leads/${id}`
+    );
+  }
+
+  createLead(data: Partial<Lead>): Observable<{ lead: Lead }> {
+    return this.http.post<{ lead: Lead }>('/ventas/leads', data);
+  }
+
+  updateLead(id: number, data: Partial<Lead>): Observable<{ lead: Lead }> {
+    return this.http.put<{ lead: Lead }>(`/ventas/leads/${id}`, data);
+  }
+
+  moveLead(
+    id: number,
+    etapa_id: number,
+    orden_pos = 0
+  ): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/ventas/leads/${id}/etapa`, {
+      etapa_id,
+      orden_pos,
+    });
+  }
+
+  convertirLead(
+    id: number,
+    tipo: 'empresa' | 'independiente',
+    razon_social?: string
+  ): Observable<{ lead: Lead; empresa_id?: number; persona_id?: number }> {
+    return this.http.post<{ lead: Lead; empresa_id?: number; persona_id?: number }>(
+      `/ventas/leads/${id}/convertir`,
+      { tipo, razon_social }
+    );
+  }
+
+  deleteLead(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/ventas/leads/${id}`);
+  }
+
+  createEmbudo(data: Partial<Embudo>): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>('/ventas/embudos', data);
+  }
+
+  updateEmbudo(id: number, data: Partial<Embudo>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/ventas/embudos/${id}`, data);
+  }
+
+  createEtapa(
+    embudoId: number,
+    data: Partial<Etapa>
+  ): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(
+      `/ventas/embudos/${embudoId}/etapas`,
+      data
+    );
+  }
+
+  updateEtapa(id: number, data: Partial<Etapa>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/ventas/etapas/${id}`, data);
+  }
+
+  deleteEtapa(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/ventas/etapas/${id}`);
+  }
+
+  // ── Diagnósticos ────────────────────────────────────────────────────────────
+  diagnosticos(filters: {
+    empresa_id?: number; responsable_id?: number; estado?: string;
+    desde?: string; hasta?: string; search?: string; page?: number;
+  } = {}): Observable<Paginated<Diagnostico> & { stats: { total: number; en_progreso: number; logrados: number; por_estado?: { estado: string; total: number }[] } }> {
+    let params = new HttpParams().set('page', filters.page ?? 1);
+    for (const [k, v] of Object.entries(filters)) {
+      if (v !== undefined && v !== null && v !== '' && k !== 'page') {
+        params = params.set(k, String(v));
+      }
+    }
+    return this.http.get<Paginated<Diagnostico> & { stats: { total: number; en_progreso: number; logrados: number; por_estado?: { estado: string; total: number }[] } }>(
+      '/diagnosticos', { params }
+    );
+  }
+
+  diagnostico(id: number): Observable<Diagnostico> {
+    return this.http.get<Diagnostico>(`/diagnosticos/${id}`);
+  }
+
+  createDiagnostico(data: Partial<Diagnostico>): Observable<Diagnostico> {
+    return this.http.post<Diagnostico>('/diagnosticos', data);
+  }
+
+  updateDiagnostico(id: number, data: Partial<Diagnostico>): Observable<Diagnostico> {
+    return this.http.put<Diagnostico>(`/diagnosticos/${id}`, data);
+  }
+
+  updateDiagnosticoEstado(id: number, estado: string): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnosticos/${id}/estado`, { estado });
+  }
+
+  deleteDiagnostico(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnosticos/${id}`);
+  }
+
+  diagnosticoEntrevista(id: number): Observable<{ preguntas: DiagnosticoPregunta[] }> {
+    return this.http.get<{ preguntas: DiagnosticoPregunta[] }>(`/diagnosticos/${id}/entrevista`);
+  }
+
+  saveRespuestas(id: number, respuestas: Record<number, unknown>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnosticos/${id}/respuestas`, { respuestas });
+  }
+
+  diagnosticoDocumentos(id: number): Observable<{
+    documentos: { config: DiagnosticoDocConfig; documento: DiagnosticoDocumento | null }[];
+  }> {
+    return this.http.get<{
+      documentos: { config: DiagnosticoDocConfig; documento: DiagnosticoDocumento | null }[];
+    }>(`/diagnosticos/${id}/documentos`);
+  }
+
+  uploadDiagnosticoDoc(id: number, configId: number, file: File, comentarios?: string): Observable<{ ok: boolean }> {
+    const form = new FormData();
+    form.append('archivo', file);
+    if (comentarios) form.append('comentarios', comentarios);
+    return this.http.post<{ ok: boolean }>(`/diagnosticos/${id}/documentos/${configId}`, form);
+  }
+
+  revisarDiagnosticoDoc(docId: number, estado: string, comentarios?: string): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnosticos/documentos/${docId}`, { estado, comentarios });
+  }
+
+  diagnosticoDocDownloadUrl(docId: number): string {
+    return `/api/diagnosticos/documentos/${docId}/download`;
+  }
+
+  diagnosticoInforme(id: number): Observable<{ contenido_html: string }> {
+    return this.http.get<{ contenido_html: string }>(`/diagnosticos/${id}/informe`);
+  }
+
+  saveDiagnosticoInforme(id: number, contenido_html: string): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnosticos/${id}/informe`, { contenido_html });
+  }
+
+  // Configuración de diagnósticos (admin)
+  diagPreguntas(): Observable<{ data: DiagnosticoPregunta[] }> {
+    return this.http.get<{ data: DiagnosticoPregunta[] }>('/diagnostico-config/preguntas');
+  }
+
+  createDiagPregunta(data: Partial<DiagnosticoPregunta>): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>('/diagnostico-config/preguntas', data);
+  }
+
+  updateDiagPregunta(id: number, data: Partial<DiagnosticoPregunta>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnostico-config/preguntas/${id}`, data);
+  }
+
+  deleteDiagPregunta(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnostico-config/preguntas/${id}`);
+  }
+
+  diagDocConfigs(): Observable<{ data: DiagnosticoDocConfig[] }> {
+    return this.http.get<{ data: DiagnosticoDocConfig[] }>('/diagnostico-config/documentos');
+  }
+
+  createDiagDocConfig(data: Partial<DiagnosticoDocConfig>): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>('/diagnostico-config/documentos', data);
+  }
+
+  updateDiagDocConfig(id: number, data: Partial<DiagnosticoDocConfig>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnostico-config/documentos/${id}`, data);
+  }
+
+  deleteDiagDocConfig(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnostico-config/documentos/${id}`);
   }
 }

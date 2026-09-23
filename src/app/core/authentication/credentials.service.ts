@@ -5,6 +5,7 @@ import { User, UserRole } from '@/app/models/user.model';
 
 export interface Credentials {
   access_token: string;
+  refresh_token: string;
   user: User;
 }
 

@@ -227,7 +227,7 @@ export default class IndependienteDetailPage {
   servicios = signal<ServicioRegistro[]>([]);
   cuentas = signal<CuentaCobro[]>([]);
   loading = signal(true);
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
   personaId = '';
 
   constructor() {

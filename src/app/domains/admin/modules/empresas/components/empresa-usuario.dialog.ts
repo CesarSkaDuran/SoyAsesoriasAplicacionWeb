@@ -92,7 +92,7 @@ export class EmpresaUsuarioDialog {
   private api = inject(ApiService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<EmpresaUsuarioDialog>);
-  protected data = inject<EmpresaUsuarioData>(MAT_DIALOG_DATA);
+  protected data = inject<EmpresaUsuarioData>(MAT_DIALOG_DATA, { optional: true }) ?? {} as EmpresaUsuarioData;
 
   protected saving = signal(false);
 

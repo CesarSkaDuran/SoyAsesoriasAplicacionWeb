@@ -18,6 +18,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import {
   PAGO_STATUS,
   PAGO_STATUS_COLOR,
@@ -46,6 +47,7 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
     DatePipe,
     NgClass,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -77,19 +79,14 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
           />
         </mat-form-field>
         @if (isAdmin()) {
-          <mat-form-field
+          <searchable-select
             class="w-64"
-            appearance="outline"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Empresa</mat-label>
-            <mat-select [formControl]="empresaControl">
-              <mat-option [value]="null">Todas</mat-option>
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
         }
         <mat-form-field
           class="w-44"
@@ -310,7 +307,7 @@ export default class ServiciosPage {
   loading = signal(true);
   categoria = signal<string>('');
   titulo = signal<string>('Servicios');
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
 
   searchControl = new FormControl('');
   statusControl = new FormControl<number | null>(null);

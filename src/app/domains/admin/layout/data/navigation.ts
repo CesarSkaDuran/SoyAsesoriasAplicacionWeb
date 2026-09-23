@@ -181,6 +181,19 @@ export const NAVIGATION: NavigationItem[] = [
     ],
   },
   {
+    id: 'comercial',
+    label: 'Comercial',
+    children: [
+      {
+        id: 'comercial/ventas',
+        label: 'Ventas',
+        icon: 'kanban',
+        route: '/admin/ventas',
+        adminOnly: true,
+      },
+    ],
+  },
+  {
     id: 'operacion',
     label: 'Operación',
     children: [
@@ -190,6 +203,13 @@ export const NAVIGATION: NavigationItem[] = [
         icon: 'inbox',
         route: '/admin/solicitudes',
         modulo: 'solicitudes',
+      },
+      {
+        id: 'operacion/diagnosticos',
+        label: 'Diagnósticos',
+        icon: 'file-check',
+        route: '/admin/diagnosticos',
+        modulo: 'diagnosticos',
       },
       {
         id: 'operacion/soporte',
@@ -203,6 +223,13 @@ export const NAVIGATION: NavigationItem[] = [
         label: 'Usuarios',
         icon: 'user-cog',
         route: '/admin/usuarios',
+        adminOnly: true,
+      },
+      {
+        id: 'operacion/configuracion',
+        label: 'Configuración',
+        icon: 'settings-2',
+        route: '/admin/configuracion',
         adminOnly: true,
       },
     ],

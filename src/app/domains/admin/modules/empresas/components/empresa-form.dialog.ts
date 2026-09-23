@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem } from '@/app/models/empleado.model';
 import { Empresa } from '@/app/models/user.model';
 
@@ -29,6 +30,7 @@ export interface EmpresaFormData {
     MatSelectModule,
     MatButtonModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="editing ? 'Editar empresa' : 'Nueva empresa'" />
@@ -75,24 +77,21 @@ export interface EmpresaFormData {
             <mat-label>Dirección</mat-label>
             <input matInput formControlName="direccion" />
           </mat-form-field>
-          <mat-form-field>
-            <mat-label>Departamento</mat-label>
-            <mat-select formControlName="departamento_id" (selectionChange)="onDepartamentoChange()">
-              @for (d of departamentos(); track d.id) {
-                <mat-option [value]="d.id">{{ d.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Departamento"
+            [items]="departamentos()"
+            displayKey="nombre"
+            formControlName="departamento_id"
+            (selectionChange)="onDepartamentoChange()"
+          />
         </div>
         <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
-          <mat-form-field>
-            <mat-label>Ciudad</mat-label>
-            <mat-select formControlName="ciudad_id">
-              @for (c of ciudadesFiltradas(); track c.id) {
-                <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Ciudad"
+            [items]="ciudadesFiltradas()"
+            displayKey="nombre"
+            formControlName="ciudad_id"
+          />
           <mat-form-field>
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" />
@@ -169,14 +168,12 @@ export interface EmpresaFormData {
               <mat-option value="V">V</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
-            <mat-label>Caja C.F</mat-label>
-            <mat-select formControlName="caja_compensacion_id">
-              @for (c of cajasCompensacion(); track c.id) {
-                <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            label="Caja C.F"
+            [items]="cajasCompensacion()"
+            displayKey="nombre"
+            formControlName="caja_compensacion_id"
+          />
           <mat-form-field>
             <mat-label>Exonerado parafiscales</mat-label>
             <mat-select formControlName="exonerado_parafiscales">
@@ -205,7 +202,7 @@ export class EmpresaFormDialog {
   private api = inject(ApiService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<EmpresaFormDialog>);
-  private data = inject<EmpresaFormData>(MAT_DIALOG_DATA, { optional: true }) ?? {};
+  private data = inject<EmpresaFormData>(MAT_DIALOG_DATA, { optional: true }) ?? {} as EmpresaFormData;
 
   protected editing = !!this.data.empresa;
   protected saving = signal(false);

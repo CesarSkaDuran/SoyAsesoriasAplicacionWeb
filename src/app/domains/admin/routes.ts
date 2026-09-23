@@ -47,6 +47,14 @@ const routes: Routes = [
         loadChildren: () => import('./modules/pagos/routes'),
       },
       {
+        path: 'ventas',
+        loadChildren: () => import('./modules/ventas/routes'),
+      },
+      {
+        path: 'diagnosticos',
+        loadChildren: () => import('./modules/diagnosticos/routes'),
+      },
+      {
         path: 'solicitudes',
         loadChildren: () => import('./modules/solicitudes/routes'),
       },
@@ -65,6 +73,10 @@ const routes: Routes = [
       {
         path: 'informes',
         loadChildren: () => import('./modules/informes/routes'),
+      },
+      {
+        path: 'configuracion',
+        loadChildren: () => import('./modules/configuracion/routes'),
       },
 
       // 404

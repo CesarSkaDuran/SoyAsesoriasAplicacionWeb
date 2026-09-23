@@ -269,3 +269,159 @@ export interface EmpresaServicio {
   fecha_inicio?: string | null;
   status: string;
 }
+
+// ── Ventas / Comercial ────────────────────────────────────────────────────────
+
+export interface Embudo {
+  id: number;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  tipo: 'cliente' | 'suscriptor';
+  activo: boolean | number;
+}
+
+export interface Etapa {
+  id: number;
+  embudo_id: number;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  posicion: number;
+  es_cierre: boolean | number;
+  es_perdido: boolean | number;
+  total?: number;
+  leads?: Lead[];
+}
+
+export interface EmbudoResumen extends Embudo {
+  total: number;
+  del_mes: number;
+  ganados: number;
+  perdidos: number;
+  etapas: Etapa[];
+}
+
+export interface EmbudoTablero {
+  embudo: Embudo;
+  etapas: Etapa[];
+  totales: {
+    leads: number;
+    del_mes: number;
+    ganados: number;
+    perdidos: number;
+  };
+}
+
+export interface Lead {
+  id: number;
+  embudo_id: number;
+  etapa_id: number;
+  nombre: string;
+  nombre_emprendedor: string | null;
+  empresa: string | null;
+  email: string | null;
+  telefono: string | null;
+  fuente: string | null;
+  campania: string | null;
+  usuario_asignado_id: number | null;
+  orden_pos: number;
+  ultimo_contacto_en: string | null;
+  etapa_cambiada_en: string | null;
+  notas: string | null;
+  metadata: string | null;
+  empresa_id: number | null;
+  persona_id: number | null;
+  created_at: string;
+  updated_at: string;
+  // joins
+  asignado_nombre?: string | null;
+  empresa_convertida_nombre?: string | null;
+  persona_convertida_nombre?: string | null;
+}
+
+export interface LeadHistorial {
+  id: number;
+  lead_id: number;
+  embudo_id: number | null;
+  etapa_id: number | null;
+  usuario_id: number | null;
+  nota: string | null;
+  created_at: string;
+  usuario_nombre?: string | null;
+  etapa_nombre?: string | null;
+}
+
+// ── Diagnósticos ──────────────────────────────────────────────────────────────
+
+export type DiagnosticoEstado = 'pendiente' | 'en_progreso' | 'logrado' | 'cancelado';
+
+export interface Diagnostico {
+  id: number;
+  nombre: string;
+  empresa_id: number | null;
+  persona_id: number | null;
+  responsable_id: number | null;
+  fecha_inicio: string;
+  fecha_fin: string;
+  estado: DiagnosticoEstado;
+  created_at?: string;
+  updated_at?: string;
+  empresa_nombre?: string | null;
+  empresa_nit?: string | null;
+  persona_nombre?: string | null;
+  responsable_nombre?: string | null;
+  metricas?: DiagnosticoMetricas;
+}
+
+export interface DiagnosticoMetricas {
+  preguntas_total: number;
+  respondidas: number;
+  preguntas_pct: number;
+  docs_obligatorios: number;
+  docs_total: number;
+  docs_cargados: number;
+  docs_pct: number;
+}
+
+export interface DiagnosticoPregunta {
+  id: number;
+  slug: string;
+  titulo: string;
+  descripcion: string | null;
+  tipo_respuesta: 'texto' | 'textarea' | 'numero' | 'fecha' | 'opciones' | 'multiple' | 'booleano';
+  opciones: string[] | null;
+  es_obligatoria: boolean | number;
+  ayuda_contextual: string | null;
+  orden: number;
+  activo: boolean | number;
+  respuesta?: string | null;
+  respuesta_json?: unknown | null;
+}
+
+export interface DiagnosticoDocConfig {
+  id: number;
+  slug: string;
+  titulo: string;
+  descripcion: string | null;
+  es_obligatorio: boolean | number;
+  tipo_archivo: string | null;
+  maximo_archivos: number | null;
+  orden: number;
+  activo: boolean | number;
+}
+
+export interface DiagnosticoDocumento {
+  id: number;
+  diagnostico_id: number;
+  doc_config_id: number;
+  estado: 'pendiente' | 'revisar' | 'aprobado' | 'rechazado' | 'renovar';
+  comentarios_revision: string | null;
+  ruta_archivo: string | null;
+  nombre_original: string | null;
+  mime_type: string | null;
+  tamano_bytes: number | null;
+  fecha_revision: string | null;
+  revisado_por: number | null;
+  revisado_por_nombre?: string | null;
+}

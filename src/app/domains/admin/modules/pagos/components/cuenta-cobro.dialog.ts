@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { CatalogoItem } from '@/app/models/empleado.model';
 import { CuentaCobro } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
@@ -28,6 +29,7 @@ import { Empresa } from '@/app/models/user.model';
     MatSelectModule,
     MatDatepickerModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="isEdit ? 'Editar cuenta de cobro' : 'Nueva cuenta de cobro'" />
@@ -59,34 +61,30 @@ import { Empresa } from '@/app/models/user.model';
         </mat-form-field>
 
         @if (form.controls.cliente_tipo.value === 'empresa') {
-          <mat-form-field class="sm:col-span-2" appearance="outline">
-            <mat-label>Empresa</mat-label>
-            <mat-select formControlName="empresa_id">
-              @for (e of data.empresas || []; track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            class="sm:col-span-2"
+            label="Empresa"
+            [items]="data.empresas || []"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
         } @else {
-          <mat-form-field class="sm:col-span-2" appearance="outline">
-            <mat-label>Tercero</mat-label>
-            <mat-select formControlName="tercero_id">
-              @for (tercero of terceros(); track tercero.id) {
-                <mat-option [value]="tercero.id">{{ tercero.nombre }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <searchable-select
+            class="sm:col-span-2"
+            label="Tercero"
+            [items]="terceros()"
+            displayKey="nombre"
+            formControlName="tercero_id"
+          />
         }
 
-        <mat-form-field appearance="outline">
-          <mat-label>Sucursal</mat-label>
-          <mat-select formControlName="sucursal_id">
-            <mat-option [value]="null">Sin sucursal</mat-option>
-            @for (sucursal of sucursales(); track sucursal.id) {
-              <mat-option [value]="sucursal.id">{{ sucursal.nombre }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          label="Sucursal"
+          nullLabel="Sin sucursal"
+          [items]="sucursales()"
+          displayKey="nombre"
+          formControlName="sucursal_id"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>Concepto</mat-label>
@@ -189,7 +187,7 @@ export class CuentaCobroDialog {
   private ref = inject(MatDialogRef<CuentaCobroDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ cuenta?: CuentaCobro; empresas?: Empresa[] }>(MAT_DIALOG_DATA);
+  data = inject<{ cuenta?: CuentaCobro; empresas?: Empresa[] }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { cuenta?: CuentaCobro; empresas?: Empresa[] };
 
   isEdit = !!this.data.cuenta;
   saving = false;

@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Planilla } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 import { PlanillaDialog } from '../components/planilla.dialog';
@@ -48,6 +49,7 @@ const STATUS_COLOR: Record<string, string> = {
     DatePipe,
     NgClass,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -56,19 +58,14 @@ const STATUS_COLOR: Record<string, string> = {
         [subtitle]="total() + ' planillas'"
       >
         @if (isAdmin()) {
-          <mat-form-field
+          <searchable-select
             class="w-64"
-            appearance="outline"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Empresa</mat-label>
-            <mat-select [formControl]="empresaControl">
-              <mat-option [value]="null">Todas</mat-option>
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
         }
         <mat-form-field
           class="w-48"
@@ -208,7 +205,7 @@ export default class PlanillasPage {
   total = signal(0);
   page = signal(1);
   loading = signal(true);
-  isAdmin = this.creds.isAdmin;
+  isAdmin = () => this.creds.isAdmin();
 
   periodoControl = new FormControl('');
   empresaControl = new FormControl<number | null>(null);

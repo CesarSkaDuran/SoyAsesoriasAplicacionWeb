@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Planilla } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 
@@ -27,6 +28,7 @@ import { Empresa } from '@/app/models/user.model';
     MatSelectModule,
     MatDatepickerModule,
     DialogHeader,
+    SearchableSelect,
   ],
   template: `
     <dialog-header [title]="isEdit ? 'Editar planilla' : 'Nueva planilla'" />
@@ -36,14 +38,13 @@ import { Empresa } from '@/app/models/user.model';
         [formGroup]="form"
         class="grid grid-cols-2 gap-x-4 pt-2"
       >
-        <mat-form-field class="col-span-2" appearance="outline">
-          <mat-label>Empresa</mat-label>
-          <mat-select formControlName="empresa_id">
-            @for (e of data.empresas || []; track e.id) {
-              <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <searchable-select
+          class="col-span-2"
+          label="Empresa"
+          [items]="data.empresas || []"
+          displayKey="razon_social"
+          formControlName="empresa_id"
+        />
 
         <mat-form-field appearance="outline">
           <mat-label>N° planilla</mat-label>
@@ -104,7 +105,7 @@ export class PlanillaDialog {
   private ref = inject(MatDialogRef<PlanillaDialog>);
   private snack = inject(MatSnackBar);
 
-  data = inject<{ planilla?: Planilla; empresas?: Empresa[] }>(MAT_DIALOG_DATA);
+  data = inject<{ planilla?: Planilla; empresas?: Empresa[] }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { planilla?: Planilla; empresas?: Empresa[] };
 
   isEdit = !!this.data.planilla;
   saving = false;

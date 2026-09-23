@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { PageHeader } from '@/app/core/ui/page-header';
+import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Nomina } from '@/app/models/empleado.model';
 import { Empresa } from '@/app/models/user.model';
 import { NominaFormDialog } from '../components/nomina-form.dialog';
@@ -31,6 +32,7 @@ import { NominaFormDialog } from '../components/nomina-form.dialog';
     MatProgressSpinner,
     CurrencyPipe,
     PageHeader,
+    SearchableSelect,
   ],
   template: `
     <div class="flex flex-col gap-y-6 p-6 sm:p-10">
@@ -49,19 +51,14 @@ import { NominaFormDialog } from '../components/nomina-form.dialog';
 
       <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
         @if (isAdmin()) {
-          <mat-form-field
+          <searchable-select
             class="w-64"
-            appearance="outline"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Empresa</mat-label>
-            <mat-select [formControl]="empresaControl">
-              <mat-option [value]="0">Todas las empresas</mat-option>
-              @for (e of empresas(); track e.id) {
-                <mat-option [value]="e.id">{{ e.razon_social }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            label="Empresa"
+            nullLabel="Todas las empresas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
         }
         <mat-form-field
           class="w-44"
@@ -244,7 +241,7 @@ export default class NominasPage {
 
   openForm() {
     this.dialog
-      .open(NominaFormDialog, { width: '480px' })
+      .open(NominaFormDialog, { width: '480px', data: {} })
       .afterClosed()
       .subscribe((ok) => {
         if (ok) this.load(undefined, 1);

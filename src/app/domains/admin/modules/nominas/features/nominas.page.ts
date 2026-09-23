@@ -40,13 +40,15 @@ import { NominaFormDialog } from '../components/nomina-form.dialog';
         title="Nóminas"
         [subtitle]="total() + ' nóminas generadas'"
       >
-        <button
-          matButton="filled"
-          (click)="openForm()"
-        >
-          <mat-icon svgIcon="plus" />
-          Nueva nómina
-        </button>
+        @if (isAdmin()) {
+          <button
+            matButton="filled"
+            (click)="openForm()"
+          >
+            <mat-icon svgIcon="plus" />
+            Nueva nómina
+          </button>
+        }
       </page-header>
 
       <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
@@ -166,13 +168,15 @@ import { NominaFormDialog } from '../components/nomina-form.dialog';
                   >
                     <mat-icon svgIcon="eye" />
                   </button>
-                  <button
-                    matIconButton
-                    title="Liquidar"
-                    [routerLink]="['/admin/nominas', n.id, 'liquidar']"
-                  >
-                    <mat-icon svgIcon="calculator" />
-                  </button>
+                  @if (isAdmin()) {
+                    <button
+                      matIconButton
+                      title="Liquidar"
+                      [routerLink]="['/admin/nominas', n.id, 'liquidar']"
+                    >
+                      <mat-icon svgIcon="calculator" />
+                    </button>
+                  }
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="columns"></tr>

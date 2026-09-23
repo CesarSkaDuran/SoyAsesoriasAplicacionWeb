@@ -48,7 +48,7 @@ import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
         <button
           matButton="filled"
           (click)="openUpload()"
-          [disabled]="!empresaId()"
+          [disabled]="!ownerId()"
         >
           <mat-icon svgIcon="upload" />
           Subir documento
@@ -106,7 +106,7 @@ import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
           }
           @if (!documentos().length) {
             <div class="p-10 text-center text-neutral-500">
-              No hay documentos para esta empresa
+              No hay documentos para mostrar
             </div>
           }
         </div>
@@ -124,7 +124,7 @@ export default class DocumentosPage {
   protected empresas = signal<Empresa[]>([]);
   protected loading = signal(false);
   protected empresaControl = new FormControl<number | null>(null);
-  protected empresaId = signal<number | null>(null);
+  protected ownerId = signal<{ empresa_id?: number; persona_id?: number } | null>(null);
   protected isAdmin = () => this.credentials.isAdmin();
 
   constructor() {
@@ -136,18 +136,21 @@ export default class DocumentosPage {
         if (res.data.length) this.empresaControl.setValue(res.data[0].id);
       });
       this.empresaControl.valueChanges.subscribe((id) => {
-        this.empresaId.set(id);
-        if (id) this.load(id);
+        this.ownerId.set(id ? { empresa_id: id } : null);
+        if (id) this.load({ empresa_id: id });
       });
     } else if (user?.empresa?.id) {
-      this.empresaId.set(user.empresa.id);
-      this.load(user.empresa.id);
+      this.ownerId.set({ empresa_id: user.empresa.id });
+      this.load({ empresa_id: user.empresa.id });
+    } else if (user?.persona?.id) {
+      this.ownerId.set({ persona_id: user.persona.id });
+      this.load({ persona_id: user.persona.id });
     }
   }
 
-  load(empresaId: number) {
+  load(owner: { empresa_id?: number; persona_id?: number }) {
     this.loading.set(true);
-    this.api.documentos({ empresa_id: empresaId }).subscribe({
+    this.api.documentos(owner).subscribe({
       next: (res) => {
         this.documentos.set(res.data);
         this.loading.set(false);
@@ -157,18 +160,18 @@ export default class DocumentosPage {
   }
 
   openUpload() {
-    const empresaId = this.empresaId();
-    if (!empresaId) return;
+    const owner = this.ownerId();
+    if (!owner) return;
 
     this.dialog
       .open(DocumentoUploadDialog, {
         width: '480px',
         maxWidth: '95vw',
-        data: { empresa_id: empresaId },
+        data: owner,
       })
       .afterClosed()
       .subscribe((uploaded) => {
-        if (uploaded) this.load(empresaId);
+        if (uploaded) this.load(owner);
       });
   }
 
@@ -187,8 +190,8 @@ export default class DocumentosPage {
     this.api.deleteDocumento(doc.id).subscribe({
       next: () => {
         this.snackBar.open('Documento eliminado', 'Cerrar', { duration: 2500 });
-        const id = this.empresaId();
-        if (id) this.load(id);
+        const owner = this.ownerId();
+        if (owner) this.load(owner);
       },
       error: () =>
         this.snackBar.open('Error al eliminar', 'Cerrar', { duration: 3000 }),

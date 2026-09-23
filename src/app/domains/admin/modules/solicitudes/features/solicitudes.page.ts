@@ -24,15 +24,19 @@ import { SolicitudDialog } from '../components/solicitud.dialog';
 
 const STATUS_LABEL: Record<string, string> = {
   pendiente: 'Pendiente',
+  aprobada: 'Aprobada',
   en_proceso: 'En proceso',
   completada: 'Completada',
   rechazada: 'Rechazada',
+  cancelada: 'Cancelada',
 };
 const STATUS_COLOR: Record<string, string> = {
-  pendiente: 'bg-red-500',
+  pendiente: 'bg-amber-500',
+  aprobada: 'bg-indigo-500',
   en_proceso: 'bg-blue-500',
   completada: 'bg-green-500',
-  rechazada: 'bg-neutral-400',
+  rechazada: 'bg-red-500',
+  cancelada: 'bg-neutral-400',
 };
 
 @Component({
@@ -102,9 +106,11 @@ const STATUS_COLOR: Record<string, string> = {
           <mat-select [formControl]="statusControl">
             <mat-option [value]="null">Todos</mat-option>
             <mat-option value="pendiente">Pendiente</mat-option>
+            <mat-option value="aprobada">Aprobada</mat-option>
             <mat-option value="en_proceso">En proceso</mat-option>
             <mat-option value="completada">Completada</mat-option>
             <mat-option value="rechazada">Rechazada</mat-option>
+            <mat-option value="cancelada">Cancelada</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field
@@ -194,9 +200,18 @@ const STATUS_COLOR: Record<string, string> = {
                       <mat-icon svgIcon="ellipsis-vertical" />
                     </button>
                     <mat-menu #menu="matMenu">
-                      <button mat-menu-item (click)="setStatus(s, 'en_proceso')">En proceso</button>
-                      <button mat-menu-item (click)="setStatus(s, 'completada')">Completar</button>
-                      <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
+                      @if (s.status === 'pendiente') {
+                        <button mat-menu-item (click)="setStatus(s, 'aprobada')">Aprobar solicitud</button>
+                        <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
+                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                      } @else if (s.status === 'aprobada') {
+                        <button mat-menu-item (click)="setStatus(s, 'en_proceso')">Iniciar gestión</button>
+                        <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
+                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                      } @else if (s.status === 'en_proceso') {
+                        <button mat-menu-item (click)="setStatus(s, 'completada')">Completar</button>
+                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                      }
                     </mat-menu>
                   }
                 </td>
@@ -294,9 +309,12 @@ export default class SolicitudesPage {
   statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-400';
 
   setStatus(s: Solicitud, status: Solicitud['status']) {
-    this.api.updateSolicitud(s.id, { status }).subscribe(() => {
-      this.snack.open('Estado actualizado', 'OK', { duration: 2500 });
-      this.load();
+    this.api.updateSolicitud(s.id, { status }).subscribe({
+      next: () => {
+        this.snack.open('Estado actualizado', 'OK', { duration: 2500 });
+        this.load();
+      },
+      error: (err) => this.snack.open(err?.error?.error || 'No se pudo cambiar el estado', 'Cerrar', { duration: 3500 }),
     });
   }
 

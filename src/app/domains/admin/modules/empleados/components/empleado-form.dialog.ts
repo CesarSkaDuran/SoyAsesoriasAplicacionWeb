@@ -43,9 +43,9 @@ export interface EmpleadoFormData {
       >
         <!-- Datos personales -->
         <div
-          class="mb-2 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-[#0d2b6b] sm:col-span-2"
+          class="mb-2 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-brand-navy sm:col-span-2"
         >
-          <span class="size-2 rounded-full bg-[#12377a]"></span>
+          <span class="size-2 rounded-full bg-brand-medium"></span>
           Datos personales
         </div>
         <mat-form-field>
@@ -117,9 +117,9 @@ export interface EmpleadoFormData {
 
         <!-- Contrato -->
         <div
-          class="mb-2 mt-3 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-[#0d2b6b] sm:col-span-2"
+          class="mb-2 mt-3 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-brand-navy sm:col-span-2"
         >
-          <span class="size-2 rounded-full bg-[#12377a]"></span>
+          <span class="size-2 rounded-full bg-brand-medium"></span>
           Contrato
         </div>
         <mat-form-field>
@@ -196,9 +196,9 @@ export interface EmpleadoFormData {
 
         <!-- Seguridad social -->
         <div
-          class="mb-2 mt-3 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-[#0d2b6b] sm:col-span-2"
+          class="mb-2 mt-3 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-brand-navy sm:col-span-2"
         >
-          <span class="size-2 rounded-full bg-[#12377a]"></span>
+          <span class="size-2 rounded-full bg-brand-medium"></span>
           Seguridad social
         </div>
         <searchable-select

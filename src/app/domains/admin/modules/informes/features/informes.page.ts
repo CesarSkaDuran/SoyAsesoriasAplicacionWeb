@@ -127,7 +127,7 @@ interface FilaInforme {
               [colors]="[chartColor()]"
               [yaxis]="{ labels: { formatter: copShort } }"
               [tooltip]="{ y: { formatter: copFull } }"
-              [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+              [grid]="{ borderColor: '#e5e6e9', strokeDashArray: 4 }"
             />
           } @else {
             <apx-chart
@@ -139,7 +139,7 @@ interface FilaInforme {
               [colors]="barColors()"
               [tooltip]="{ y: { formatter: copFull } }"
               [legend]="{ show: showPagado(), position: 'top' }"
-              [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+              [grid]="{ borderColor: '#e5e6e9', strokeDashArray: 4 }"
             />
           }
         </div>
@@ -276,7 +276,7 @@ export default class InformesPage {
     return `${t} ${g}`;
   };
 
-  chartColor = () => (this.tab() === 'egresos' ? '#ef4444' : this.tab() === 'servicios' ? '#8b5cf6' : '#3b82f6');
+  chartColor = () => (this.tab() === 'egresos' ? '#ef4444' : this.tab() === 'servicios' ? '#8b5cf6' : '#0154f9');
 
   chartHeight = () => Math.min(120 + this.filas().length * 34, 480);
 

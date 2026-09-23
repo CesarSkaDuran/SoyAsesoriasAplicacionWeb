@@ -35,9 +35,9 @@ const ESTADO_COLOR: Record<string, string> = {
 };
 const ESTADO_HEX: Record<string, string> = {
   pendiente: '#f59e0b',
-  en_progreso: '#0ea5e9',
+  en_progreso: '#0154f9',
   logrado: '#10b981',
-  cancelado: '#a3a3a3',
+  cancelado: '#4b4e56',
 };
 
 @Component({
@@ -335,7 +335,7 @@ export default class DiagnosticosPage {
 
   estadoLabel = (s: string) => ESTADO_LABEL[s] || s;
   estadoColor = (s: string) => ESTADO_COLOR[s] || 'bg-neutral-400';
-  estadoHex = (s: string) => ESTADO_HEX[s] || '#a3a3a3';
+  estadoHex = (s: string) => ESTADO_HEX[s] || '#4b4e56';
 
   openCreate() {
     this.dialog

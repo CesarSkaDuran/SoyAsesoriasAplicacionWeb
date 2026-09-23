@@ -229,14 +229,14 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
               <ng-container matColumnDef="acciones">
                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                 <td mat-cell *matCellDef="let r">
-                  <button
-                    matIconButton
-                    [matMenuTriggerFor]="menu"
-                  >
-                    <mat-icon svgIcon="ellipsis-vertical" />
-                  </button>
-                  <mat-menu #menu="matMenu">
-                    @if (isAdmin()) {
+                  @if (isAdmin()) {
+                    <button
+                      matIconButton
+                      [matMenuTriggerFor]="menu"
+                    >
+                      <mat-icon svgIcon="ellipsis-vertical" />
+                    </button>
+                    <mat-menu #menu="matMenu">
                       @for (s of [1, 4, 2, 3, 5]; track s) {
                         <button
                           mat-menu-item
@@ -257,14 +257,14 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
                       >
                         Pago: Pendiente
                       </button>
-                    }
-                    <button
-                      mat-menu-item
-                      (click)="openEdit(r)"
-                    >
-                      Editar
-                    </button>
-                  </mat-menu>
+                      <button
+                        mat-menu-item
+                        (click)="openEdit(r)"
+                      >
+                        Editar
+                      </button>
+                    </mat-menu>
+                  }
                 </td>
               </ng-container>
 

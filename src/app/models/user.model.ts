@@ -12,7 +12,7 @@ export interface UserModulos {
   independientes?: boolean;
   usuarios?: boolean;
   informes?: boolean;
-  soporte?: boolean;
+  soportes?: boolean;
   diagnosticos?: boolean;
 }
 

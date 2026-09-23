@@ -170,6 +170,7 @@ export const NAVIGATION: NavigationItem[] = [
         icon: 'receipt',
         route: '/admin/gastos',
         modulo: 'gastos',
+        adminOnly: true,
       },
       {
         id: 'finanzas/informes',
@@ -230,6 +231,13 @@ export const NAVIGATION: NavigationItem[] = [
         label: 'Configuración',
         icon: 'settings-2',
         route: '/admin/configuracion',
+        adminOnly: true,
+      },
+      {
+        id: 'operacion/auditorias',
+        label: 'Auditorías',
+        icon: 'file-check',
+        route: '/admin/configuracion/auditorias',
         adminOnly: true,
       },
     ],

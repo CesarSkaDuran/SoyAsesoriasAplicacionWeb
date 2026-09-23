@@ -11,7 +11,7 @@ import { MatIcon } from '@angular/material/icon';
   imports: [MatIcon, MatDialogClose],
   template: `
     <div
-      class="flex min-h-16 shrink-0 items-center justify-between bg-gradient-to-r from-[#0b2b68] to-[#123f8c] px-6 py-4 text-white"
+      class="flex min-h-16 shrink-0 items-center justify-between bg-gradient-to-r from-brand-navy to-brand-medium px-6 py-4 text-white"
     >
       <div class="flex min-w-0 items-center gap-3">
         <span class="h-7 w-1 shrink-0 rounded-full bg-white/70"></span>

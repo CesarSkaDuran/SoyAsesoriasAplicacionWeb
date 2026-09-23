@@ -35,6 +35,57 @@ import {
   Usuario,
 } from '@/app/models/negocio.model';
 
+export interface AuditEntry {
+  id: number;
+  user_id: number | null;
+  actor_email: string | null;
+  actor_role: string | null;
+  accion: string;
+  recurso: string;
+  recurso_id: string | null;
+  metodo: string;
+  ruta: string;
+  codigo_respuesta: number;
+  ip: string | null;
+  user_agent: string | null;
+  campos: string[] | null;
+  detalle: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface NotificationItem {
+  id: number;
+  titulo: string | null;
+  mensaje: string | null;
+  leida: boolean;
+  tipo: string;
+  solicitud_id: number | null;
+  url: string | null;
+  created_at: string;
+}
+
+export interface ClienteDashboard {
+  empleados_activos: number;
+  nominas_total: number;
+  planillas_total: number;
+  documentos_total: number;
+  ultima_nomina: Nomina | null;
+  cartera_pendiente: number;
+  cuentas_por_estado: { estado: string; total: number }[];
+  pagos_mensuales: { mes: string; total: number; pagado: number }[];
+  servicios_por_estado: { estado: string; total: number }[];
+  servicios_por_tipo: { nombre: string; total: number }[];
+  solicitudes_por_estado: { estado: string; total: number }[];
+  soportes_por_estado: { estado: string; total: number }[];
+  diagnosticos_por_estado: { estado: string; total: number }[];
+  solicitudes_recientes: {
+    id: number;
+    descripcion: string | null;
+    status: string;
+    created_at: string;
+  }[];
+}
+
 /**
  * REST client for the soyasesorias-api.
  * All routes are relative — apiPrefixInterceptor prepends environment.serverUrl
@@ -156,6 +207,7 @@ export class ApiService {
       descripcion?: string;
       empresa_id?: number | string;
       empleado_id?: number | string;
+      persona_id?: number | string;
       servicio_id?: number | string;
     }
   ): Observable<{ documento: Documento }> {
@@ -365,6 +417,38 @@ export class ApiService {
     data: Partial<Solicitud>
   ): Observable<{ solicitud: Solicitud }> {
     return this.http.put<{ solicitud: Solicitud }>(`/solicitudes/${id}`, data);
+  }
+
+  notificaciones(): Observable<{ data: NotificationItem[]; unread_count: number }> {
+    return this.http.get<{ data: NotificationItem[]; unread_count: number }>('/notificaciones');
+  }
+
+  markNotificationRead(id: number): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/notificaciones/${id}/leida`, {});
+  }
+
+  markAllNotificationsRead(): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>('/notificaciones/leidas', {});
+  }
+
+  auditorias(filters: {
+    search?: string;
+    accion?: string;
+    recurso?: string;
+    desde?: string;
+    hasta?: string;
+    page?: number;
+    per_page?: number;
+  }): Observable<Paginated<AuditEntry>> {
+    let params = new HttpParams()
+      .set('page', filters.page ?? 1)
+      .set('per_page', filters.per_page ?? 25);
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined && value !== null && value !== '' && key !== 'page' && key !== 'per_page') {
+        params = params.set(key, value);
+      }
+    }
+    return this.http.get<Paginated<AuditEntry>>('/auditorias', { params });
   }
 
   // ── Soporte ────────────────────────────────────────────────────────────────
@@ -606,6 +690,10 @@ export class ApiService {
   }
 
   // ── Informes (admin) ───────────────────────────────────────────────────────
+  informeMiResumen(): Observable<ClienteDashboard> {
+    return this.http.get<ClienteDashboard>('/informes/mi-resumen');
+  }
+
   informeResumen(): Observable<{
     empresas: number;
     empleados: number;

@@ -146,7 +146,7 @@ export interface Solicitud {
   persona_id: number | null;
   servicio_id: number | null;
   descripcion: string | null;
-  status: 'pendiente' | 'en_proceso' | 'completada' | 'rechazada';
+  status: 'pendiente' | 'aprobada' | 'en_proceso' | 'completada' | 'rechazada' | 'cancelada';
   created_at: string;
   empresa_nombre?: string;
   persona_nombre?: string;

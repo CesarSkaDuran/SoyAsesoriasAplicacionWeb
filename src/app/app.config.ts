@@ -59,7 +59,7 @@ export const appConfig: ApplicationConfig = {
     provideIcons(),
     provideTheming({
       scheme: 'light',
-      primary: '#12377a',
+      primary: '#0e1222',
       error: '#dc2626',
     }),
 

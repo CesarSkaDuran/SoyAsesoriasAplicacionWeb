@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { PageHeader } from '@/app/core/ui/page-header';
@@ -36,6 +37,7 @@ import {
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    RouterLink,
     PageHeader,
   ],
   template: `
@@ -43,13 +45,18 @@ import {
       <page-header
         title="Configuración"
         subtitle="Administra los listados que alimentan los selectores del sistema"
-      />
+      >
+        <a matButton="outlined" routerLink="/admin/configuracion/auditorias">
+          <mat-icon svgIcon="list-check" />
+          Auditorías
+        </a>
+      </page-header>
 
       <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
         <!-- Selector compacto para tablet y móvil -->
         <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm xl:hidden">
           <div class="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
-            <mat-icon svgIcon="database" class="!size-5 text-[#12377a]" />
+            <mat-icon svgIcon="database" class="!size-5 text-brand-medium" />
             Selecciona un maestro
           </div>
           <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
@@ -71,7 +78,7 @@ import {
         <aside class="sticky top-6 hidden overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm xl:block">
           <div class="border-b border-slate-100 bg-slate-50/80 px-5 py-4">
             <div class="flex items-center gap-3">
-              <span class="flex size-10 items-center justify-center rounded-xl bg-[#12377a] text-white shadow-sm">
+              <span class="flex size-10 items-center justify-center rounded-xl bg-brand-medium text-white shadow-sm">
                 <mat-icon svgIcon="database" class="!size-5" />
               </span>
               <div>
@@ -86,27 +93,27 @@ import {
               <button
                 type="button"
                 class="group flex w-full items-center gap-3 border-l-4 border-l-transparent px-4 py-3 text-left transition-colors hover:bg-slate-50"
-                [class.!border-l-[#12377a]]="selected()?.key === m.key"
+                [class.!border-l-brand-medium]="selected()?.key === m.key"
                 [class.bg-blue-50]="selected()?.key === m.key"
                 (click)="select(m)"
               >
                 <span
                   class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white"
-                  [class.!bg-[#12377a]]="selected()?.key === m.key"
+                  [class.!bg-brand-medium]="selected()?.key === m.key"
                   [class.!text-white]="selected()?.key === m.key"
                 >
                   <mat-icon [svgIcon]="m.icon" class="!size-4.5" />
                 </span>
                 <span
                   class="min-w-0 flex-1 truncate text-sm font-medium text-slate-600"
-                  [class.!text-[#12377a]]="selected()?.key === m.key"
+                  [class.!text-brand-medium]="selected()?.key === m.key"
                 >
                   {{ m.label }}
                 </span>
                 <span
                   class="min-w-7 rounded-full bg-slate-100 px-2 py-1 text-center text-[11px] font-semibold text-slate-500"
                   [class.!bg-white]="selected()?.key === m.key"
-                  [class.!text-[#12377a]]="selected()?.key === m.key"
+                  [class.!text-brand-medium]="selected()?.key === m.key"
                 >
                   {{ m.total }}
                 </span>
@@ -122,7 +129,7 @@ import {
               <div class="border-b border-slate-100 px-5 py-5 sm:px-6">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div class="flex min-w-0 items-center gap-3">
-                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#12377a]">
+                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-brand-medium">
                       <mat-icon [svgIcon]="meta.icon" class="!size-5" />
                     </span>
                     <div class="min-w-0">
@@ -225,7 +232,7 @@ import {
                           <button
                             matIconButton
                             title="Editar registro"
-                            class="!text-slate-500 hover:!bg-blue-50 hover:!text-[#12377a]"
+                            class="!text-slate-500 hover:!bg-blue-50 hover:!text-brand-medium"
                             (click)="openForm(row)"
                           >
                             <mat-icon svgIcon="pencil" />

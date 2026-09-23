@@ -16,6 +16,7 @@ import { DialogHeader } from '@/app/core/ui/dialog-header';
 export interface DocumentoUploadData {
   empresa_id?: number;
   empleado_id?: number;
+  persona_id?: number;
 }
 
 @Component({
@@ -134,6 +135,7 @@ export class DocumentoUploadDialog {
         descripcion: this.form.value.descripcion || undefined,
         empresa_id: this.data.empresa_id,
         empleado_id: this.data.empleado_id,
+        persona_id: this.data.persona_id,
       })
       .subscribe({
         next: () => {

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ModuloGuard } from '@/app/core/authentication/modulo.guard';
 
 const routes: Routes = [
   {
@@ -7,6 +8,8 @@ const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [ModuloGuard],
+    data: { adminOnly: true },
     loadComponent: () => import('./features/empresas.page'),
   },
   {

@@ -43,7 +43,7 @@ import { MatSelectModule } from '@angular/material/select';
         [disabled]="disabled()"
         [required]="required()"
         panelClass="searchable-select-panel"
-        (selectionChange)="select($event)"
+        (selectionChange)="select($event.value)"
         (openedChange)="onOpen($event)"
       >
         <div class="search-box">
@@ -93,14 +93,14 @@ import { MatSelectModule } from '@angular/material/select';
       z-index: 10;
       padding: 8px 12px 6px;
       margin-top: -8px;
-      background: var(--mat-select-panel-background-color, #fff);
+      background: var(--mat-select-panel-background-color, #ffffff);
     }
     .search-box__field {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 7px 10px;
-      border: 1px solid var(--mat-sys-outline-variant, #d4d4d4);
+      border: 1px solid var(--mat-sys-outline-variant, #b8bbc3);
       border-radius: 8px;
       font-size: 13px;
     }
@@ -108,7 +108,7 @@ import { MatSelectModule } from '@angular/material/select';
       width: 16px;
       height: 16px;
       font-size: 16px;
-      color: var(--mat-sys-on-surface-variant, #737373);
+      color: var(--mat-sys-on-surface-variant, #4b4e56);
       flex-shrink: 0;
     }
     .search-box__field input {
@@ -125,7 +125,7 @@ import { MatSelectModule } from '@angular/material/select';
       border: none;
       background: none;
       cursor: pointer;
-      color: var(--mat-sys-on-surface-variant, #737373);
+      color: var(--mat-sys-on-surface-variant, #4b4e56);
     }
     .search-box__clear mat-icon {
       width: 14px;

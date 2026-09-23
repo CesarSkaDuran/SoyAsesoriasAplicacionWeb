@@ -18,6 +18,7 @@ const credentialsKey = 'credentials';
 export class CredentialsService {
   private platformId = inject(PLATFORM_ID);
   private _credentials = signal<Credentials | null>(null);
+  readonly credentialsState = this._credentials.asReadonly();
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -56,6 +57,7 @@ export class CredentialsService {
     const user = this.user;
     if (!user) return false;
     if (user.role === 'admin') return true;
+    if (modulo === 'solicitudes' && (user.role === 'empresa' || user.role === 'independiente')) return true;
     return !!user.modulos?.[modulo as keyof User['modulos']];
   }
 

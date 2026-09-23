@@ -9,8 +9,8 @@ import { PageHeader } from '@/app/core/ui/page-header';
 import { EmbudoResumen } from '@/app/models/negocio.model';
 
 const ETAPA_HEX = [
-  '#0ea5e9',
-  '#6366f1',
+  '#0154f9',
+  '#253a94',
   '#8b5cf6',
   '#f59e0b',
   '#f97316',
@@ -94,7 +94,7 @@ const ETAPA_HEX = [
                     [colors]="etapaHex"
                     [dataLabels]="{ enabled: true }"
                     [legend]="{ show: false }"
-                    [grid]="{ borderColor: '#e5e7eb', strokeDashArray: 4 }"
+                    [grid]="{ borderColor: '#e5e6e9', strokeDashArray: 4 }"
                     [tooltip]="{ y: { formatter: fmtInt } }"
                   />
                 } @else {

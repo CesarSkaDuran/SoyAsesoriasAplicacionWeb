@@ -1,32 +1,39 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { formatDistance, sub } from 'date-fns';
+import { formatDistance } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { NotificationItem } from '@/app/core/api/api.service';
+import { NotificationsService } from '@/app/core/notifications/notifications.service';
 
 @Component({
   selector: 'notifications',
   imports: [
+    NgClass,
     MatIconButton,
     MatIcon,
     CdkConnectedOverlay,
     CdkOverlayOrigin,
     MatButton,
     MatDivider,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
   ],
   template: `
     <button
       matIconButton
       cdkOverlayOrigin
+      [attr.aria-label]="'Notificaciones, ' + notificationsService.unreadCount() + ' sin leer'"
       (click)="toggle()"
       #trigger="cdkOverlayOrigin"
     >
       <mat-icon svgIcon="bell" />
+      @if (notificationsService.unreadCount()) {
+        <span class="absolute top-0 right-0 flex min-w-4 translate-x-1 -translate-y-1 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] leading-4 font-bold text-white">
+          {{ notificationsService.unreadCount() > 99 ? '99+' : notificationsService.unreadCount() }}
+        </span>
+      }
     </button>
 
     <ng-template
@@ -38,97 +45,61 @@ import { formatDistance, sub } from 'date-fns';
       (detach)="toggle(false)"
       (backdropClick)="toggle(false)"
     >
-      <div
-        class="z-10 flex max-h-120 w-full max-w-xs flex-col overflow-y-auto rounded-lg bg-white shadow-(--mat-sys-level2) dark:bg-neutral-800"
-      >
+      <div class="z-10 flex max-h-[min(32rem,80vh)] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-y-auto rounded-xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-800">
         <!-- Header -->
-        <div class="flex flex-col bg-neutral-100 dark:bg-neutral-800">
-          <div class="flex items-center p-4 pb-0 pl-6">
-            <div class="flex items-center gap-x-3">
-              <mat-icon
-                class="size-4.5"
-                svgIcon="bell"
-              />
-              <div class="text-xl font-semibold tracking-tighter">
-                Notifications
-              </div>
+        <div class="flex items-center gap-3 bg-neutral-50 p-4 dark:bg-neutral-800">
+          <mat-icon class="size-5" svgIcon="bell" />
+          <div class="flex-auto">
+            <div class="font-semibold text-neutral-900 dark:text-neutral-100">Notificaciones</div>
+            <div class="text-xs text-neutral-500">
+              {{ notificationsService.unreadCount() }} sin leer
             </div>
-            <div class="flex-auto"></div>
-            <button
-              matIconButton
-              [matMenuTriggerFor]="notificationsMenu"
-            >
-              <mat-icon svgIcon="ellipsis-vertical" />
-            </button>
-            <mat-menu #notificationsMenu="matMenu">
-              <button mat-menu-item>
-                <mat-icon svgIcon="check-check" />
-                Mark all as read
-              </button>
-              <button mat-menu-item>
-                <mat-icon svgIcon="settings" />
-                Notification settings
-              </button>
-            </mat-menu>
           </div>
-
-          <!-- Filters -->
-          <div class="flex items-center gap-x-2 px-6 pt-3 pb-4">
-            @for (filter of filters; track filter.value) {
-              <button
-                [matButton]="
-                  currentFilter().value === filter.value ? 'filled' : 'text'
-                "
-                class="small"
-                (click)="currentFilter.set(filter)"
-              >
-                {{ filter.label }}
-              </button>
-            }
-          </div>
-          <mat-divider />
+          @if (notificationsService.unreadCount()) {
+            <button matButton="text" class="small" (click)="markAllRead()">Marcar todas leídas</button>
+          }
         </div>
+
+        <!-- Filters -->
+        <div class="flex items-center gap-2 px-4 py-2">
+          <button [matButton]="onlyUnread() ? 'text' : 'filled'" class="small" (click)="onlyUnread.set(false)">Todas</button>
+          <button [matButton]="onlyUnread() ? 'filled' : 'text'" class="small" (click)="onlyUnread.set(true)">Sin leer</button>
+        </div>
+        <mat-divider />
 
         <!-- List -->
         <div class="flex flex-col">
-          @for (
-            notification of notifications;
-            track notification.id;
-            let last = $last
-          ) {
-            <div class="flex gap-x-2 py-3 pr-4 pl-6">
-              <div class="flex-auto">
-                @if (notification.title) {
-                  <div class="font-semibold">{{ notification.title }}</div>
-                }
-                <div class="line-clamp-2">{{ notification.description }}</div>
-                <div class="mt-1 text-xs text-neutral-500">
-                  {{ timeAgo(notification.time) }}
-                </div>
-              </div>
-              <button
-                matIconButton
-                [matMenuTriggerFor]="notificationActions"
-              >
-                <mat-icon svgIcon="ellipsis-vertical" />
-              </button>
-              <mat-menu #notificationActions="matMenu">
-                <button mat-menu-item>
-                  <mat-icon svgIcon="list-check" />
-                  Mark as read
-                </button>
-                <button mat-menu-item>
-                  <mat-icon svgIcon="trash" />
-                  Delete
-                </button>
-              </mat-menu>
-            </div>
-
+          @for (notification of visibleNotifications(); track notification.id; let last = $last) {
+            <button
+              type="button"
+              class="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700/60"
+              [ngClass]="!notification.leida ? 'bg-blue-50 dark:bg-blue-950/30' : ''"
+              (click)="activate(notification)"
+            >
+              <span class="mt-1.5 size-2 shrink-0 rounded-full" [class.bg-blue-600]="!notification.leida" [class.bg-transparent]="notification.leida"></span>
+              <span class="min-w-0 flex-auto">
+                <span class="block font-semibold text-neutral-800 dark:text-neutral-100">
+                  {{ notification.titulo || 'Notificación' }}
+                </span>
+                <span class="mt-0.5 block text-sm text-neutral-600 dark:text-neutral-300">
+                  {{ notification.mensaje }}
+                </span>
+                <span class="mt-1 block text-xs text-neutral-400">
+                  {{ timeAgo(notification.created_at) }}
+                </span>
+              </span>
+            </button>
             @if (!last) {
-              <mat-divider
-                class="[--mat-divider-color:var(--color-neutral-200)] dark:[--mat-divider-color:var(--color-neutral-700)]"
-              />
+              <mat-divider />
             }
+          } @empty {
+            <div class="px-6 py-12 text-center">
+              <mat-icon class="mb-2 text-neutral-300" svgIcon="bell" />
+              <p class="text-sm font-medium text-neutral-600 dark:text-neutral-300">
+                {{ onlyUnread() ? 'No tienes notificaciones sin leer' : 'No tienes notificaciones' }}
+              </p>
+              <p class="mt-1 text-xs text-neutral-400">Aquí aparecerán las actualizaciones de tus solicitudes.</p>
+            </div>
           }
         </div>
       </div>
@@ -138,115 +109,36 @@ import { formatDistance, sub } from 'date-fns';
 export class Notifications {
   // State
   private now = new Date();
+  private service = inject(NotificationsService);
+  protected notificationsService = this.service;
   protected open = signal(false);
-  protected filters = [
-    {
-      value: 'all',
-      label: 'All',
-    },
-    {
-      value: 'system',
-      label: 'System',
-    },
-    {
-      value: 'archive',
-      label: 'Archive',
-    },
-  ];
-  protected currentFilter = signal<{ value: string; label: string }>({
-    value: 'all',
-    label: 'All',
-  });
+  protected onlyUnread = signal(false);
 
   // Data
-  protected notifications = [
-    {
-      id: '4q7Z8REBhn9kLBZMJE6p6',
-      title: 'Daily challenges',
-      description: 'Your submission has been accepted',
-      time: sub(this.now, { minutes: 25 }), // 25 minutes ago
-      read: false,
-      type: 'system',
-    },
-    {
-      id: 'eeeihQ6qGUtFFp7UkPqPJ',
-      title: null,
-      description:
-        'Leo Gill added you to "Top Secret Project" group and assigned you as a "Project Manager"',
-      time: sub(this.now, { minutes: 50 }), // 50 minutes ago
-      read: true,
-      type: 'archive',
-    },
-    {
-      id: 'X6f4gm4J7BfjwPTtttWze',
-      title: 'Mailbox',
-      description: 'You have 15 unread mails across 3 mailboxes',
-      time: sub(this.now, { hours: 3 }), // 3 hours ago
-      read: false,
-      type: 'system',
-    },
-    {
-      id: '99zrJ4pjchkmaB9V3npXZ',
-      title: 'Cron jobs',
-      description: 'Your Container is ready to publish',
-      time: sub(this.now, { hours: 5 }), // 5 hours ago
-      read: false,
-      type: 'system',
-    },
-    {
-      id: 'FjFRcXm9xtaVeqVtdV7MV',
-      title: null,
-      description: 'Roger Murray accepted your friend request',
-      time: sub(this.now, { hours: 7 }), // 7 hours ago
-      read: true,
-      type: 'archive',
-    },
-    {
-      id: 'PSSIjTGLtmHGRentSxFYj',
-      title: null,
-      description: 'Sophie Stone sent you a direct message',
-      time: sub(this.now, { hours: 9 }), // 9 hours ago
-      read: true,
-      type: 'system',
-    },
-    {
-      id: 'ltJWASIsKGO8cckmL4Pih',
-      title: 'Mailbox',
-      description: 'You have 3 new mails',
-      time: sub(this.now, { days: 1 }), // 1 day ago
-      read: true,
-      type: 'system',
-    },
-    {
-      id: 'vM0pgpCTOSDuLYzcGX1YW',
-      title: 'Daily challenges',
-      description:
-        'Your submission has been accepted and you are ready to sign-up for the final assigment which will be ready in 2 days',
-      time: sub(this.now, { days: 3 }), // 3 days ago
-      read: true,
-      type: 'system',
-    },
-    {
-      id: '3SCmoGzdD2jLaehkuSVf5',
-      title: 'Cron jobs',
-      description: 'Your Container is ready to download',
-      time: sub(this.now, { days: 4 }), // 4 days ago
-      read: true,
-      type: 'system',
-    },
-  ];
+  protected visibleNotifications = computed(() =>
+    this.onlyUnread()
+      ? this.service.notifications().filter(notification => !notification.leida)
+      : this.service.notifications()
+  );
 
   toggle(force: boolean | null = null) {
-    this.open.update((value) => {
-      if (force === null) {
-        return !value;
-      }
-
-      return force;
+    this.open.update(value => {
+      const next = force === null ? !value : force;
+      if (next) this.service.load();
+      return next;
     });
   }
 
-  timeAgo(time: Date) {
-    return formatDistance(time, this.now, { addSuffix: true });
+  activate(notification: NotificationItem) {
+    this.service.open(notification);
+    this.toggle(false);
+  }
+
+  markAllRead() {
+    this.service.markAllRead();
+  }
+
+  timeAgo(time: string) {
+    return formatDistance(new Date(time), this.now, { addSuffix: true, locale: es });
   }
 }

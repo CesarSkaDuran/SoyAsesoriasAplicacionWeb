@@ -45,7 +45,7 @@ export interface MaestroDialogData {
 
     <mat-dialog-content class="mat-typography !px-5 !py-5 sm:!px-6">
       <div class="mb-5 flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3">
-        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#12377a] text-white">
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-medium text-white">
           <mat-icon [svgIcon]="data.meta.icon" class="!size-5" />
         </span>
         <div>

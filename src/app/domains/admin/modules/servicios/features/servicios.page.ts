@@ -1,5 +1,6 @@
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
+import { NotificationsService } from '@/app/core/notifications/notifications.service';
 import { PageHeader } from '@/app/core/ui/page-header';
 import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import {
@@ -49,253 +51,12 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
     PageHeader,
     SearchableSelect,
   ],
-  template: `
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      <page-header
-        [title]="titulo()"
-        [subtitle]="total() + ' registros'"
-      >
-        <button
-          matButton="filled"
-          (click)="openCreate()"
-        >
-          <mat-icon svgIcon="plus" />
-          Solicitar
-        </button>
-      </page-header>
-
-      <!-- Filtros como la app vieja -->
-      <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-        <mat-form-field
-          class="w-72"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-icon svgIcon="search" matIconPrefix />
-          <input
-            matInput
-            [formControl]="searchControl"
-            placeholder="Nombre de la empresa o documento"
-          />
-        </mat-form-field>
-        @if (isAdmin()) {
-          <searchable-select
-            class="w-64"
-            label="Empresa"
-            nullLabel="Todas"
-            [items]="empresas()"
-            displayKey="razon_social"
-            [formControl]="empresaControl"
-          />
-        }
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Estado</mat-label>
-          <mat-select [formControl]="statusControl">
-            <mat-option [value]="null">Todos</mat-option>
-            <mat-option [value]="1">Pendiente</mat-option>
-            <mat-option [value]="4">En trámite</mat-option>
-            <mat-option [value]="2">Finalizado</mat-option>
-            <mat-option [value]="3">Verificado</mat-option>
-            <mat-option [value]="5">Cancelado</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Estado pago</mat-label>
-          <mat-select [formControl]="statusPagoControl">
-            <mat-option [value]="null">Todos</mat-option>
-            <mat-option [value]="1">Pagado</mat-option>
-            <mat-option [value]="2">Pendiente</mat-option>
-            <mat-option [value]="3">Cancelado</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Desde</mat-label>
-          <input matInput [matDatepicker]="dpDesde" [formControl]="desdeControl" />
-          <mat-datepicker-toggle matIconSuffix [for]="dpDesde" />
-          <mat-datepicker #dpDesde />
-        </mat-form-field>
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Hasta</mat-label>
-          <input matInput [matDatepicker]="dpHasta" [formControl]="hastaControl" />
-          <mat-datepicker-toggle matIconSuffix [for]="dpHasta" />
-          <mat-datepicker #dpHasta />
-        </mat-form-field>
-      </div>
-
-      @if (loading()) {
-        <div class="flex justify-center py-20">
-          <mat-spinner diameter="48" />
-        </div>
-      } @else {
-        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-          <div class="overflow-x-auto">
-            <table
-              mat-table
-              [dataSource]="registros()"
-              class="w-full"
-            >
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
-                <td mat-cell *matCellDef="let r">{{ r.id }}</td>
-              </ng-container>
-              <ng-container matColumnDef="nombre">
-                <th mat-header-cell *matHeaderCellDef>Nombre Empresa</th>
-                <td mat-cell *matCellDef="let r">
-                  <div class="font-medium">{{ r.cliente_nombre || '—' }}</div>
-                  @if (r.empleado_nombre) {
-                    <div class="text-xs text-neutral-500">{{ r.empleado_nombre }}</div>
-                  }
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="nit">
-                <th mat-header-cell *matHeaderCellDef>Documento</th>
-                <td mat-cell *matCellDef="let r">{{ r.cliente_nit || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="tipo">
-                <th mat-header-cell *matHeaderCellDef>Tipo Cliente</th>
-                <td mat-cell *matCellDef="let r">{{ r.tipo_cliente || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="sucursal">
-                <th mat-header-cell *matHeaderCellDef>Sucursal</th>
-                <td mat-cell *matCellDef="let r">
-                  {{ r.sucursal_nombre || '—' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="paquete">
-                <th mat-header-cell *matHeaderCellDef>Paquete</th>
-                <td mat-cell *matCellDef="let r">
-                  <div>{{ r.paquete || r.nombre || '—' }}</div>
-                  @if (r.obs) {
-                    <div class="max-w-56 truncate text-xs text-neutral-400">{{ r.obs }}</div>
-                  }
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="fecha">
-                <th mat-header-cell *matHeaderCellDef>Registro</th>
-                <td mat-cell *matCellDef="let r">{{ r.fecha | date: 'dd/MM/yyyy' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="rep">
-                <th mat-header-cell *matHeaderCellDef>Rep. Legal</th>
-                <td mat-cell *matCellDef="let r">{{ r.representante || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="tel">
-                <th mat-header-cell *matHeaderCellDef>Teléfono/Contacto</th>
-                <td mat-cell *matCellDef="let r">{{ r.telefono || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="valor">
-                <th mat-header-cell *matHeaderCellDef>Valor</th>
-                <td mat-cell *matCellDef="let r" class="font-semibold">
-                  {{ r.valor ? (r.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="estado2">
-                <th mat-header-cell *matHeaderCellDef>Estado Pago</th>
-                <td mat-cell *matCellDef="let r">
-                  <span
-                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
-                    [ngClass]="pagoColor(r.status_pago)"
-                  >
-                    {{ pagoLabel(r.status_pago) }}
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="estado">
-                <th mat-header-cell *matHeaderCellDef>Estado Servicio</th>
-                <td mat-cell *matCellDef="let r">
-                  <span
-                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
-                    [ngClass]="statusColor(r.status)"
-                  >
-                    {{ statusLabel(r.status) }}
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="acciones">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let r">
-                  @if (isAdmin()) {
-                    <button
-                      matIconButton
-                      [matMenuTriggerFor]="menu"
-                    >
-                      <mat-icon svgIcon="ellipsis-vertical" />
-                    </button>
-                    <mat-menu #menu="matMenu">
-                      @for (s of [1, 4, 2, 3, 5]; track s) {
-                        <button
-                          mat-menu-item
-                          (click)="setStatus(r, s)"
-                        >
-                          Marcar: {{ statusLabel(s) }}
-                        </button>
-                      }
-                      <button
-                        mat-menu-item
-                        (click)="setStatusPago(r, 1)"
-                      >
-                        Pago: Pagado
-                      </button>
-                      <button
-                        mat-menu-item
-                        (click)="setStatusPago(r, 2)"
-                      >
-                        Pago: Pendiente
-                      </button>
-                      <button
-                        mat-menu-item
-                        (click)="openEdit(r)"
-                      >
-                        Editar
-                      </button>
-                    </mat-menu>
-                  }
-                </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
-              <tr
-                mat-row
-                *matRowDef="let row; columns: columns"
-              ></tr>
-            </table>
-          </div>
-
-          @if (!registros().length) {
-            <div class="py-16 text-center text-neutral-400">
-              No hay registros de este servicio
-            </div>
-          }
-
-          <mat-paginator
-            [length]="total()"
-            [pageSize]="25"
-            [pageIndex]="page() - 1"
-            (page)="onPage($event)"
-          />
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './servicios.page.html',
 })
 export default class ServiciosPage {
   private api = inject(ApiService);
   private creds = inject(CredentialsService);
+  private notifications = inject(NotificationsService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
@@ -334,6 +95,12 @@ export default class ServiciosPage {
   ];
 
   constructor() {
+    this.notifications.realtimeEvents$
+      .pipe(takeUntilDestroyed())
+      .subscribe((notification) => {
+        if (['solicitud', 'servicio'].includes(notification.tipo)) this.load();
+      });
+
     this.route.data.subscribe((d) => {
       this.categoria.set(d['categoria'] || '');
       this.titulo.set(d['titulo'] || 'Servicios');

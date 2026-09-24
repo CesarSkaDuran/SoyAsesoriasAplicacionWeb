@@ -7,11 +7,7 @@ import { CredentialsService } from '@/app/core/authentication/credentials.servic
 @Component({
   selector: 'mi-empresa-redirect',
   imports: [MatProgressSpinner],
-  template: `
-    <div class="flex justify-center p-20">
-      <mat-spinner />
-    </div>
-  `,
+  templateUrl: './mi-empresa.redirect.html',
 })
 export default class MiEmpresaRedirect {
   constructor() {

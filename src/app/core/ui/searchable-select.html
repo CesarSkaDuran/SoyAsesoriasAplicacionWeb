@@ -1,0 +1,56 @@
+
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="w-full"
+    >
+      <mat-label>{{ label() }}</mat-label>
+      <mat-select
+        [value]="value()"
+        [compareWith]="compareWith()"
+        [disabled]="disabled()"
+        [required]="required()"
+        panelClass="searchable-select-panel"
+        (selectionChange)="select($event.value)"
+        (openedChange)="onOpen($event)"
+      >
+        <div class="search-box">
+          <div class="search-box__field">
+            <mat-icon svgIcon="search" />
+            <input
+              type="text"
+              [placeholder]="'Buscar ' + label().toLowerCase() + '…'"
+              [value]="search()"
+              (input)="search.set($any($event.target).value)"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+            />
+            @if (search()) {
+              <button
+                type="button"
+                class="search-box__clear"
+                (click)="search.set(''); $event.stopPropagation()"
+              >
+                <mat-icon svgIcon="x" />
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (nullLabel()) {
+          <mat-option [value]="null">{{ nullLabel() }}</mat-option>
+        }
+        @for (item of filtered(); track trackBy(item)) {
+          <mat-option [value]="val(item)">{{ display(item) }}</mat-option>
+        }
+        @if (!filtered().length) {
+          <mat-option [disabled]="true">
+            Sin resultados para «{{ search() }}»
+          </mat-option>
+        }
+      </mat-select>
+      @if (hint()) {
+        <mat-hint>{{ hint() }}</mat-hint>
+      }
+    </mat-form-field>
+  

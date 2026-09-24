@@ -1,0 +1,166 @@
+
+    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
+      @if (loading()) {
+        <div class="flex justify-center p-10">
+          <mat-spinner />
+        </div>
+      } @else {
+        <page-header
+          [title]="'Liquidar nómina — ' + (nomina()?.nombre_periodo || 'Periodo')"
+          [subtitle]="nomina()?.empresa_nombre || ''"
+        >
+          <a
+            [routerLink]="['/admin/nominas', nominaId]"
+            matButton="outlined"
+          >
+            <mat-icon svgIcon="arrow-left" />
+            Volver
+          </a>
+          <button
+            matButton="filled"
+            [disabled]="!empleados().length || saving()"
+            (click)="liquidar()"
+          >
+            <mat-icon svgIcon="check" />
+            Liquidar nómina
+          </button>
+        </page-header>
+
+        @if (parametros(); as p) {
+          <div class="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            Vigencia {{ p.vigencia }} · SMLMV {{ p.salario_minimo | currency: 'COP' : 'symbol-narrow' : '1.0-0' }} · Auxilio {{ p.auxilio_transporte | currency: 'COP' : 'symbol-narrow' : '1.0-0' }} · Período: {{ nomina()?.dias_periodo || 30 }} días
+            @if (periodoFechas(); as f) { ({{ f.inicio }} → {{ f.fin }}) }
+            @if (nomina()?.aplica_exoneracion) { · Exoneración 114-1 marcada por admin }
+            <div class="mt-1 text-xs text-blue-800/80">
+              Incluye retención art. 383 ET (proc. 1), recargos por tipo con fecha de corte y novedades de ausentismo.
+              El excedente del 40% de pagos no salariales se incluye en IBC y prestaciones (interpretación mayoritaria, art. 30 Ley 1393/2010);
+              si el contador aplica una interpretación restrictiva, el ajuste se hace fuera del sistema.
+              Fuera de alcance: nómina electrónica DIAN, archivo PILA plano, procedimiento 2 de retención, deducciones personales del art. 388 y contratos de aprendizaje (Ley 2466).
+            </div>
+          </div>
+        }
+
+        @if (novedades().length) {
+          <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            {{ novedades().length }} novedad(es) de ausentismo activas en el período afectan
+            {{ totalNovedades() }} empleado(s): los días se descuentan del salario y del auxilio,
+            y se liquidan según quien las asume (empleador / EPS / ARL).
+          </div>
+        }
+
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Empleados</div>
+            <div class="text-xl font-bold">{{ empleados().length }}</div>
+          </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Neto estimado</div>
+            <div class="text-xl font-bold">
+              {{ totalEstimado() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Horas extras</div>
+            <div class="text-xl font-bold">
+              {{ totalHoras() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Deducciones</div>
+            <div class="text-xl font-bold">
+              {{ totalDed() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+          <table
+            mat-table
+            [dataSource]="empleados()"
+            class="w-full"
+          >
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let e">
+                <div class="font-medium">
+                  {{ e.primer_nombre }} {{ e.primer_apellido }}
+                  @if (novedadesDe(e.id).length) {
+                    <span class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                      {{ diasNovedad(e) }}d novedad
+                    </span>
+                  }
+                </div>
+                <div class="text-xs text-neutral-400">{{ e.numero_documento }}</div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="salario">
+              <th mat-header-cell *matHeaderCellDef>Salario</th>
+              <td mat-cell *matCellDef="let e">
+                {{ e.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="dias">
+              <th mat-header-cell *matHeaderCellDef>Días</th>
+              <td mat-cell *matCellDef="let e">
+                {{ inputs()[e.id]?.dias_laborados ?? nomina()?.dias_periodo ?? 30 }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="auxilio">
+              <th mat-header-cell *matHeaderCellDef>Aux. transporte</th>
+              <td mat-cell *matCellDef="let e">
+                {{ auxilioEstimado(e) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="horas">
+              <th mat-header-cell *matHeaderCellDef>H. extras/recargos</th>
+              <td mat-cell *matCellDef="let e">
+                {{ horasEstimado(e) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="otros">
+              <th mat-header-cell *matHeaderCellDef>Otros</th>
+              <td mat-cell *matCellDef="let e">
+                {{ (inputs()[e.id]?.otros_ingresos ?? 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="deducciones">
+              <th mat-header-cell *matHeaderCellDef>Deducciones</th>
+              <td mat-cell *matCellDef="let e">
+                {{ deduccionesEmpleado(e) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="neto">
+              <th mat-header-cell *matHeaderCellDef>Neto estimado</th>
+              <td mat-cell *matCellDef="let e">
+                {{ neto(e) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let e">
+                <button
+                  matButton="outlined"
+                  (click)="openEmpleado(e)"
+                >
+                  <mat-icon svgIcon="calculator" />
+                  Liquidar
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: columns"
+            ></tr>
+          </table>
+
+          @if (!empleados().length) {
+            <div class="py-16 text-center text-neutral-400">
+              No hay empleados activos con un contrato habilitado para esta liquidación (excluye prestación de servicios y aprendizaje).
+            </div>
+          }
+        </div>
+      }
+    </div>
+  

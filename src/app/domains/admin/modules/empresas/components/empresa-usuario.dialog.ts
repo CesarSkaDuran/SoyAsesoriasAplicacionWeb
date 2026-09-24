@@ -27,65 +27,7 @@ export interface EmpresaUsuarioData {
     MatButtonModule,
     DialogHeader,
   ],
-  template: `
-    <dialog-header title="Usuario de acceso" />
-    <mat-dialog-content>
-      <div class="mb-3 text-sm text-neutral-500">
-        Crea el usuario con el que <strong>{{ data.empresa.razon_social }}</strong>
-        ingresará al portal.
-      </div>
-      <form
-        [formGroup]="form"
-        class="grid grid-cols-1 gap-x-4 sm:grid-cols-2"
-      >
-        <mat-form-field>
-          <mat-label>Nombre *</mat-label>
-          <input
-            matInput
-            formControlName="name"
-          />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Apellido</mat-label>
-          <input
-            matInput
-            formControlName="lastname"
-          />
-        </mat-form-field>
-        <mat-form-field class="sm:col-span-2">
-          <mat-label>Correo electrónico *</mat-label>
-          <input
-            matInput
-            type="email"
-            formControlName="email"
-          />
-        </mat-form-field>
-        <mat-form-field class="sm:col-span-2">
-          <mat-label>Contraseña *</mat-label>
-          <input
-            matInput
-            type="password"
-            formControlName="password"
-          />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button
-        matButton
-        mat-dialog-close
-      >
-        Cancelar
-      </button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving()"
-        (click)="save()"
-      >
-        {{ saving() ? 'Creando…' : 'Crear usuario' }}
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './empresa-usuario.dialog.html',
 })
 export class EmpresaUsuarioDialog {
   private fb = inject(FormBuilder);

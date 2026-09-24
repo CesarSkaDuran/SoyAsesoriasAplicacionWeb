@@ -1,0 +1,167 @@
+
+    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
+      <page-header
+        title="Documentos"
+        subtitle="Documentos cargados por ítem"
+      >
+        <button
+          matButton="filled"
+          (click)="openUpload()"
+          [disabled]="!canUpload()"
+        >
+          <mat-icon svgIcon="upload" />
+          Cargar documento
+        </button>
+      </page-header>
+
+      <div
+        class="grid grid-cols-1 items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:grid-cols-2"
+        [ngClass]="isAdmin() ? 'xl:grid-cols-3' : 'xl:grid-cols-2'"
+      >
+        <mat-form-field
+          class="w-full"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-icon svgIcon="search" matIconPrefix />
+          <input
+            matInput
+            [formControl]="searchControl"
+            placeholder="Buscar documento"
+          />
+        </mat-form-field>
+        <mat-form-field
+          class="w-full"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Tipo de documento</mat-label>
+          <mat-select [formControl]="tipoControl">
+            <mat-option [value]="null">Todos</mat-option>
+            @for (t of tipos(); track t.id) {
+              <mat-option [value]="t.id">{{ t.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (isAdmin()) {
+          <searchable-select
+            class="w-full"
+            label="Cliente"
+            nullLabel="Todos"
+            [items]="clientes()"
+            displayKey="nombre"
+            valueKey="key"
+            [formControl]="clienteControl"
+          />
+        }
+      </div>
+
+      @if (loading()) {
+        <div class="flex justify-center p-10">
+          <mat-spinner />
+        </div>
+      } @else {
+        <div
+          class="overflow-hidden rounded-2xl border bg-white dark:bg-neutral-900"
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[820px] text-sm">
+              <thead>
+                <tr
+                  class="border-b bg-slate-50/80 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                >
+                  <th class="px-5 py-3">Archivo</th>
+                  @if (isAdmin()) {
+                    <th class="px-4 py-3">Cliente</th>
+                  }
+                  <th class="px-4 py-3">Tipo</th>
+                  <th class="px-4 py-3">Versión</th>
+                  <th class="px-4 py-3">Fecha de emisión</th>
+                  <th class="px-4 py-3">Estatus</th>
+                  <th class="px-5 py-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (d of documentos(); track d.id) {
+                  <tr class="border-b last:border-0 hover:bg-slate-50/60">
+                    <td class="px-5 py-3">
+                      <div class="flex items-center gap-x-3">
+                        <div
+                          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600"
+                        >
+                          <mat-icon [svgIcon]="iconFor(d)" class="!size-4.5" />
+                        </div>
+                        <div class="min-w-0">
+                          <div class="truncate font-medium">{{ d.nombre }}</div>
+                          <div class="text-xs text-neutral-500">
+                            {{ d.created_at | date: 'dd/MM/yyyy' }}
+                            @if (d.size) {
+                              · {{ formatSize(d.size) }}
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    @if (isAdmin()) {
+                      <td class="px-4 py-3">{{ d.cliente_nombre || '—' }}</td>
+                    }
+                    <td class="px-4 py-3">{{ d.tipo_nombre || '—' }}</td>
+                    <td class="px-4 py-3">{{ d.version || '—' }}</td>
+                    <td class="px-4 py-3">
+                      {{ d.fecha_emision ? (d.fecha_emision | date: 'dd/MM/yyyy') : '—' }}
+                    </td>
+                    <td class="px-4 py-3">
+                      <span
+                        class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                        [ngClass]="estatusClass(d.estatus)"
+                      >
+                        {{ estatusLabel(d.estatus) }}
+                      </span>
+                    </td>
+                    <td class="px-5 py-3">
+                      <div class="flex items-center justify-end gap-x-1">
+                        <button
+                          matIconButton
+                          title="Ver / descargar"
+                          (click)="download(d)"
+                        >
+                          <mat-icon svgIcon="eye" />
+                        </button>
+                        <button
+                          matIconButton
+                          title="Editar"
+                          (click)="openEdit(d)"
+                        >
+                          <mat-icon svgIcon="pencil" />
+                        </button>
+                        <button
+                          matIconButton
+                          title="Eliminar"
+                          (click)="remove(d)"
+                        >
+                          <mat-icon svgIcon="trash" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (!documentos().length) {
+            <div class="p-10 text-center text-neutral-500">
+              No hay documentos para mostrar
+            </div>
+          }
+          <mat-paginator
+            [length]="total()"
+            [pageIndex]="page() - 1"
+            [pageSize]="pageSize()"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            (page)="onPage($event)"
+            showFirstLastButtons
+          />
+        </div>
+      }
+    </div>
+  

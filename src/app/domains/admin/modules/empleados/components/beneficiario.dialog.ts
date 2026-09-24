@@ -36,57 +36,7 @@ const PARENTESCOS = [
     MatDatepickerModule,
     DialogHeader,
   ],
-  template: `
-    <dialog-header title="Información beneficiario" />
-
-    <mat-dialog-content class="mat-typography">
-      <form
-        [formGroup]="form"
-        class="grid grid-cols-2 gap-x-4 pt-2"
-      >
-        <mat-form-field class="col-span-2" appearance="outline">
-          <mat-label>Nombre completo</mat-label>
-          <input matInput formControlName="nombre" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Parentesco</mat-label>
-          <mat-select formControlName="parentesco">
-            @for (p of parentescos; track p) {
-              <mat-option [value]="p">{{ p }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>N° documento</mat-label>
-          <input matInput formControlName="num_documento" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de nacimiento</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker"
-            formControlName="fecha_nacimiento"
-          />
-          <mat-datepicker-toggle matIconSuffix [for]="picker" />
-          <mat-datepicker #picker />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button matButton="text" mat-dialog-close>Cancelar</button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving"
-        (click)="save()"
-      >
-        Agregar
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './beneficiario.dialog.html',
 })
 export class BeneficiarioDialog {
   private fb = inject(FormBuilder);

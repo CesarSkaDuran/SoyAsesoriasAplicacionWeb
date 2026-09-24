@@ -5,12 +5,19 @@ import { Observable } from 'rxjs';
 import { Empresa } from '@/app/models/user.model';
 import {
   Catalogos,
+  ConceptoNomina,
   Documento,
+  DocumentoTipo,
   Empleado,
+  HoraExtraInput,
+  Incapacidad,
+  IngresoConceptoInput,
   MaestroMeta,
   Nomina,
   NominaDetalle,
+  NominaParametros,
   Paginated,
+  PilaEstado,
 } from '@/app/models/empleado.model';
 import {
   CuentaCobro,
@@ -190,14 +197,28 @@ export class ApiService {
 
   // ── Documentos ─────────────────────────────────────────────────────────────
   // owner: empresa_id | empleado_id | persona_id | beneficiado_id | nomina_id
-  documentos(owner: Record<string, number | string>): Observable<{
+  documentos(filters: Record<string, number | string | undefined>): Observable<{
     data: Documento[];
+    total: number;
+    page: number;
+    per_page: number;
   }> {
     let params = new HttpParams();
-    Object.entries(owner).forEach(([key, value]) => {
-      params = params.set(key, value);
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value);
+      }
     });
-    return this.http.get<{ data: Documento[] }>('/documentos', { params });
+    return this.http.get<{
+      data: Documento[];
+      total: number;
+      page: number;
+      per_page: number;
+    }>('/documentos', { params });
+  }
+
+  documentoTipos(): Observable<{ data: DocumentoTipo[] }> {
+    return this.http.get<{ data: DocumentoTipo[] }>('/documentos/tipos');
   }
 
   uploadDocumento(
@@ -209,6 +230,9 @@ export class ApiService {
       empleado_id?: number | string;
       persona_id?: number | string;
       servicio_id?: number | string;
+      tipo_id?: number | string;
+      version?: string;
+      fecha_emision?: string;
     }
   ): Observable<{ documento: Documento }> {
     const form = new FormData();
@@ -217,6 +241,13 @@ export class ApiService {
       if (value !== undefined && value !== null) form.append(key, String(value));
     });
     return this.http.post<{ documento: Documento }>('/documentos', form);
+  }
+
+  updateDocumento(
+    id: number | string,
+    data: Partial<Documento>
+  ): Observable<{ documento: Documento }> {
+    return this.http.put<{ documento: Documento }>(`/documentos/${id}`, data);
   }
 
   downloadDocumento(id: number | string): Observable<Blob> {
@@ -419,6 +450,32 @@ export class ApiService {
     return this.http.put<{ solicitud: Solicitud }>(`/solicitudes/${id}`, data);
   }
 
+  uploadRespuestaSolicitud(
+    id: number | string,
+    file: File
+  ): Observable<{ solicitud: Solicitud }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.put<{ solicitud: Solicitud }>(
+      `/solicitudes/${id}/respuesta`,
+      form
+    );
+  }
+
+  downloadRespuestaSolicitud(id: number | string): Observable<Blob> {
+    return this.http.get(`/solicitudes/${id}/respuesta`, {
+      responseType: 'blob',
+    });
+  }
+
+  deleteRespuestaSolicitud(
+    id: number | string
+  ): Observable<{ solicitud: Solicitud }> {
+    return this.http.delete<{ solicitud: Solicitud }>(
+      `/solicitudes/${id}/respuesta`
+    );
+  }
+
   notificaciones(): Observable<{ data: NotificationItem[]; unread_count: number }> {
     return this.http.get<{ data: NotificationItem[]; unread_count: number }>('/notificaciones');
   }
@@ -493,10 +550,11 @@ export class ApiService {
     desde?: string;
     hasta?: string;
     page?: number;
+    per_page?: number;
   }): Observable<Paginated<Persona>> {
     let params = new HttpParams()
       .set('page', filters.page ?? 1)
-      .set('per_page', 25);
+      .set('per_page', filters.per_page ?? 25);
     for (const [k, v] of Object.entries(filters)) {
       if (v !== undefined && v !== null && v !== '' && k !== 'page') {
         params = params.set(k, v);
@@ -556,6 +614,15 @@ export class ApiService {
     return this.http.put<{ user: Usuario }>(`/usuarios/${id}`, data);
   }
 
+  resetUsuarioPassword(
+    id: number | string,
+    newPassword: string
+  ): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`/usuarios/${id}/password`, {
+      new_password: newPassword,
+    });
+  }
+
   // ── Gastos (admin) ─────────────────────────────────────────────────────────
   gastos(filters: {
     search?: string;
@@ -592,11 +659,72 @@ export class ApiService {
   }
 
   // ── Nomina: crear cabecera + liquidar ──────────────────────────────────────
+  nominaParametros(vigencia: number): Observable<{ parametros: NominaParametros }> {
+    return this.http.get<{ parametros: NominaParametros }>(`/nominas/parametros/${vigencia}`);
+  }
+
+  updateNominaParametros(
+    vigencia: number,
+    data: Partial<NominaParametros>
+  ): Observable<{ parametros: NominaParametros }> {
+    return this.http.put<{ parametros: NominaParametros }>(
+      `/nominas/parametros/${vigencia}`,
+      data
+    );
+  }
+
   createNomina(data: {
     empresa_id: number | string;
     nombre_periodo?: string;
+    vigencia?: number;
+    dias_periodo?: number;
+    aplica_exoneracion?: boolean;
+    fecha_inicio?: string;
+    fecha_fin?: string;
   }): Observable<{ nomina: Nomina }> {
     return this.http.post<{ nomina: Nomina }>('/nominas', data);
+  }
+
+  conceptosNomina(filtros: {
+    activos?: string; tratamiento?: string; salarial?: string;
+    pendiente?: string; q?: string;
+  } = {}): Observable<{ data: ConceptoNomina[] }> {
+    const params: Record<string, string> = {};
+    if (filtros.activos) params['activos'] = filtros.activos;
+    if (filtros.tratamiento) params['tratamiento'] = filtros.tratamiento;
+    if (filtros.salarial) params['salarial'] = filtros.salarial;
+    if (filtros.pendiente) params['pendiente'] = filtros.pendiente;
+    if (filtros.q) params['q'] = filtros.q;
+    return this.http.get<{ data: ConceptoNomina[] }>('/nominas/conceptos', { params });
+  }
+
+  createConceptoNomina(
+    data: Partial<ConceptoNomina>
+  ): Observable<{ concepto: ConceptoNomina }> {
+    return this.http.post<{ concepto: ConceptoNomina }>('/nominas/conceptos', data);
+  }
+
+  updateConceptoNomina(
+    id: number | string,
+    data: Partial<ConceptoNomina>
+  ): Observable<{ concepto: ConceptoNomina }> {
+    return this.http.put<{ concepto: ConceptoNomina }>(
+      `/nominas/conceptos/${id}`,
+      data
+    );
+  }
+
+  pilaEstado(empresaId?: number): Observable<PilaEstado> {
+    return this.http.get<PilaEstado>('/nominas/pila-estado', {
+      params: empresaId ? { empresa_id: empresaId } : {},
+    });
+  }
+
+  descargarPlanoNomina(id: number | string, conceptos = false): Observable<Blob> {
+    return this.http.get(`/nominas/${id}/plano`, {
+      params: conceptos ? { tipo: 'conceptos' } : {},
+      responseType: 'blob',
+    });
   }
 
   liquidarNomina(
@@ -607,16 +735,30 @@ export class ApiService {
         empleado_id: number;
         dias_laborados?: number;
         horas_extras?: number;
+        horas?: HoraExtraInput[];
+        ingresos?: IngresoConceptoInput[];
         otros_ingresos?: number;
         ingreso_noc?: number;
+        ingreso_noc_incr?: boolean;
+        ingreso_noc_incr_motivo?: string;
         deducciones?: number;
+        retencion_ajuste?: number;
+        retencion_ajuste_motivo?: string;
         indemnizacion?: number;
       }[];
     }
-  ): Observable<{ nomina: Nomina; detalles: NominaDetalle[] }> {
-    return this.http.put<{ nomina: Nomina; detalles: NominaDetalle[] }>(
+  ): Observable<{ nomina: Nomina; detalles: NominaDetalle[]; alertas?: { empleado_id: number; mensaje: string }[] }> {
+    return this.http.put<{ nomina: Nomina; detalles: NominaDetalle[]; alertas?: { empleado_id: number; mensaje: string }[] }>(
       `/nominas/${id}/liquidar`,
       data
+    );
+  }
+
+  nominaNovedades(
+    id: number | string
+  ): Observable<{ fechas: { inicio: string; fin: string } | null; novedades: Incapacidad[] }> {
+    return this.http.get<{ fechas: { inicio: string; fin: string } | null; novedades: Incapacidad[] }>(
+      `/nominas/${id}/novedades`
     );
   }
 

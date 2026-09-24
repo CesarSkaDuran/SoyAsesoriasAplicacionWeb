@@ -17,6 +17,7 @@ import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Nomina } from '@/app/models/empleado.model';
 import { Empresa } from '@/app/models/user.model';
 import { NominaFormDialog } from '../components/nomina-form.dialog';
+import { NominaParametrosDialog } from '../components/nomina-parametros.dialog';
 
 @Component({
   selector: 'nominas-page',
@@ -34,173 +35,7 @@ import { NominaFormDialog } from '../components/nomina-form.dialog';
     PageHeader,
     SearchableSelect,
   ],
-  template: `
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      <page-header
-        title="Nóminas"
-        [subtitle]="total() + ' nóminas generadas'"
-      >
-        @if (isAdmin()) {
-          <button
-            matButton="filled"
-            (click)="openForm()"
-          >
-            <mat-icon svgIcon="plus" />
-            Nueva nómina
-          </button>
-        }
-      </page-header>
-
-      <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-        @if (isAdmin()) {
-          <searchable-select
-            class="w-64"
-            label="Empresa"
-            nullLabel="Todas las empresas"
-            [items]="empresas()"
-            displayKey="razon_social"
-            [formControl]="empresaControl"
-          />
-        }
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Estado</mat-label>
-          <mat-select [formControl]="statusControl">
-            <mat-option value="">Todos</mat-option>
-            <mat-option value="borrador">Borrador</mat-option>
-            <mat-option value="liquidada">Liquidada</mat-option>
-            <mat-option value="pagada">Pagada</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      @if (loading()) {
-        <div class="flex justify-center p-10">
-          <mat-spinner />
-        </div>
-      } @else {
-        <div
-          class="overflow-hidden rounded-2xl border bg-white dark:bg-neutral-900"
-        >
-          <div class="overflow-x-auto">
-            <table
-              mat-table
-              [dataSource]="nominas()"
-              class="w-full"
-            >
-              <ng-container matColumnDef="periodo">
-                <th mat-header-cell *matHeaderCellDef>Periodo</th>
-                <td mat-cell *matCellDef="let n">
-                  <a
-                    [routerLink]="['/admin/nominas', n.id]"
-                    class="font-medium text-blue-700 hover:underline"
-                  >
-                    {{ n.nombre_periodo || 'Nómina #' + n.id }}
-                  </a>
-                  <div class="text-xs text-neutral-500">
-                    {{ n.empresa_nombre }}
-                  </div>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="empleados">
-                <th mat-header-cell *matHeaderCellDef>N. empleados</th>
-                <td mat-cell *matCellDef="let n">{{ n.num_empleados ?? 0 }}</td>
-              </ng-container>
-              <ng-container matColumnDef="salarios">
-                <th mat-header-cell *matHeaderCellDef>Salarios</th>
-                <td mat-cell *matCellDef="let n">
-                  {{ n.salario_dias | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="o_ingreso">
-                <th mat-header-cell *matHeaderCellDef>Horas Extras</th>
-                <td mat-cell *matCellDef="let n">
-                  {{ n.total_horas_extras | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="pago_ss">
-                <th mat-header-cell *matHeaderCellDef>Seguridad Social</th>
-                <td mat-cell *matCellDef="let n">
-                  {{ n.total_seguridad_social | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="otros">
-                <th mat-header-cell *matHeaderCellDef>Otros Pagos</th>
-                <td mat-cell *matCellDef="let n">
-                  {{ n.total_otros_pagos | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="deducciones">
-                <th mat-header-cell *matHeaderCellDef>Deducciones</th>
-                <td mat-cell *matCellDef="let n">
-                  {{ n.total_deducciones | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="total_pagar">
-                <th mat-header-cell *matHeaderCellDef>Total a pagar</th>
-                <td mat-cell *matCellDef="let n" class="font-semibold">
-                  {{ n.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Estado</th>
-                <td mat-cell *matCellDef="let n">
-                  <span
-                    class="rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
-                    [class.bg-amber-500]="n.status === 'borrador'"
-                    [class.bg-blue-500]="n.status === 'liquidada'"
-                    [class.bg-green-500]="n.status === 'pagada'"
-                  >
-                    {{ n.status }}
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="acciones">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let n">
-                  <button
-                    matIconButton
-                    title="Ver detalle"
-                    [routerLink]="['/admin/nominas', n.id]"
-                  >
-                    <mat-icon svgIcon="eye" />
-                  </button>
-                  @if (isAdmin()) {
-                    <button
-                      matIconButton
-                      title="Liquidar"
-                      [routerLink]="['/admin/nominas', n.id, 'liquidar']"
-                    >
-                      <mat-icon svgIcon="calculator" />
-                    </button>
-                  }
-                </td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
-              <tr
-                mat-row
-                *matRowDef="let row; columns: columns"
-              ></tr>
-            </table>
-          </div>
-          @if (!nominas().length) {
-            <div class="p-10 text-center text-neutral-500">
-              No hay nóminas para esta empresa
-            </div>
-          }
-        </div>
-
-        <mat-paginator
-          [length]="total()"
-          [pageSize]="25"
-          (page)="onPage($event)"
-        />
-      }
-    </div>
-  `,
+  templateUrl: './nominas.page.html',
 })
 export default class NominasPage {
   private api = inject(ApiService);
@@ -226,6 +61,7 @@ export default class NominasPage {
   protected loading = signal(false);
   protected empresaControl = new FormControl<number | null>(null);
   protected statusControl = new FormControl('');
+  protected vigenciaActual = new Date().getFullYear();
   protected isAdmin = () => this.credentials.isAdmin();
 
   constructor() {
@@ -241,6 +77,14 @@ export default class NominasPage {
       this.load(user.empresa.id, 1);
     }
     this.statusControl.valueChanges.subscribe(() => this.load(undefined, 1));
+  }
+
+  openParametros() {
+    this.dialog.open(NominaParametrosDialog, {
+      width: '820px',
+      maxWidth: '96vw',
+      data: new Date().getFullYear(),
+    });
   }
 
   openForm() {

@@ -46,6 +46,8 @@ export interface Empresa {
   caja_compensacion_id?: number | null;
   actividad_economica_id?: number | null;
   exonerado_parafiscales?: string;
+  arl_id?: number | null;
+  eps_id?: number | null;
 }
 
 export interface Persona {

@@ -1,0 +1,38 @@
+<span class="fi fi-gr"></span>
+<span class="fi fi-gr"></span>
+
+<button
+  matIconButton
+  [matMenuTriggerFor]="langMenu"
+>
+  <img
+    [src]="'/images/flags/' + getLangFlag(this.activeLang) + '.svg'"
+    alt="{{ this.activeLang }}"
+    width="20"
+    height="15"
+  />
+</button>
+<mat-menu #langMenu="matMenu">
+  @for (lang of availableLangs; track lang.id) {
+    <button
+      mat-menu-item
+      (click)="setActiveLang(lang.id)"
+    >
+      <span class="flex items-center gap-x-3">
+        <span class="flex items-center gap-x-2">
+          <img
+            [src]="'/images/flags/' + getLangFlag(lang.id) + '.svg'"
+            alt="{{ this.activeLang }}"
+            width="20"
+            height="15"
+          />
+          <span>{{ lang.label }}</span>
+        </span>
+        <mat-pseudo-checkbox
+          appearance="minimal"
+          [state]="lang.id === activeLang ? 'checked' : 'unchecked'"
+        />
+      </span>
+    </button>
+  }
+</mat-menu>

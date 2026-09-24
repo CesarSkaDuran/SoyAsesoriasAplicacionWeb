@@ -9,14 +9,18 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
+import { DocumentoTipo } from '@/app/models/empleado.model';
 
 export interface DocumentoUploadData {
   empresa_id?: number;
   empleado_id?: number;
   persona_id?: number;
+  tipo_id?: number;
 }
 
 @Component({
@@ -26,78 +30,13 @@ export interface DocumentoUploadData {
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
     MatButtonModule,
     MatIcon,
     DialogHeader,
   ],
-  template: `
-    <dialog-header title="Subir documento" />
-    <mat-dialog-content>
-      <form
-        [formGroup]="form"
-        class="flex flex-col gap-y-4 pt-2"
-      >
-        <!-- File picker -->
-        <button
-          type="button"
-          matButton="outlined"
-          class="flex h-24 w-full flex-col items-center justify-center gap-y-1 rounded-xl border-2 border-dashed"
-          (click)="fileInput.click()"
-        >
-          <mat-icon svgIcon="cloud-upload" />
-          @if (file()) {
-            <span class="font-medium">{{ file()!.name }}</span>
-            <span class="text-xs text-neutral-500">
-              {{ formatSize(file()!.size) }}
-            </span>
-          } @else {
-            <span>Seleccionar archivo</span>
-            <span class="text-xs text-neutral-500">
-              PDF, imágenes, Excel — máx. 20 MB
-            </span>
-          }
-        </button>
-        <input
-          #fileInput
-          type="file"
-          class="hidden"
-          (change)="onFileSelected($event)"
-        />
-
-        <mat-form-field>
-          <mat-label>Nombre del documento</mat-label>
-          <input
-            matInput
-            formControlName="nombre"
-          />
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Descripción</mat-label>
-          <textarea
-            matInput
-            rows="2"
-            formControlName="descripcion"
-          ></textarea>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button
-        matButton
-        mat-dialog-close
-      >
-        Cancelar
-      </button>
-      <button
-        matButton="filled"
-        [disabled]="!file() || uploading()"
-        (click)="upload()"
-      >
-        {{ uploading() ? 'Subiendo…' : 'Subir' }}
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './documento-upload.dialog.html',
 })
 export class DocumentoUploadDialog {
   private fb = inject(FormBuilder);
@@ -108,11 +47,19 @@ export class DocumentoUploadDialog {
 
   protected file = signal<File | null>(null);
   protected uploading = signal(false);
+  protected tipos = signal<DocumentoTipo[]>([]);
 
   protected form = this.fb.group({
-    nombre: ['', Validators.required],
+    tipo_id: [this.data.tipo_id ?? null as number | null, Validators.required],
+    nombre: [''],
+    version: [''],
+    fecha_emision: [new Date() as Date | null],
     descripcion: [''],
   });
+
+  constructor() {
+    this.api.documentoTipos().subscribe((res) => this.tipos.set(res.data));
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -129,13 +76,17 @@ export class DocumentoUploadDialog {
     if (!file || this.form.invalid) return;
     this.uploading.set(true);
 
+    const fecha = this.form.value.fecha_emision;
     this.api
       .uploadDocumento(file, {
-        nombre: this.form.value.nombre!,
+        nombre: this.form.value.nombre || undefined,
         descripcion: this.form.value.descripcion || undefined,
         empresa_id: this.data.empresa_id,
         empleado_id: this.data.empleado_id,
         persona_id: this.data.persona_id,
+        tipo_id: this.form.value.tipo_id!,
+        version: this.form.value.version || undefined,
+        fecha_emision: fecha ? this.fmtFecha(fecha) : undefined,
       })
       .subscribe({
         next: () => {
@@ -154,8 +105,15 @@ export class DocumentoUploadDialog {
   }
 
   formatSize(bytes: number): string {
-    if (bytes > 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
-    if (bytes > 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-    return `${bytes} B`;
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  private fmtFecha(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 }

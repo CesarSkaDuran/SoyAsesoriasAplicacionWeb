@@ -1,0 +1,186 @@
+
+    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
+      <page-header
+        title="Empleados"
+        [subtitle]="total() + ' empleados'"
+      >
+        <button
+          matButton="filled"
+          (click)="openForm()"
+        >
+          <mat-icon svgIcon="plus" />
+          Nuevo empleado
+        </button>
+      </page-header>
+
+      <!-- Filtros como la app vieja: buscar + rango de fechas + empresa/estado -->
+      <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <mat-form-field
+          class="w-72"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-icon matPrefix svgIcon="search" />
+          <input
+            matInput
+            placeholder="Nombre o documento"
+            [formControl]="searchControl"
+          />
+        </mat-form-field>
+        @if (isAdmin()) {
+          <searchable-select
+            class="w-64"
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
+        }
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Estado</mat-label>
+          <mat-select [formControl]="statusControl">
+            <mat-option value="todos">Todos</mat-option>
+            <mat-option value="activo">Activo</mat-option>
+            <mat-option value="retirado">Retirado</mat-option>
+            <mat-option value="suspendido">Suspendido</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Desde</mat-label>
+          <input matInput [matDatepicker]="dpDesde" [formControl]="desdeControl" />
+          <mat-datepicker-toggle matIconSuffix [for]="dpDesde" />
+          <mat-datepicker #dpDesde />
+        </mat-form-field>
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Hasta</mat-label>
+          <input matInput [matDatepicker]="dpHasta" [formControl]="hastaControl" />
+          <mat-datepicker-toggle matIconSuffix [for]="dpHasta" />
+          <mat-datepicker #dpHasta />
+        </mat-form-field>
+      </div>
+
+      @if (loading()) {
+        <div class="flex justify-center p-10">
+          <mat-spinner />
+        </div>
+      } @else {
+        <div
+          class="overflow-hidden rounded-2xl border bg-white dark:bg-neutral-900"
+        >
+          <div class="overflow-x-auto">
+            <table
+              mat-table
+              [dataSource]="empleados()"
+              class="w-full"
+            >
+              <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let e">
+                  <a
+                    [routerLink]="['/admin/empleados', e.id]"
+                    class="font-medium text-blue-700 hover:underline"
+                  >
+                    {{ e.primer_nombre }} {{ e.segundo_nombre }}
+                    {{ e.primer_apellido }} {{ e.segundo_apellido }}
+                  </a>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="empresa">
+                <th mat-header-cell *matHeaderCellDef>Empresa</th>
+                <td mat-cell *matCellDef="let e">
+                  {{ e.empresa_nombre || '—' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="n_doc">
+                <th mat-header-cell *matHeaderCellDef>Documento</th>
+                <td mat-cell *matCellDef="let e">
+                  {{ e.tipo_documento }} {{ e.numero_documento }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="tel">
+                <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+                <td mat-cell *matCellDef="let e">{{ e.movil || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="cargo">
+                <th mat-header-cell *matHeaderCellDef>Cargo</th>
+                <td mat-cell *matCellDef="let e">{{ e.cargo_nombre || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="contrato">
+                <th mat-header-cell *matHeaderCellDef>Tipo de contrato</th>
+                <td mat-cell *matCellDef="let e">
+                  {{ tipoContrato(e.tipo_contrato) }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="salario">
+                <th mat-header-cell *matHeaderCellDef>Salario</th>
+                <td mat-cell *matCellDef="let e">
+                  {{ e.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef>Estado</th>
+                <td mat-cell *matCellDef="let e">
+                  <span
+                    class="rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
+                    [class.bg-green-500]="e.status === 'activo' || !e.status"
+                    [class.bg-red-500]="e.status === 'retirado'"
+                    [class.bg-amber-500]="e.status === 'suspendido'"
+                  >
+                    {{ e.status || 'activo' }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let e">
+                  <button
+                    matIconButton
+                    title="Ver detalle"
+                    [routerLink]="['/admin/empleados', e.id]"
+                  >
+                    <mat-icon svgIcon="eye" />
+                  </button>
+                  <button
+                    matIconButton
+                    title="Editar"
+                    (click)="openForm(e)"
+                  >
+                    <mat-icon svgIcon="pencil" />
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: columns"
+              ></tr>
+            </table>
+          </div>
+          @if (!empleados().length) {
+            <div class="p-10 text-center text-neutral-500">
+              No se encontraron empleados
+            </div>
+          }
+        </div>
+
+        <mat-paginator
+          [length]="total()"
+          [pageSize]="25"
+          (page)="onPage($event)"
+        />
+      }
+    </div>
+  

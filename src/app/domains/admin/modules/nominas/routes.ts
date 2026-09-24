@@ -6,6 +6,10 @@ const routes: Routes = [
     loadComponent: () => import('./features/nominas.page'),
   },
   {
+    path: 'conceptos',
+    loadComponent: () => import('./features/conceptos.page'),
+  },
+  {
     path: ':id',
     loadComponent: () => import('./features/nomina-detail.page'),
   },

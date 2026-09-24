@@ -1,0 +1,90 @@
+
+    <dialog-header
+      [title]="isEdit ? 'Editar registro de servicio' : 'Solicitar servicio'"
+    />
+
+    <mat-dialog-content class="mat-typography">
+      <form
+        [formGroup]="form"
+        class="grid grid-cols-2 gap-x-4 pt-2"
+      >
+        @if (isAdmin) {
+          <searchable-select
+            class="col-span-2"
+            label="Empresa"
+            [items]="data.empresas || []"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
+        }
+
+        <searchable-select
+          class="col-span-2"
+          label="Servicio"
+          [items]="categorias"
+          displayKey="label"
+          valueKey="nombre"
+          formControlName="nombre"
+        />
+
+        <mat-form-field appearance="outline">
+          <mat-label>Detalle / paquete</mat-label>
+          <input matInput formControlName="paquete" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cantidad</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="cantidad"
+          />
+        </mat-form-field>
+
+        @if (isAdmin) {
+          <mat-form-field appearance="outline">
+            <mat-label>Valor</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="valor"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>N° empleados</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="numero_empleados"
+            />
+          </mat-form-field>
+        }
+
+        <mat-form-field class="col-span-2" appearance="outline">
+          <mat-label>Observaciones</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            formControlName="obs"
+          ></textarea>
+        </mat-form-field>
+      </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button
+        matButton="text"
+        mat-dialog-close
+      >
+        Cancelar
+      </button>
+      <button
+        matButton="filled"
+        [disabled]="form.invalid || saving"
+        (click)="save()"
+      >
+        {{ isEdit ? 'Guardar' : 'Solicitar' }}
+      </button>
+    </mat-dialog-actions>
+  

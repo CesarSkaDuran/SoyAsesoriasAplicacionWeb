@@ -147,6 +147,12 @@ export interface Solicitud {
   servicio_id: number | null;
   descripcion: string | null;
   status: 'pendiente' | 'aprobada' | 'en_proceso' | 'completada' | 'rechazada' | 'cancelada';
+  fecha_entrega?: string | null;
+  observaciones?: string | null;
+  respuesta_nombre?: string | null;
+  respuesta_mime?: string | null;
+  respuesta_size?: number | null;
+  respuesta_at?: string | null;
   created_at: string;
   empresa_nombre?: string;
   persona_nombre?: string;

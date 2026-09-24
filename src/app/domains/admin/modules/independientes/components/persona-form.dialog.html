@@ -1,0 +1,94 @@
+
+    <dialog-header [title]="isEdit ? 'Editar independiente' : 'Nuevo independiente'" />
+
+    <mat-dialog-content class="mat-typography">
+      <form [formGroup]="form" class="flex flex-col gap-y-1 pt-2">
+
+        <!-- DATOS PERSONALES -->
+        <div class="mb-2 mt-1 border-b border-blue-200 pb-1">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-blue-700">Datos personales</h3>
+        </div>
+        <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Primer nombre *</mat-label>
+            <input matInput formControlName="primer_nombre" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Segundo nombre</mat-label>
+            <input matInput formControlName="segundo_nombre" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Primer apellido</mat-label>
+            <input matInput formControlName="primer_apellido" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Segundo apellido</mat-label>
+            <input matInput formControlName="segundo_apellido" />
+          </mat-form-field>
+        </div>
+
+        <!-- IDENTIFICACION -->
+        <div class="mb-2 mt-3 border-b border-blue-200 pb-1">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-blue-700">Identificación</h3>
+        </div>
+        <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo documento</mat-label>
+            <mat-select formControlName="tipo_documento">
+              <mat-option value="CC">CC</mat-option>
+              <mat-option value="CE">CE</mat-option>
+              <mat-option value="PAS">PAS</mat-option>
+              <mat-option value="NIT">NIT</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>N° documento</mat-label>
+            <input matInput formControlName="num_documento" />
+          </mat-form-field>
+        </div>
+
+        <!-- CONTACTO -->
+        <div class="mb-2 mt-3 border-b border-blue-200 pb-1">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-blue-700">Contacto y ubicación</h3>
+        </div>
+        <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <mat-form-field class="col-span-2" appearance="outline">
+            <mat-label>Dirección</mat-label>
+            <input matInput formControlName="direccion" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="telefono" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
+          <searchable-select
+            label="Departamento"
+            [items]="departamentos()"
+            displayKey="nombre"
+            formControlName="departamento_id"
+          />
+          <searchable-select
+            label="Ciudad"
+            [items]="ciudadesFiltradas()"
+            displayKey="nombre"
+            formControlName="ciudad_id"
+          />
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput rows="2" formControlName="observaciones"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton="text" mat-dialog-close>Cancelar</button>
+      <button matButton="filled" [disabled]="form.invalid || saving" (click)="save()">
+        {{ isEdit ? 'Guardar' : 'Crear' }}
+      </button>
+    </mat-dialog-actions>
+  

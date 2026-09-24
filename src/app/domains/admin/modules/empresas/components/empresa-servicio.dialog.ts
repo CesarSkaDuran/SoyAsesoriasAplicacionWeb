@@ -30,55 +30,7 @@ import { Empresa } from '@/app/models/user.model';
     DialogHeader,
     SearchableSelect,
   ],
-  template: `
-    <dialog-header title="Asignar servicio" />
-
-    <mat-dialog-content class="mat-typography">
-      <form
-        [formGroup]="form"
-        class="flex flex-col gap-y-1 pt-2"
-      >
-        <searchable-select
-          label="Servicio"
-          [items]="catalogo()"
-          displayKey="nombre"
-          formControlName="servicio_id"
-          (selectionChange)="onServicio($event)"
-        />
-
-        <mat-form-field appearance="outline">
-          <mat-label>Valor mensual</mat-label>
-          <input
-            matInput
-            type="number"
-            formControlName="valor"
-          />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de inicio</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker"
-            formControlName="fecha_inicio"
-          />
-          <mat-datepicker-toggle matIconSuffix [for]="picker" />
-          <mat-datepicker #picker />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button matButton="text" mat-dialog-close>Cancelar</button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving"
-        (click)="save()"
-      >
-        Asignar
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './empresa-servicio.dialog.html',
 })
 export class EmpresaServicioDialog {
   private fb = inject(FormBuilder);

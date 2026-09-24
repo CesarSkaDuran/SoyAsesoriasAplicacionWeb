@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
-import { Nomina, NominaDetalle } from '@/app/models/empleado.model';
+import { Nomina, NominaDetalle, PilaEstado } from '@/app/models/empleado.model';
 
 @Component({
   selector: 'nomina-detail-page',
@@ -19,264 +19,9 @@ import { Nomina, NominaDetalle } from '@/app/models/empleado.model';
     MatTableModule,
     MatProgressSpinner,
     CurrencyPipe,
+    DatePipe,
   ],
-  template: `
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      @if (loading()) {
-        <div class="flex justify-center p-10">
-          <mat-spinner />
-        </div>
-      } @else if (nomina(); as n) {
-        <div>
-          <a
-            routerLink="/admin/nominas"
-            class="mb-2 inline-flex items-center gap-x-1 text-sm text-neutral-500 hover:text-blue-600"
-          >
-            <mat-icon
-              svgIcon="arrow-left"
-              class="size-4"
-            />
-            Volver a nóminas
-          </a>
-          <div class="text-2xl font-bold">
-            Nómina #{{ n.id }}
-            @if (n.nombre_periodo) {
-              — {{ n.nombre_periodo }}
-            }
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="text-neutral-500">
-              {{ n.num_empleados }} empleados · {{ n.status }}
-            </div>
-            @if (isAdmin()) {
-              <div class="flex gap-2">
-                @if (n.status === 'liquidada') {
-                  <button
-                    matButton="outlined"
-                    [disabled]="generando()"
-                    (click)="generarPlanilla()"
-                  >
-                    <mat-icon svgIcon="file-check" />
-                    Generar planilla PILA
-                  </button>
-                }
-                <a
-                  [routerLink]="['/admin/nominas', n.id, 'liquidar']"
-                  matButton="filled"
-                >
-                  <mat-icon svgIcon="calculator" />
-                  {{ detalles().length ? 'Reliquidar' : 'Liquidar nómina' }}
-                </a>
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Totals -->
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Total nómina</div>
-            <div class="mt-1 text-xl font-bold">
-              {{ n.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-            </div>
-          </div>
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Seguridad social</div>
-            <div class="mt-1 text-xl font-bold">
-              {{
-                n.total_seguridad_social
-                  | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-              }}
-            </div>
-          </div>
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Horas extras</div>
-            <div class="mt-1 text-xl font-bold">
-              {{
-                n.total_horas_extras
-                  | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-              }}
-            </div>
-          </div>
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Deducciones</div>
-            <div class="mt-1 text-xl font-bold">
-              {{
-                n.total_deducciones
-                  | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-              }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Detail per employee -->
-        <div
-          class="overflow-auto rounded-2xl border bg-white dark:bg-neutral-900"
-        >
-          <table
-            mat-table
-            [dataSource]="detalles()"
-            class="w-full"
-          >
-            <ng-container matColumnDef="empleado">
-              <th mat-header-cell *matHeaderCellDef>Empleado</th>
-              <td mat-cell *matCellDef="let d">
-                <div class="font-medium">
-                  {{ d.primer_nombre }} {{ d.primer_apellido }}
-                </div>
-                <div class="text-xs text-neutral-500">
-                  {{ d.numero_documento }}
-                </div>
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="dias">
-              <th mat-header-cell *matHeaderCellDef>Días</th>
-              <td mat-cell *matCellDef="let d">{{ d.dias_laborados }}</td>
-            </ng-container>
-            <ng-container matColumnDef="salario">
-              <th mat-header-cell *matHeaderCellDef>Salario</th>
-              <td mat-cell *matCellDef="let d">
-                {{
-                  d.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-                }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="extras">
-              <th mat-header-cell *matHeaderCellDef>H. extras</th>
-              <td mat-cell *matCellDef="let d">
-                {{
-                  d.horas_extras | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-                }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="deducciones">
-              <th mat-header-cell *matHeaderCellDef>Deducciones</th>
-              <td mat-cell *matCellDef="let d">
-                {{
-                  d.deducciones | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-                }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="neto">
-              <th mat-header-cell *matHeaderCellDef>Neto</th>
-              <td
-                mat-cell
-                *matCellDef="let d"
-                class="font-semibold"
-              >
-                {{ d.neto | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-              </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="columns"></tr>
-            <tr
-              mat-row
-              *matRowDef="let row; columns: columns"
-            ></tr>
-          </table>
-          @if (!detalles().length) {
-            <div class="p-10 text-center text-neutral-500">
-              Esta nómina no tiene detalle por empleado
-            </div>
-          }
-        </div>
-
-        <!-- Planilla PILA (aportes seguridad social por empleado) -->
-        @if (detalles().length) {
-          <div>
-            <div class="mb-3 flex items-center justify-between">
-              <div class="text-lg font-bold">Planilla PILA — Aportes</div>
-              <button
-                matButton="outlined"
-                (click)="exportarCsv()"
-              >
-                <mat-icon svgIcon="download" />
-                Exportar CSV
-              </button>
-            </div>
-            <div
-              class="overflow-auto rounded-2xl border bg-white dark:bg-neutral-900"
-            >
-              <table
-                mat-table
-                [dataSource]="detalles()"
-                class="w-full"
-              >
-                <ng-container matColumnDef="p_empleado">
-                  <th mat-header-cell *matHeaderCellDef>Empleado</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.primer_nombre }} {{ d.primer_apellido }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_ibc">
-                  <th mat-header-cell *matHeaderCellDef>IBC</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.ibc | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_salud">
-                  <th mat-header-cell *matHeaderCellDef>Salud</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.salud | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_pension">
-                  <th mat-header-cell *matHeaderCellDef>Pensión</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.pension | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_arl">
-                  <th mat-header-cell *matHeaderCellDef>ARL</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.arl | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_ccf">
-                  <th mat-header-cell *matHeaderCellDef>CCF</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.ccf | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_sena">
-                  <th mat-header-cell *matHeaderCellDef>SENA</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.sena | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_icbf">
-                  <th mat-header-cell *matHeaderCellDef>ICBF</th>
-                  <td mat-cell *matCellDef="let d">
-                    {{ d.icbf | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="p_total">
-                  <th mat-header-cell *matHeaderCellDef>Total planilla</th>
-                  <td
-                    mat-cell
-                    *matCellDef="let d"
-                    class="font-semibold"
-                  >
-                    {{
-                      d.total_planilla
-                        | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-                    }}
-                  </td>
-                </ng-container>
-                <tr
-                  mat-header-row
-                  *matHeaderRowDef="columnsPlanilla"
-                ></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: columnsPlanilla"
-                ></tr>
-              </table>
-            </div>
-          </div>
-        }
-      }
-    </div>
-  `,
+  templateUrl: './nomina-detail.page.html',
 })
 export default class NominaDetailPage {
   private api = inject(ApiService);
@@ -287,26 +32,41 @@ export default class NominaDetailPage {
 
   protected nomina = signal<Nomina | null>(null);
   protected detalles = signal<NominaDetalle[]>([]);
+  protected pilaEstado = signal<PilaEstado | null>(null);
+
+  protected pilaResumen(): string[] {
+    const e = this.pilaEstado();
+    if (!e) return [];
+    const etiquetas: Record<string, string> = {
+      eps: 'EPS', arl: 'ARL', pensiones: 'Fondos de pensión',
+      cajas_compensacion: 'Cajas de compensación', departamentos: 'Departamentos (DANE)',
+      ciudades: 'Ciudades (DANE)', cargos: 'Cargos (CIUO)', sucursales: 'Sucursales',
+    };
+    return Object.entries(e.catalogos).map(
+      ([k, v]) => `${etiquetas[k] ?? k}: ${v.con_codigo}/${v.total} con código`
+    );
+  }
+
+  protected pilaCompleta(): boolean {
+    const e = this.pilaEstado();
+    if (!e) return false;
+    const catalogosOk = Object.values(e.catalogos).every((v) => v.total > 0 && v.con_codigo === v.total);
+    return catalogosOk
+      && !e.aportantes.sin_arl && !e.aportantes.sin_eps
+      && !e.cotizantes.sin_tipo_cotizante && !e.cotizantes.sin_tipo_trabajador;
+  }
+  protected printSlip = signal<NominaDetalle | null>(null);
   protected loading = signal(true);
   protected generando = signal(false);
   protected columns = [
-    'empleado',
-    'dias',
-    'salario',
-    'extras',
-    'deducciones',
-    'neto',
+    'empleado', 'dias', 'salario', 'auxilio', 'extras', 'incapacidad', 'otros',
+    'salud_empleado', 'pension_empleado', 'fsp', 'retencion', 'deducciones', 'neto',
+    'prima', 'cesantias', 'intereses', 'vacaciones', 'costo_empresa', 'desprendible',
   ];
   protected columnsPlanilla = [
-    'p_empleado',
-    'p_ibc',
-    'p_salud',
-    'p_pension',
-    'p_arl',
-    'p_ccf',
-    'p_sena',
-    'p_icbf',
-    'p_total',
+    'p_empleado', 'p_ibc', 'p_salud_trab', 'p_salud_emp',
+    'p_pension_trab', 'p_pension_emp', 'p_fsp', 'p_arl',
+    'p_ccf', 'p_sena', 'p_icbf', 'p_total',
   ];
 
   isAdmin = () => this.creds.isAdmin();
@@ -341,9 +101,17 @@ export default class NominaDetailPage {
       'Empleado',
       'Documento',
       'Dias',
+      'Dias incapacidad',
+      'Incapacidad empleador',
+      'Incapacidad tercero',
+      'Retencion calculada',
+      'Retencion ajuste',
       'IBC',
-      'Salud',
-      'Pension',
+      'Salud trabajador',
+      'Salud empleador',
+      'Pension trabajador',
+      'Pension empleador',
+      'FSP trabajador',
       'ARL',
       'CCF',
       'SENA',
@@ -354,9 +122,17 @@ export default class NominaDetailPage {
       `"${d.primer_nombre ?? ''} ${d.primer_apellido ?? ''}"`,
       d.numero_documento ?? '',
       d.dias_laborados ?? 0,
+      d.dias_incapacidad ?? 0,
+      d.valor_incapacidad_empleador ?? 0,
+      d.valor_incapacidad_tercero ?? 0,
+      d.retencion_calculada ?? 0,
+      d.retencion_ajuste ?? 0,
       d.ibc ?? 0,
+      d.salud_empleado ?? 0,
       d.salud ?? 0,
+      d.pension_empleado ?? 0,
       d.pension ?? 0,
+      d.fsp ?? 0,
       d.arl ?? 0,
       d.ccf ?? 0,
       d.sena ?? 0,
@@ -373,6 +149,55 @@ export default class NominaDetailPage {
     URL.revokeObjectURL(url);
   }
 
+  // Descarga el archivo plano (detalle o empleado×concepto) desde el snapshot;
+  // va como blob autenticado porque el endpoint exige el token
+  descargarPlano(conceptos: boolean) {
+    const n = this.nomina();
+    if (!n) return;
+    const a = document.createElement('a');
+    a.download = conceptos
+      ? `nomina-detalle-conceptos-${n.id}.txt`
+      : `nomina-detalle-${n.id}.txt`;
+    this.api.descargarPlanoNomina(n.id, conceptos).subscribe({
+      next: (blob) => {
+        const u = URL.createObjectURL(blob);
+        a.href = u;
+        a.click();
+        URL.revokeObjectURL(u);
+      },
+      error: () => this.snack.open('No se pudo generar el plano', 'Cerrar'),
+    });
+  }
+
+  totalNeto(): number {
+    return this.detalles().reduce((sum, d) => {
+      const storedNeto = Number(d.neto_pagar) || Number(d.neto) || 0;
+      return sum + storedNeto;
+    }, 0);
+  }
+
+  alertasDe(d: NominaDetalle): string[] {
+    if (!d.alertas) return [];
+    try { return typeof d.alertas === 'string' ? JSON.parse(d.alertas) : d.alertas; }
+    catch { return []; }
+  }
+
+  novedadesDe(d: NominaDetalle): { tipo?: string; dias?: number; descripcion?: string }[] {
+    if (!d.novedades_detalle) return [];
+    try { return typeof d.novedades_detalle === 'string' ? JSON.parse(d.novedades_detalle) : d.novedades_detalle as never[]; }
+    catch { return []; }
+  }
+
+  hayAlertas(): boolean {
+    return this.detalles().some((d) => this.alertasDe(d).length > 0);
+  }
+
+  imprimirDesprendible(detalle: NominaDetalle) {
+    this.printSlip.set(detalle);
+    window.addEventListener('afterprint', () => this.printSlip.set(null), { once: true });
+    requestAnimationFrame(() => window.print());
+  }
+
   constructor() {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.api.nomina(id).subscribe({
@@ -380,6 +205,11 @@ export default class NominaDetailPage {
         this.nomina.set(res.nomina);
         this.detalles.set(res.detalles);
         this.loading.set(false);
+        if (this.isAdmin() && res.nomina?.empresa_id) {
+          this.api.pilaEstado(res.nomina.empresa_id).subscribe({
+            next: (e) => this.pilaEstado.set(e),
+          });
+        }
       },
       error: () => this.loading.set(false),
     });

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,71 +25,14 @@ const MESES = [
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     DialogHeader,
     SearchableSelect,
   ],
-  template: `
-    <dialog-header title="Nueva nómina" />
-
-    <mat-dialog-content class="mat-typography">
-      <form
-        [formGroup]="form"
-        class="flex flex-col gap-y-1 pt-2"
-      >
-        @if (isAdmin()) {
-          <searchable-select
-            label="Empresa"
-            [items]="empresas()"
-            displayKey="razon_social"
-            formControlName="empresa_id"
-          />
-        }
-
-        <div class="grid grid-cols-2 gap-x-4">
-          <mat-form-field appearance="outline">
-            <mat-label>Mes</mat-label>
-            <mat-select [formControl]="mesControl">
-              @for (m of meses; track m; let i = $index) {
-                <mat-option [value]="i">{{ m }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Quincena</mat-label>
-            <mat-select [formControl]="quincenaControl">
-              <mat-option [value]="1">Primera quincena</mat-option>
-              <mat-option [value]="2">Segunda quincena</mat-option>
-              <mat-option [value]="0">Mes completo</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Nombre del periodo</mat-label>
-          <input
-            matInput
-            formControlName="nombre_periodo"
-            placeholder="Ej: Enero 2026 - Primera quincena"
-          />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button matButton="text" mat-dialog-close>Cancelar</button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving"
-        (click)="save()"
-      >
-        Crear y liquidar
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './nomina-form.dialog.html',
 })
 export class NominaFormDialog {
   private fb = inject(FormBuilder);
@@ -109,6 +53,7 @@ export class NominaFormDialog {
   form = this.fb.group({
     empresa_id: [null as number | null],
     nombre_periodo: ['', Validators.required],
+    aplica_exoneracion: [false],
   });
 
   constructor() {
@@ -132,10 +77,23 @@ export class NominaFormDialog {
       ? this.form.value.empresa_id
       : this.creds.user?.empresa?.id;
 
+    const label = this.form.value.nombre_periodo || '';
+    const vigencia = Number(label.match(/\b(20\d{2})\b/)?.[1] || new Date().getFullYear());
+    const diasPeriodo = this.quincenaControl.value === 0 ? 30 : 15;
+    const mes = this.mesControl.value;
+    const ultimoDia = new Date(Date.UTC(vigencia, mes + 1, 0)).getUTCDate();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const diaInicio = this.quincenaControl.value === 2 ? 16 : 1;
+    const diaFin = this.quincenaControl.value === 1 ? 15 : ultimoDia;
     this.api
       .createNomina({
         empresa_id: empresaId!,
-        nombre_periodo: this.form.value.nombre_periodo!,
+        nombre_periodo: label,
+        vigencia,
+        dias_periodo: diasPeriodo,
+        aplica_exoneracion: this.isAdmin() && this.form.value.aplica_exoneracion === true,
+        fecha_inicio: `${vigencia}-${pad(mes + 1)}-${pad(diaInicio)}`,
+        fecha_fin: `${vigencia}-${pad(mes + 1)}-${pad(diaFin)}`,
       })
       .subscribe({
         next: (res) => {

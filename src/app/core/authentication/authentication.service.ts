@@ -10,6 +10,7 @@ const routes = {
   login: () => `/auth/login`,
   refresh: () => `/auth/refresh`,
   logout: () => `/auth/logout`,
+  changePassword: () => `/auth/change-password`,
   me: () => `/auth/me`,
 };
 
@@ -71,6 +72,20 @@ export class AuthenticationService {
         })),
         tap((credentials) => this.credentialsService.setCredentials(credentials))
       );
+  }
+
+  changePassword(context: {
+    current_password: string;
+    new_password: string;
+  }): Observable<Credentials> {
+    return this.httpClient.put<LoginResponse>(routes.changePassword(), context).pipe(
+      map((response) => ({
+        access_token: response.token,
+        refresh_token: response.refresh_token,
+        user: response.user,
+      })),
+      tap((credentials) => this.credentialsService.setCredentials(credentials))
+    );
   }
 
   /**

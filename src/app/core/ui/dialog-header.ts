@@ -9,24 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'dialog-header',
   imports: [MatIcon, MatDialogClose],
-  template: `
-    <div
-      class="flex min-h-16 shrink-0 items-center justify-between bg-gradient-to-r from-brand-navy to-brand-medium px-6 py-4 text-white"
-    >
-      <div class="flex min-w-0 items-center gap-3">
-        <span class="h-7 w-1 shrink-0 rounded-full bg-white/70"></span>
-        <div class="truncate text-lg font-semibold tracking-tight">{{ title() }}</div>
-      </div>
-      <button
-        type="button"
-        class="ml-4 flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/15"
-        mat-dialog-close
-        aria-label="Cerrar"
-      >
-        <mat-icon svgIcon="x" />
-      </button>
-    </div>
-  `,
+  templateUrl: './dialog-header.html',
 })
 export class DialogHeader {
   title = input.required<string>();

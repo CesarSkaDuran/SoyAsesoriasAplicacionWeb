@@ -1,0 +1,90 @@
+<div class="flex flex-col gap-y-6 p-6 sm:p-10">
+  <page-header
+    title="Ventas"
+    subtitle="Embudos comerciales y seguimiento de leads"
+  />
+
+  @if (loading()) {
+    <div class="flex justify-center py-20">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else {
+    <!-- Tarjetas de embudos -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      @for (e of embudos(); track e.id) {
+        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <!-- Cabecera del embudo -->
+          <div class="flex items-center justify-between gap-4 border-b border-neutral-100 p-5 dark:border-neutral-800">
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-11 w-11 items-center justify-center rounded-xl text-white"
+                [class]="e.tipo === 'cliente' ? 'bg-sky-500' : 'bg-violet-500'"
+              >
+                <mat-icon [svgIcon]="e.tipo === 'cliente' ? 'kanban' : 'mail'" />
+              </div>
+              <div>
+                <div class="font-semibold">{{ e.nombre }}</div>
+                <div class="text-xs text-neutral-500">{{ e.descripcion }}</div>
+              </div>
+            </div>
+            <button
+              matButton="filled"
+              [routerLink]="['/admin/ventas/embudo', e.slug]"
+            >
+              <mat-icon svgIcon="kanban" />
+              Abrir tablero
+            </button>
+          </div>
+
+          <!-- KPIs -->
+          <div class="grid grid-cols-4 divide-x divide-neutral-100 text-center dark:divide-neutral-800">
+            <div class="py-4">
+              <div class="text-2xl font-bold">{{ e.total }}</div>
+              <div class="text-xs text-neutral-500">Leads</div>
+            </div>
+            <div class="py-4">
+              <div class="text-2xl font-bold text-sky-600">{{ e.del_mes }}</div>
+              <div class="text-xs text-neutral-500">Este mes</div>
+            </div>
+            <div class="py-4">
+              <div class="text-2xl font-bold text-emerald-600">{{ e.ganados }}</div>
+              <div class="text-xs text-neutral-500">Ganados</div>
+            </div>
+            <div class="py-4">
+              <div class="text-2xl font-bold text-red-500">{{ e.perdidos }}</div>
+              <div class="text-xs text-neutral-500">Perdidos</div>
+            </div>
+          </div>
+
+          <!-- Gráfica de etapas -->
+          <div class="px-5 pb-5">
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Leads por etapa
+            </div>
+            @if (e.total) {
+              <apx-chart
+                [series]="[{ name: 'Leads', data: e.etapas.map(et => et.total ?? 0) }]"
+                [chart]="{ type: 'bar', height: 210, toolbar: { show: false }, fontFamily: 'inherit' }"
+                [xaxis]="{ categories: e.etapas.map(et => et.nombre) }"
+                [plotOptions]="{ bar: { horizontal: true, distributed: true, borderRadius: 4, barHeight: '62%' } }"
+                [colors]="etapaHex"
+                [dataLabels]="{ enabled: true }"
+                [legend]="{ show: false }"
+                [grid]="{ borderColor: '#e5e6e9', strokeDashArray: 4 }"
+                [tooltip]="{ y: { formatter: fmtInt } }"
+              />
+            } @else {
+              <p class="py-8 text-center text-sm text-neutral-400">Sin leads aún</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (!embudos().length) {
+      <div class="rounded-xl border border-dashed border-neutral-300 py-16 text-center text-neutral-400">
+        No hay embudos configurados
+      </div>
+    }
+  }
+</div>

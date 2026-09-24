@@ -1,0 +1,286 @@
+
+    <dialog-header
+      [title]="data.empleado.primer_nombre + ' ' + (data.empleado.primer_apellido || '')"
+    />
+
+    <mat-dialog-content class="mat-typography">
+      <div class="mb-3 text-sm text-neutral-500">
+        Salario base:
+        <b>{{ data.empleado.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</b>
+      </div>
+
+      @if (novedades.length) {
+        <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div class="mb-1 font-semibold">Novedades de ausentismo en el período</div>
+          @for (n of novedades; track n.id) {
+            <div>
+              {{ novedadLabel(n.tipo) }}: {{ n.fecha_inicio | date: 'dd/MM/yyyy' }}
+              → {{ n.fecha_fin ? (n.fecha_fin | date: 'dd/MM/yyyy') : 'abierta' }}
+              · {{ n.tipo === 'vacaciones' ? 'días remunerados a tarifa de vacaciones' : 'se descuenta automáticamente de los días laborados' }}
+            </div>
+          }
+        </div>
+      }
+
+      @if (requiereBaseVacaciones) {
+        <div class="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+          <div class="mb-2 font-semibold">Vacaciones con salario variable (CST art. 192)</div>
+          <div class="grid grid-cols-2 gap-x-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Base mensual de vacaciones ($)</mat-label>
+              <input matInput type="number" formControlName="vacaciones_base" />
+              <mat-hint>Si hay histórico se usa el promedio de 12 meses; si no, esta base es obligatoria</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Motivo (obligatorio si es manual)</mat-label>
+              <input matInput formControlName="vacaciones_motivo"
+                placeholder="Ej: sin histórico en el sistema" />
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="form">
+        <div class="grid grid-cols-2 gap-x-4">
+          <mat-form-field appearance="outline">
+            <mat-label>Días del período</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="30"
+              formControlName="dias_laborados"
+            />
+            <mat-hint>Las incapacidades se descuentan solas</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Otros ingresos ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="otros_ingresos"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="mb-2 mt-1 flex items-center justify-between">
+          <div class="text-sm font-semibold">Horas extras y recargos</div>
+          <button matButton="outlined" type="button" (click)="addHora()">
+            <mat-icon svgIcon="plus" />
+            Agregar
+          </button>
+        </div>
+        <div formArrayName="horas">
+          @for (row of horas.controls; track row; let i = $index) {
+            <div [formGroupName]="i" class="mb-2 grid grid-cols-[1fr_90px_120px_36px] items-center gap-2">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Tipo</mat-label>
+                <mat-select formControlName="tipo">
+                  @for (t of horaTipos; track t.value) {
+                    <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Horas</mat-label>
+                <input matInput type="number" min="0" step="0.5" formControlName="cantidad" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Fecha</mat-label>
+                <input matInput type="date" formControlName="fecha" />
+              </mat-form-field>
+              <button matIconButton type="button" (click)="removeHora(i)" title="Quitar">
+                <mat-icon svgIcon="trash-2" />
+              </button>
+              <div class="col-span-4 -mt-1 text-xs text-neutral-500">
+                Valor estimado: {{ valorHoraRow(i) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                · sin fecha usa el inicio del período
+              </div>
+            </div>
+          }
+          @if (horas.length) {
+            <div class="mb-2 text-sm text-neutral-600">
+              Total por cantidad y tipo:
+              <b>{{ totalHorasTipadas() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</b>
+            </div>
+          }
+        </div>
+
+        <div class="mb-2 mt-1 flex items-center justify-between">
+          <div class="text-sm font-semibold">Pagos por concepto (catálogo)</div>
+          <button matButton="outlined" type="button" (click)="addIngreso()">
+            <mat-icon svgIcon="plus" />
+            Agregar
+          </button>
+        </div>
+        <div formArrayName="ingresos">
+          @for (row of ingresos.controls; track row; let i = $index) {
+            <div [formGroupName]="i" class="mb-2 grid grid-cols-[1fr_120px_36px] items-center gap-2">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Concepto</mat-label>
+                <mat-select formControlName="concepto_id">
+                  @for (c of conceptos; track c.id) {
+                    <mat-option [value]="c.id" [disabled]="conceptoBloqueado(c)">
+                      {{ c.nombre }}{{ conceptoBloqueado(c) ? ' (pendiente de verificación)' : '' }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Valor ($)</mat-label>
+                <input matInput type="number" min="0" formControlName="valor" />
+              </mat-form-field>
+              <button matIconButton type="button" (click)="removeIngreso(i)" title="Quitar">
+                <mat-icon svgIcon="trash-2" />
+              </button>
+              @if (conceptoDe(row.value.concepto_id); as c) {
+                <div class="col-span-3 -mt-1 text-xs text-neutral-500">
+                  {{ c.constitutivo_salario ? 'Constitutivo de salario' : 'No constitutivo de salario' }}
+                  · @if (c.tratamiento_fiscal === 'incr') {
+                    INCR{{ c.limite_incr_uvt ? ' hasta ' + c.limite_incr_uvt + ' UVT/mes' : '' }}{{ c.condicion_salario_uvt ? ' si salario ≤' + c.condicion_salario_uvt + ' UVT' : '' }}; excedente gravable
+                  } @else {
+                    Gravable para retención
+                  }
+                  @if (c.fuente_normativa) {
+                    · {{ c.fuente_normativa }}
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 gap-x-4">
+          <mat-form-field appearance="outline">
+            <mat-label>Otros valores manuales extras/recargos ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="horas_extras"
+            />
+            <mat-hint>Solo para casos atípicos</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Deducciones ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="deducciones"
+            />
+            <mat-hint>Genéricas sin tipificar; embargos/libranzas van abajo</mat-hint>
+          </mat-form-field>
+
+          <div class="mt-2">
+            <div class="mb-1 flex items-center justify-between">
+              <span class="text-sm font-medium">Descuentos tipificados</span>
+              <button matButton type="button" (click)="addDescuento()">
+                <mat-icon svgIcon="plus" /> Agregar
+              </button>
+            </div>
+            @for (d of descuentos.controls; track $index) {
+              <div [formGroup]="$any(d)" class="mb-2 grid grid-cols-12 items-start gap-2">
+                <mat-form-field appearance="outline" class="col-span-4">
+                  <mat-label>Tipo</mat-label>
+                  <mat-select formControlName="tipo">
+                    @for (t of descuentoTipos; track t.value) {
+                      <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-hint>{{ descuentoHint(d.value.tipo) }}</mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-span-5">
+                  <mat-label>Concepto</mat-label>
+                  <input matInput formControlName="concepto" placeholder="Ej: Juzgado, entidad…" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-span-2">
+                  <mat-label>Valor</mat-label>
+                  <input matInput type="number" formControlName="valor" />
+                </mat-form-field>
+                <button matIconButton type="button" class="col-span-1 mt-1"
+                  (click)="removeDescuento($index)">
+                  <mat-icon svgIcon="trash-2" />
+                </button>
+              </div>
+            }
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Pago no salarial sin concepto ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="ingreso_noc"
+            />
+            <mat-hint>Solo atípicos; lo recurrente va por catálogo</mat-hint>
+          </mat-form-field>
+
+          <div>
+            <mat-checkbox formControlName="ingreso_noc_incr">
+              También es INCR para retención
+            </mat-checkbox>
+            @if (incrRequiereMotivo) {
+              <mat-form-field appearance="outline" class="mt-1 w-full">
+                <mat-label>Motivo del INCR manual (obligatorio)</mat-label>
+                <input
+                  matInput
+                  formControlName="ingreso_noc_incr_motivo"
+                  placeholder="Ej: viáticos sin tipificar, pacto no salarial"
+                />
+              </mat-form-field>
+            }
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ajuste manual de retención ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="retencion_ajuste"
+            />
+            <mat-hint>
+              Se suma a la retención calculada (negativo la reduce).
+              @if (data.retencionEstimada != null) {
+                Estimada: {{ data.retencionEstimada | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Motivo del ajuste</mat-label>
+            <input
+              matInput
+              formControlName="retencion_ajuste_motivo"
+              placeholder="Ej: procedimiento 2, certificado ICE"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Indemnización ($)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="indemnizacion"
+            />
+          </mat-form-field>
+        </div>
+      </form>
+
+      @if (errorMsg()) {
+        <div class="mt-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          {{ errorMsg() }}
+        </div>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton="text" mat-dialog-close>Cancelar</button>
+      <button
+        matButton="filled"
+        (click)="apply()"
+      >
+        Aplicar
+      </button>
+    </mat-dialog-actions>
+  

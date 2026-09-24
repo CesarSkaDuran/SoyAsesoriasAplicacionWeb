@@ -1,0 +1,51 @@
+
+    <div
+      class="@container mx-auto flex w-full max-w-5xl flex-auto flex-col gap-4 p-6 sm:gap-6 lg:px-8 lg:pt-8 lg:pb-10"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between gap-x-3">
+        <div class="text-xl font-semibold tracking-tighter sm:text-2xl">
+          Settings
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <nav
+        class="mb-2 hidden sm:flex"
+        mat-tab-nav-bar
+        [mat-stretch-tabs]="false"
+        [tabPanel]="tabPanel"
+        ngSkipHydration
+      >
+        @for (link of links; track link.id) {
+          <a
+            mat-tab-link
+            routerLinkActive
+            [routerLink]="link.route"
+            [active]="rla.isActive"
+            #rla="routerLinkActive"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+
+      <!-- Mobile navigation -->
+      <mat-form-field class="mb-2 w-full sm:hidden">
+        <mat-select
+          [value]="router.url"
+          (selectionChange)="router.navigateByUrl($event.value)"
+          #select
+        >
+          @for (link of links; track link.id) {
+            <mat-option [value]="link.route">{{ link.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Tab panel -->
+      <mat-tab-nav-panel #tabPanel>
+        <router-outlet />
+      </mat-tab-nav-panel>
+    </div>
+  

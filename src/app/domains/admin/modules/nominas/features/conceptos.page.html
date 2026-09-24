@@ -1,0 +1,117 @@
+<page-header
+  title="Catálogo de conceptos de nómina"
+  subtitle="Tipifica salarialidad y tratamiento fiscal de cada concepto. Los conceptos pendientes de verificación no se pueden usar en liquidaciones."
+>
+  <a matButton="outlined" [routerLink]="['/admin/nominas']">
+    <mat-icon svgIcon="arrow-left" />
+    Volver a nóminas
+  </a>
+  <button matButton="filled" (click)="openForm()">
+    <mat-icon svgIcon="plus" />
+    Nuevo concepto
+  </button>
+</page-header>
+
+<div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+  <mat-form-field>
+    <mat-label>Buscar</mat-label>
+    <input matInput [formControl]="busqueda" placeholder="Nombre…" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtroActivo">
+      <mat-option value="1">Activos</mat-option>
+      <mat-option value="0">Inactivos</mat-option>
+      <mat-option value="all">Todos</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Tratamiento fiscal</mat-label>
+    <mat-select [formControl]="filtroTratamiento">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="gravable">Gravable</mat-option>
+      <mat-option value="incr">INCR</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Constitutivo</mat-label>
+    <mat-select [formControl]="filtroSalarial">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="1">Constitutivo de salario</mat-option>
+      <mat-option value="0">No salarial</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Verificación</mat-label>
+    <mat-select [formControl]="filtroPendiente">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="1">Pendiente de verificar</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading()) {
+  <div class="flex justify-center p-8"><mat-spinner /></div>
+} @else {
+  <div class="overflow-auto rounded-2xl border bg-white dark:bg-neutral-900">
+    <table mat-table [dataSource]="conceptos()" class="w-full">
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Concepto</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.nombre }}
+          @if (pendiente(c)) {
+            <span class="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+              Pendiente de verificación
+            </span>
+          }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="salario">
+        <th mat-header-cell *matHeaderCellDef>Salario</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.constitutivo_salario ? 'Constitutivo' : 'No salarial' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tratamiento">
+        <th mat-header-cell *matHeaderCellDef>Tratamiento</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.tratamiento_fiscal === 'incr' ? 'INCR' : 'Gravable' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tope">
+        <th mat-header-cell *matHeaderCellDef>Tope INCR</th>
+        <td mat-cell *matCellDef="let c">
+          @if (c.limite_incr_uvt) {
+            {{ c.limite_incr_uvt }} UVT/mes
+            @if (c.condicion_salario_uvt) { · si salario ≤ {{ c.condicion_salario_uvt }} UVT }
+          } @else { — }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="fuente">
+        <th mat-header-cell *matHeaderCellDef>Fuente</th>
+        <td mat-cell *matCellDef="let c" class="text-xs text-neutral-500">
+          {{ c.fuente_normativa || '—' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let c">{{ c.activo ? 'Activo' : 'Inactivo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let c">
+          @if (pendiente(c)) {
+            <span class="text-xs text-neutral-400">Bloqueado hasta verificar</span>
+          } @else {
+            <button matButton (click)="openForm(c)">Editar</button>
+          }
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+    @if (!conceptos().length) {
+      <div class="p-6 text-center text-sm text-neutral-500">Sin conceptos con estos filtros.</div>
+    }
+  </div>
+}

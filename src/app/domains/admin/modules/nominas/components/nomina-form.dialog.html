@@ -1,0 +1,68 @@
+
+    <dialog-header title="Nueva nómina" />
+
+    <mat-dialog-content class="mat-typography">
+      <form
+        [formGroup]="form"
+        class="flex flex-col gap-y-1 pt-2"
+      >
+        @if (isAdmin()) {
+          <searchable-select
+            label="Empresa"
+            [items]="empresas()"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
+        }
+
+        <div class="grid grid-cols-2 gap-x-4">
+          <mat-form-field appearance="outline">
+            <mat-label>Mes</mat-label>
+            <mat-select [formControl]="mesControl">
+              @for (m of meses; track m; let i = $index) {
+                <mat-option [value]="i">{{ m }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Quincena</mat-label>
+            <mat-select [formControl]="quincenaControl">
+              <mat-option [value]="1">Primera quincena</mat-option>
+              <mat-option [value]="2">Segunda quincena</mat-option>
+              <mat-option [value]="0">Mes completo</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre del periodo</mat-label>
+          <input
+            matInput
+            formControlName="nombre_periodo"
+            placeholder="Ej: Enero 2026 - Primera quincena"
+          />
+        </mat-form-field>
+
+        @if (isAdmin()) {
+          <mat-checkbox formControlName="aplica_exoneracion">
+            La empresa cumple requisitos de exoneración del art. 114-1 E.T.
+          </mat-checkbox>
+          <p class="-mt-2 text-xs text-neutral-500">
+            Marca solo si la empresa tiene derecho. Se aplica salud empleador, SENA e ICBF únicamente a quienes devenguen menos de 10 SMMLV.
+          </p>
+        }
+      </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton="text" mat-dialog-close>Cancelar</button>
+      <button
+        matButton="filled"
+        [disabled]="form.invalid || saving"
+        (click)="save()"
+      >
+        Crear y liquidar
+      </button>
+    </mat-dialog-actions>
+  

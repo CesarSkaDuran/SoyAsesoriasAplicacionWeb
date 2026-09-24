@@ -1,0 +1,110 @@
+<dialog-header [title]="'Etapas — ' + (data.embudo?.nombre || '')" />
+
+<mat-dialog-content class="mat-typography">
+  <!-- Lista de etapas -->
+  <div class="mb-4 space-y-2 pt-2">
+    @for (e of etapas(); track e.id; let i = $index) {
+      <div class="flex items-center gap-3 rounded-lg border border-neutral-200 px-3 py-2.5 dark:border-neutral-700">
+        <span class="w-6 text-center text-sm font-bold text-neutral-400">{{ i + 1 }}</span>
+        <div class="flex-1">
+          <div class="text-sm font-medium">
+            {{ e.nombre }}
+            @if (e.es_cierre && !e.es_perdido) {
+              <span class="ml-1 rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">cierre</span>
+            }
+            @if (e.es_perdido) {
+              <span class="ml-1 rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-700 dark:bg-red-950 dark:text-red-400">perdido</span>
+            }
+          </div>
+          <div class="text-xs text-neutral-500">{{ e.descripcion }}</div>
+        </div>
+        <span class="rounded-full bg-neutral-100 px-2 py-0.5 text-xs dark:bg-neutral-800">
+          {{ e.total ?? 0 }} leads
+        </span>
+        @if (editingId() === e.id) {
+          <button matIconButton (click)="editingId.set(null)">
+            <mat-icon svgIcon="x" />
+          </button>
+        } @else {
+          <button matIconButton (click)="startEdit(e)">
+            <mat-icon svgIcon="pencil" />
+          </button>
+          <button
+            matIconButton
+            class="!text-red-500"
+            (click)="remove(e)"
+          >
+            <mat-icon svgIcon="trash" />
+          </button>
+        }
+      </div>
+
+      @if (editingId() === e.id) {
+        <form
+          [formGroup]="editForm"
+          class="grid grid-cols-2 gap-x-3 rounded-lg bg-neutral-50 p-3 dark:bg-neutral-800/50"
+        >
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Descripción</mat-label>
+            <input matInput formControlName="descripcion" />
+          </mat-form-field>
+          <div class="col-span-2 flex items-center justify-between">
+            <div class="flex gap-4">
+              <mat-checkbox formControlName="es_cierre">Es cierre (ganado)</mat-checkbox>
+              <mat-checkbox formControlName="es_perdido">Es perdido</mat-checkbox>
+            </div>
+            <button
+              matButton="tonal"
+              [disabled]="editForm.invalid"
+              (click)="saveEdit(e)"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      }
+    }
+  </div>
+
+  <!-- Nueva etapa -->
+  <div class="rounded-lg border border-dashed border-neutral-300 p-3 dark:border-neutral-700">
+    <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+      Nueva etapa
+    </div>
+    <form
+      [formGroup]="createForm"
+      class="grid grid-cols-2 gap-x-3"
+    >
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Nombre *</mat-label>
+        <input matInput formControlName="nombre" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="descripcion" />
+      </mat-form-field>
+      <div class="col-span-2 flex items-center justify-between">
+        <div class="flex gap-4">
+          <mat-checkbox formControlName="es_cierre">Es cierre</mat-checkbox>
+          <mat-checkbox formControlName="es_perdido">Es perdido</mat-checkbox>
+        </div>
+        <button
+          matButton="filled"
+          [disabled]="createForm.invalid || saving"
+          (click)="create()"
+        >
+          <mat-icon svgIcon="plus" />
+          Agregar
+        </button>
+      </div>
+    </form>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="filled" [mat-dialog-close]="changed()">Cerrar</button>
+</mat-dialog-actions>

@@ -1,0 +1,57 @@
+
+    <dialog-header [title]="'Solicitud #' + data.id" />
+    <mat-dialog-content>
+      <dl class="grid grid-cols-1 gap-y-3 pt-2 text-sm sm:grid-cols-2">
+        <div>
+          <dt class="text-xs text-neutral-400">Cliente</dt>
+          <dd class="font-medium">{{ data.cliente_nombre || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-neutral-400">Servicio</dt>
+          <dd class="font-medium">{{ data.servicio_nombre || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-neutral-400">Fecha de solicitud</dt>
+          <dd class="font-medium">{{ data.created_at | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-neutral-400">Fecha de entrega</dt>
+          <dd class="font-medium">
+            {{ data.fecha_entrega ? (data.fecha_entrega | date: 'dd/MM/yyyy') : '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-neutral-400">Estado</dt>
+          <dd class="font-medium">{{ statusLabel(data.status) }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-neutral-400">Teléfono</dt>
+          <dd class="font-medium">{{ data.telefono || '—' }}</dd>
+        </div>
+        <div class="sm:col-span-2">
+          <dt class="text-xs text-neutral-400">Descripción</dt>
+          <dd class="font-medium whitespace-pre-line">{{ data.descripcion || '—' }}</dd>
+        </div>
+        <div class="sm:col-span-2">
+          <dt class="text-xs text-neutral-400">Observaciones</dt>
+          <dd class="font-medium whitespace-pre-line">{{ data.observaciones || '—' }}</dd>
+        </div>
+        @if (data.respuesta_nombre) {
+          <div class="sm:col-span-2">
+            <dt class="text-xs text-neutral-400">Respuesta o documento</dt>
+            <dd>
+              <button
+                class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                (click)="downloadRespuesta()"
+              >
+                <mat-icon svgIcon="file-text" class="!h-4 !w-4" />
+                {{ data.respuesta_nombre }}
+              </button>
+            </dd>
+          </div>
+        }
+      </dl>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button matButton mat-dialog-close>Cerrar</button>
+    </mat-dialog-actions>

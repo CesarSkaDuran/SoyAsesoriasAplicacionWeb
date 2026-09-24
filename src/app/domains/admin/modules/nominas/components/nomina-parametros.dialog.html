@@ -1,0 +1,60 @@
+
+    <dialog-header [title]="'Parámetros de nómina ' + vigencia" />
+    <mat-dialog-content class="max-h-[75vh]">
+      @if (loading()) {
+        <div class="py-10 text-center text-neutral-500">Cargando parámetros...</div>
+      } @else {
+        <form [formGroup]="form" class="flex flex-col gap-5 py-2">
+          <div class="rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900">
+            Los valores se guardan por vigencia. Nóminas ya liquidadas conservan una copia de sus parámetros.
+            Revisa y actualiza los valores al iniciar cada año.
+          </div>
+          @for (group of groups; track group.title) {
+            <section>
+              <h3 class="mb-3 font-semibold">{{ group.title }}</h3>
+              <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                @for (field of group.fields; track field[0]) {
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ field[1] }}</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      min="0"
+                      step="any"
+                      [formControlName]="field[0]"
+                    />
+                  </mat-form-field>
+                }
+              </div>
+            </section>
+          }
+          <section>
+            <h3 class="mb-3 font-semibold">Tablas y cortes con vigencia (JSON)</h3>
+            @for (field of jsonGroups; track field[0]) {
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ field[1] }}</mat-label>
+                <textarea
+                  matInput
+                  rows="5"
+                  class="font-mono text-xs"
+                  [formControl]="jsonControls[field[0]]"
+                ></textarea>
+              </mat-form-field>
+            }
+            @if (jsonError()) {
+              <p class="text-sm text-red-600">{{ jsonError() }}</p>
+            }
+          </section>
+          <mat-form-field appearance="outline">
+            <mat-label>Fuente normativa / notas de vigencia</mat-label>
+            <textarea matInput rows="3" [formControl]="sourceControl"></textarea>
+          </mat-form-field>
+        </form>
+      }
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button matButton mat-dialog-close>Cancelar</button>
+      <button matButton="filled" [disabled]="loading() || saving()" (click)="save()">
+        {{ saving() ? 'Guardando…' : 'Guardar parámetros' }}
+      </button>
+    </mat-dialog-actions>

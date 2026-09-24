@@ -1,0 +1,142 @@
+
+    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
+      <page-header
+        title="Planillas"
+        [subtitle]="total() + ' planillas'"
+      >
+        @if (isAdmin()) {
+          <searchable-select
+            class="w-64"
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
+        }
+        <mat-form-field
+          class="w-48"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Periodo</mat-label>
+          <input
+            matInput
+            [formControl]="periodoControl"
+            placeholder="ej. 2023-07"
+          />
+        </mat-form-field>
+        @if (isAdmin()) {
+          <button style="margin-top:27px"
+            matButton="filled"
+            (click)="openCreate()"
+          >
+            <mat-icon svgIcon="plus" />
+            Nueva planilla
+          </button>
+        }
+      </page-header>
+
+      @if (loading()) {
+        <div class="flex justify-center py-20">
+          <mat-spinner diameter="48" />
+        </div>
+      } @else {
+        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+          <div class="overflow-x-auto">
+          <table
+            mat-table
+            [dataSource]="planillas()"
+            class="w-full"
+          >
+            <ng-container matColumnDef="periodo">
+              <th mat-header-cell *matHeaderCellDef>Periodo</th>
+              <td mat-cell *matCellDef="let p">
+                <div class="font-medium">
+                  {{ p.nombre_periodo || p.periodo || '—' }}
+                </div>
+                <div class="text-xs text-neutral-500">
+                  {{ p.empresa_nombre }} · Planilla {{ p.numero_planilla || '#' + p.id }}
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="empleados">
+              <th mat-header-cell *matHeaderCellDef>N. empleados</th>
+              <td mat-cell *matCellDef="let p">{{ p.num_empleados ?? '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="salarios">
+              <th mat-header-cell *matHeaderCellDef>Salarios</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.salario_dias | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="pago_ss">
+              <th mat-header-cell *matHeaderCellDef>Total Planilla</th>
+              <td mat-cell *matCellDef="let p" class="font-semibold">
+                {{ p.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="otros">
+              <th mat-header-cell *matHeaderCellDef>Otros Pagos</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.total_otros_pagos | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="fecha_pago">
+              <th mat-header-cell *matHeaderCellDef>Fecha pago</th>
+              <td mat-cell *matCellDef="let p">{{ p.fecha_pago | date: 'dd/MM/yyyy' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let p">
+                <span
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
+                  [ngClass]="statusColor(p.status)"
+                >
+                  {{ statusLabel(p.status) }}
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let p">
+                @if (isAdmin()) {
+                  <button
+                    matIconButton
+                    [matMenuTriggerFor]="menu"
+                  >
+                    <mat-icon svgIcon="ellipsis-vertical" />
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="setStatus(p, 'pagada')">Marcar pagada</button>
+                    <button mat-menu-item (click)="setStatus(p, 'verificada')">Verificada</button>
+                    <button mat-menu-item (click)="openEdit(p)">Editar</button>
+                  </mat-menu>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columns()"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: columns()"
+            ></tr>
+          </table>
+          </div>
+
+          @if (!planillas().length) {
+            <div class="py-16 text-center text-neutral-400">
+              No hay planillas registradas
+            </div>
+          }
+
+          <mat-paginator
+            [length]="total()"
+            [pageSize]="25"
+            [pageIndex]="page() - 1"
+            (page)="onPage($event)"
+          />
+        </div>
+      }
+    </div>
+  

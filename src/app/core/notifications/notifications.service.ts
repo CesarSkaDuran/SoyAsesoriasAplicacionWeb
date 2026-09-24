@@ -3,6 +3,7 @@ import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { io, Socket } from 'socket.io-client';
+import { Subject } from 'rxjs';
 import { ApiService, NotificationItem } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { environment } from '@/environments/environment';
@@ -19,9 +20,11 @@ export class NotificationsService {
   private socketUserId: number | null = null;
   private activityVersion = 0;
   private toastedNotifications = new Set<number>();
+  private realtimeEvents = new Subject<NotificationItem>();
 
   readonly notifications = signal<NotificationItem[]>([]);
   readonly unreadCount = signal(0);
+  readonly realtimeEvents$ = this.realtimeEvents.asObservable();
 
   constructor() {
     effect(() => {
@@ -104,6 +107,7 @@ export class NotificationsService {
   }
 
   private receive(notification: NotificationItem) {
+    this.realtimeEvents.next(notification);
     const exists = this.notifications().some(item => item.id === notification.id);
     if (!exists) {
       this.activityVersion++;

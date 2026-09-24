@@ -15,30 +15,7 @@ import { Scheme, Theming } from '@/app/core/theming';
     MatPseudoCheckbox,
     MatMenuTrigger,
   ],
-  template: `
-    <button
-      matIconButton
-      [matMenuTriggerFor]="schemeMenu"
-    >
-      <mat-icon svgIcon="sun-moon" />
-    </button>
-    <mat-menu #schemeMenu>
-      @for (item of schemes; track item.value) {
-        <button
-          mat-menu-item
-          (click)="updateScheme(item.value)"
-        >
-          <span class="flex items-center gap-x-1">
-            <span class="flex-auto">{{ item.label }}</span>
-            <mat-pseudo-checkbox
-              appearance="minimal"
-              [state]="scheme() === item.value ? 'checked' : 'unchecked'"
-            />
-          </span>
-        </button>
-      }
-    </mat-menu>
-  `,
+  templateUrl: './scheme-switcher.html',
 })
 export class SchemeSwitcher {
   // Dependencies

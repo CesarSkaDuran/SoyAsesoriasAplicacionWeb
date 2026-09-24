@@ -1,7 +1,10 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { DatePipe, NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,14 +16,18 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
+import { NotificationsService } from '@/app/core/notifications/notifications.service';
 import { PageHeader } from '@/app/core/ui/page-header';
 import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Solicitud } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 import { SolicitudDialog } from '../components/solicitud.dialog';
+import { SolicitudDetalleDialog } from '../components/solicitud-detalle.dialog';
+import { SolicitudEntregaDialog } from '../components/solicitud-entrega.dialog';
 
 const STATUS_LABEL: Record<string, string> = {
   pendiente: 'Pendiente',
@@ -31,6 +38,14 @@ const STATUS_LABEL: Record<string, string> = {
   cancelada: 'Cancelada',
 };
 const STATUS_COLOR: Record<string, string> = {
+  pendiente: 'bg-amber-50 text-amber-700',
+  aprobada: 'bg-indigo-50 text-indigo-700',
+  en_proceso: 'bg-blue-50 text-blue-700',
+  completada: 'bg-green-50 text-green-700',
+  rechazada: 'bg-red-50 text-red-700',
+  cancelada: 'bg-neutral-100 text-neutral-500',
+};
+const STATUS_DOT: Record<string, string> = {
   pendiente: 'bg-amber-500',
   aprobada: 'bg-indigo-500',
   en_proceso: 'bg-blue-500',
@@ -44,6 +59,7 @@ const STATUS_COLOR: Record<string, string> = {
   imports: [
     ReactiveFormsModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -53,198 +69,18 @@ const STATUS_COLOR: Record<string, string> = {
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinner,
+    MatTooltipModule,
     DatePipe,
     NgClass,
     PageHeader,
     SearchableSelect,
   ],
-  template: `
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      <page-header
-        title="Solicitudes"
-        [subtitle]="total() + ' solicitudes'"
-      >
-        <button
-          matButton="filled"
-          (click)="openCreate()"
-        >
-          <mat-icon svgIcon="plus" />
-          Nueva solicitud
-        </button>
-      </page-header>
-
-      <!-- Filtros como la app vieja -->
-      <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-        <mat-form-field
-          class="w-72"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-icon svgIcon="search" matIconPrefix />
-          <input
-            matInput
-            [formControl]="searchControl"
-            placeholder="Nombre de la cuenta o por valor"
-          />
-        </mat-form-field>
-        @if (isAdmin()) {
-          <searchable-select
-            class="w-64"
-            label="Empresa"
-            nullLabel="Todas"
-            [items]="empresas()"
-            displayKey="razon_social"
-            [formControl]="empresaControl"
-          />
-        }
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Estado</mat-label>
-          <mat-select [formControl]="statusControl">
-            <mat-option [value]="null">Todos</mat-option>
-            <mat-option value="pendiente">Pendiente</mat-option>
-            <mat-option value="aprobada">Aprobada</mat-option>
-            <mat-option value="en_proceso">En proceso</mat-option>
-            <mat-option value="completada">Completada</mat-option>
-            <mat-option value="rechazada">Rechazada</mat-option>
-            <mat-option value="cancelada">Cancelada</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Desde</mat-label>
-          <input matInput [matDatepicker]="dpDesde" [formControl]="desdeControl" />
-          <mat-datepicker-toggle matIconSuffix [for]="dpDesde" />
-          <mat-datepicker #dpDesde />
-        </mat-form-field>
-        <mat-form-field
-          class="w-44"
-          appearance="outline"
-          subscriptSizing="dynamic"
-        >
-          <mat-label>Hasta</mat-label>
-          <input matInput [matDatepicker]="dpHasta" [formControl]="hastaControl" />
-          <mat-datepicker-toggle matIconSuffix [for]="dpHasta" />
-          <mat-datepicker #dpHasta />
-        </mat-form-field>
-      </div>
-
-      @if (loading()) {
-        <div class="flex justify-center py-20">
-          <mat-spinner diameter="48" />
-        </div>
-      } @else {
-        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-          <div class="overflow-x-auto">
-            <table
-              mat-table
-              [dataSource]="solicitudes()"
-              class="w-full"
-            >
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>Ticket</th>
-                <td mat-cell *matCellDef="let s">{{ s.id }}</td>
-              </ng-container>
-              <ng-container matColumnDef="company">
-                <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                <td mat-cell *matCellDef="let s">
-                  <div class="font-medium">{{ s.cliente_nombre || '—' }}</div>
-                  <div class="text-xs text-neutral-500">{{ s.cliente_nit }}</div>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="nit">
-                <th mat-header-cell *matHeaderCellDef>Teléfono</th>
-                <td mat-cell *matCellDef="let s">{{ s.telefono || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef>Fecha</th>
-                <td mat-cell *matCellDef="let s">
-                  {{ s.created_at | date: 'dd/MM/yyyy' }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="value">
-                <th mat-header-cell *matHeaderCellDef>Servicio</th>
-                <td mat-cell *matCellDef="let s">{{ s.servicio_nombre || '—' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Estado</th>
-                <td mat-cell *matCellDef="let s">
-                  <span
-                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
-                    [ngClass]="statusColor(s.status)"
-                  >
-                    {{ statusLabel(s.status) }}
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="concept">
-                <th mat-header-cell *matHeaderCellDef>Descripción</th>
-                <td mat-cell *matCellDef="let s">
-                  <div class="max-w-80 truncate">{{ s.descripcion || '—' }}</div>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="options">
-                <th mat-header-cell *matHeaderCellDef>Opciones</th>
-                <td mat-cell *matCellDef="let s">
-                  @if (isAdmin()) {
-                    <button
-                      matIconButton
-                      [matMenuTriggerFor]="menu"
-                    >
-                      <mat-icon svgIcon="ellipsis-vertical" />
-                    </button>
-                    <mat-menu #menu="matMenu">
-                      @if (s.status === 'pendiente') {
-                        <button mat-menu-item (click)="setStatus(s, 'aprobada')">Aprobar solicitud</button>
-                        <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
-                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
-                      } @else if (s.status === 'aprobada') {
-                        <button mat-menu-item (click)="setStatus(s, 'en_proceso')">Iniciar gestión</button>
-                        <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
-                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
-                      } @else if (s.status === 'en_proceso') {
-                        <button mat-menu-item (click)="setStatus(s, 'completada')">Completar</button>
-                        <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
-                      }
-                    </mat-menu>
-                  }
-                </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
-              <tr
-                mat-row
-                *matRowDef="let row; columns: columns"
-              ></tr>
-            </table>
-          </div>
-
-          @if (!solicitudes().length) {
-            <div class="py-16 text-center text-neutral-400">
-              No hay solicitudes
-            </div>
-          }
-
-          <mat-paginator
-            [length]="total()"
-            [pageSize]="25"
-            [pageIndex]="page() - 1"
-            (page)="onPage($event)"
-          />
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './solicitudes.page.html',
 })
 export default class SolicitudesPage {
   private api = inject(ApiService);
   private creds = inject(CredentialsService);
+  private notifications = inject(NotificationsService);
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
 
@@ -255,16 +91,33 @@ export default class SolicitudesPage {
   loading = signal(true);
   isAdmin = () => this.creds.isAdmin();
 
+  // Seleccion multiple de tickets (columna de checkboxes)
+  selection = new SelectionModel<Solicitud>(true, []);
+  respuestaTarget: Solicitud | null = null;
+  uploadingRespuesta = signal<number | null>(null);
+
   searchControl = new FormControl('');
   statusControl = new FormControl<string | null>(null);
   empresaControl = new FormControl<number | null>(null);
   desdeControl = new FormControl<Date | null>(null);
   hastaControl = new FormControl<Date | null>(null);
 
-  // Mismo orden que la tabla vieja de solicitudes
-  columns = ['id', 'company', 'nit', 'date', 'value', 'status', 'concept', 'options'];
+  // Mismo formato del modelo: Solicitud | Estatus | Fechas | Respuesta | Obs | Acciones
+  // El admin además ve el teléfono del cliente
+  get columns(): string[] {
+    const cols = ['select', 'solicitud', 'status', 'date', 'entrega'];
+    if (this.isAdmin()) cols.push('telefono');
+    cols.push('respuesta', 'obs', 'options');
+    return cols;
+  }
 
   constructor() {
+    this.notifications.realtimeEvents$
+      .pipe(takeUntilDestroyed())
+      .subscribe((notification) => {
+        if (['solicitud', 'servicio'].includes(notification.tipo)) this.load();
+      });
+
     if (this.isAdmin()) {
       this.api.empresas(undefined, 1, 500).subscribe((r) => this.empresas.set(r.data));
       this.empresaControl.valueChanges.subscribe(() => { this.page.set(1); this.load(); });
@@ -294,6 +147,7 @@ export default class SolicitudesPage {
         next: (r) => {
           this.solicitudes.set(r.data);
           this.total.set(r.total);
+          this.selection.clear();
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
@@ -306,7 +160,42 @@ export default class SolicitudesPage {
   }
 
   statusLabel = (s: string) => STATUS_LABEL[s] || s;
-  statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-400';
+  statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-100 text-neutral-500';
+  statusDot = (s: string) => STATUS_DOT[s] || 'bg-neutral-400';
+
+  // Semáforo de entrega: rojo si ya pasó, amarillo si faltan 3 días o menos
+  entregaClass(s: Solicitud): string {
+    if (['completada', 'cancelada', 'rechazada'].includes(s.status)) {
+      return 'bg-neutral-100 text-neutral-500';
+    }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const f = new Date(`${String(s.fecha_entrega).slice(0, 10)}T00:00:00`);
+    const diff = Math.round((f.getTime() - hoy.getTime()) / 86400000);
+    if (diff < 0) return 'bg-red-100 text-red-700';
+    if (diff <= 3) return 'bg-amber-100 text-amber-800';
+    return 'bg-neutral-100 text-neutral-600';
+  }
+
+  fmtEntrega(fecha: string): string {
+    const [y, m, d] = String(fecha).slice(0, 10).split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  openDetalle(s: Solicitud) {
+    this.dialog.open(SolicitudDetalleDialog, {
+      width: '520px',
+      maxWidth: '95vw',
+      data: s,
+    });
+  }
+
+  openEntrega(s: Solicitud) {
+    this.dialog
+      .open(SolicitudEntregaDialog, { width: '480px', maxWidth: '95vw', data: s })
+      .afterClosed()
+      .subscribe((ok) => ok && this.load());
+  }
 
   setStatus(s: Solicitud, status: Solicitud['status']) {
     this.api.updateSolicitud(s.id, { status }).subscribe({
@@ -315,6 +204,76 @@ export default class SolicitudesPage {
         this.load();
       },
       error: (err) => this.snack.open(err?.error?.error || 'No se pudo cambiar el estado', 'Cerrar', { duration: 3500 }),
+    });
+  }
+
+  isAllSelected(): boolean {
+    const rows = this.solicitudes();
+    return rows.length > 0 && rows.every((r) => this.selection.isSelected(r));
+  }
+
+  toggleAll() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.solicitudes().forEach((r) => this.selection.select(r));
+    }
+  }
+
+  // Respuesta/documento: el admin adjunta el archivo; el cliente lo descarga
+  pickRespuesta(s: Solicitud, input: HTMLInputElement) {
+    this.respuestaTarget = s;
+    input.value = '';
+    input.click();
+  }
+
+  onRespuestaFile(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const s = this.respuestaTarget;
+    if (!file || !s) return;
+    this.uploadingRespuesta.set(s.id);
+    this.api.uploadRespuestaSolicitud(s.id, file).subscribe({
+      next: () => {
+        this.uploadingRespuesta.set(null);
+        this.snack.open('Respuesta cargada', 'OK', { duration: 2500 });
+        this.load();
+      },
+      error: (err) => {
+        this.uploadingRespuesta.set(null);
+        this.snack.open(
+          err?.error?.error || 'No se pudo cargar la respuesta',
+          'Cerrar',
+          { duration: 3500 }
+        );
+      },
+    });
+  }
+
+  downloadRespuesta(s: Solicitud) {
+    this.api.downloadRespuestaSolicitud(s.id).subscribe((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = s.respuesta_nombre || `respuesta-${s.id}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  removeRespuesta(s: Solicitud) {
+    if (!confirm(`¿Eliminar la respuesta "${s.respuesta_nombre}"?`)) return;
+    this.api.deleteRespuestaSolicitud(s.id).subscribe({
+      next: () => {
+        this.snack.open('Respuesta eliminada', 'OK', { duration: 2500 });
+        this.load();
+      },
+      error: (err) =>
+        this.snack.open(
+          err?.error?.error || 'No se pudo eliminar',
+          'Cerrar',
+          { duration: 3500 }
+        ),
     });
   }
 

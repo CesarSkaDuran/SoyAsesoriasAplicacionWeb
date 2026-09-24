@@ -29,58 +29,7 @@ import { Empresa } from '@/app/models/user.model';
     DialogHeader,
     SearchableSelect,
   ],
-  template: `
-    <dialog-header title="Nueva solicitud" />
-
-    <mat-dialog-content class="mat-typography">
-      <form
-        [formGroup]="form"
-        class="grid grid-cols-1 gap-x-4 pt-2"
-      >
-        @if (isAdmin) {
-          <searchable-select
-            label="Empresa"
-            [items]="data.empresas || []"
-            displayKey="razon_social"
-            formControlName="empresa_id"
-          />
-        }
-
-        <searchable-select
-          label="Servicio"
-          [items]="servicios()"
-          displayKey="nombre"
-          formControlName="servicio_id"
-        />
-
-        <mat-form-field appearance="outline">
-          <mat-label>Descripción</mat-label>
-          <textarea
-            matInput
-            rows="4"
-            formControlName="descripcion"
-            placeholder="Describe lo que necesitas..."
-          ></textarea>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button
-        matButton="text"
-        mat-dialog-close
-      >
-        Cancelar
-      </button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving"
-        (click)="save()"
-      >
-        Enviar solicitud
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './solicitud.dialog.html',
 })
 export class SolicitudDialog {
   private fb = inject(FormBuilder);

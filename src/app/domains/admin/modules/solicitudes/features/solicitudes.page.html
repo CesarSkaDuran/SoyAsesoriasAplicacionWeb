@@ -1,0 +1,303 @@
+
+    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
+      <page-header
+        title="Solicitudes"
+        [subtitle]="total() + ' solicitudes'"
+      >
+        <button
+          matButton="filled"
+          (click)="openCreate()"
+        >
+          <mat-icon svgIcon="plus" />
+          Nueva solicitud
+        </button>
+      </page-header>
+
+      <!-- Filtros como la app vieja -->
+      <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <mat-form-field
+          class="w-72"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-icon svgIcon="search" matIconPrefix />
+          <input
+            matInput
+            [formControl]="searchControl"
+            placeholder="Nombre de la cuenta o por valor"
+          />
+        </mat-form-field>
+        @if (isAdmin()) {
+          <searchable-select
+            class="w-64"
+            label="Empresa"
+            nullLabel="Todas"
+            [items]="empresas()"
+            displayKey="razon_social"
+            [formControl]="empresaControl"
+          />
+        }
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Estado</mat-label>
+          <mat-select [formControl]="statusControl">
+            <mat-option [value]="null">Todos</mat-option>
+            <mat-option value="pendiente">Pendiente</mat-option>
+            <mat-option value="aprobada">Aprobada</mat-option>
+            <mat-option value="en_proceso">En proceso</mat-option>
+            <mat-option value="completada">Completada</mat-option>
+            <mat-option value="rechazada">Rechazada</mat-option>
+            <mat-option value="cancelada">Cancelada</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Desde</mat-label>
+          <input matInput [matDatepicker]="dpDesde" [formControl]="desdeControl" />
+          <mat-datepicker-toggle matIconSuffix [for]="dpDesde" />
+          <mat-datepicker #dpDesde />
+        </mat-form-field>
+        <mat-form-field
+          class="w-44"
+          appearance="outline"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Hasta</mat-label>
+          <input matInput [matDatepicker]="dpHasta" [formControl]="hastaControl" />
+          <mat-datepicker-toggle matIconSuffix [for]="dpHasta" />
+          <mat-datepicker #dpHasta />
+        </mat-form-field>
+      </div>
+
+      @if (loading()) {
+        <div class="flex justify-center py-20">
+          <mat-spinner diameter="48" />
+        </div>
+      } @else {
+        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+          <div class="overflow-x-auto">
+            <table
+              mat-table
+              [dataSource]="solicitudes()"
+              class="w-full"
+            >
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                  <mat-checkbox
+                    [checked]="isAllSelected()"
+                    (change)="toggleAll()"
+                  />
+                </th>
+                <td mat-cell *matCellDef="let s">
+                  <mat-checkbox
+                    [checked]="selection.isSelected(s)"
+                    (change)="selection.toggle(s)"
+                  />
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="solicitud">
+                <th mat-header-cell *matHeaderCellDef>Solicitud</th>
+                <td mat-cell *matCellDef="let s">
+                  <div class="flex items-center gap-3 py-1">
+                    <mat-icon
+                      svgIcon="file-text"
+                      class="!h-5 !w-5 shrink-0 text-neutral-400"
+                    />
+                    <div class="min-w-0">
+                      <div class="max-w-72 truncate font-medium">
+                        {{ s.descripcion || s.servicio_nombre || ('Solicitud #' + s.id) }}
+                      </div>
+                      <div class="text-xs text-neutral-500">
+                        #{{ s.id }}
+                        @if (isAdmin() && s.cliente_nombre) {
+                          · {{ s.cliente_nombre }}
+                        } @else if (s.servicio_nombre && s.descripcion) {
+                          · {{ s.servicio_nombre }}
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Estatus</th>
+                <td mat-cell *matCellDef="let s">
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+                    [ngClass]="statusColor(s.status)"
+                  >
+                    <span
+                      class="h-1.5 w-1.5 rounded-full"
+                      [ngClass]="statusDot(s.status)"
+                    ></span>
+                    {{ statusLabel(s.status) }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Fecha solicitud</th>
+                <td mat-cell *matCellDef="let s">
+                  {{ s.created_at | date: 'dd/MM/yyyy' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="entrega">
+                <th mat-header-cell *matHeaderCellDef>Fecha entrega</th>
+                <td mat-cell *matCellDef="let s">
+                  @if (s.fecha_entrega) {
+                    <span
+                      class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                      [ngClass]="entregaClass(s)"
+                    >
+                      {{ fmtEntrega(s.fecha_entrega) }}
+                    </span>
+                  } @else {
+                    <span class="text-neutral-400">—</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="telefono">
+                <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+                <td mat-cell *matCellDef="let s">{{ s.telefono || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="respuesta">
+                <th mat-header-cell *matHeaderCellDef>Respuesta o documento</th>
+                <td mat-cell *matCellDef="let s">
+                  @if (s.respuesta_nombre) {
+                    <div class="flex items-center gap-1">
+                      <button
+                        class="inline-flex max-w-48 items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300"
+                        [matTooltip]="s.respuesta_nombre!"
+                        (click)="downloadRespuesta(s)"
+                      >
+                        <mat-icon
+                          svgIcon="file-text"
+                          class="!h-4 !w-4 shrink-0"
+                        />
+                        <span class="truncate">{{ s.respuesta_nombre }}</span>
+                      </button>
+                      @if (isAdmin()) {
+                        <button
+                          matIconButton
+                          matTooltip="Eliminar respuesta"
+                          (click)="removeRespuesta(s)"
+                        >
+                          <mat-icon svgIcon="trash-2" />
+                        </button>
+                      }
+                    </div>
+                  } @else if (isAdmin()) {
+                    <button
+                      matIconButton
+                      matTooltip="Adjuntar respuesta"
+                      [disabled]="uploadingRespuesta() === s.id"
+                      (click)="pickRespuesta(s, respuestaInput)"
+                    >
+                      <mat-icon svgIcon="upload" />
+                    </button>
+                  } @else {
+                    <span class="text-neutral-300">—</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="obs">
+                <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+                <td mat-cell *matCellDef="let s">
+                  @if (s.observaciones) {
+                    <button
+                      matIconButton
+                      [matTooltip]="s.observaciones!"
+                      (click)="isAdmin() && openEntrega(s)"
+                    >
+                      <mat-icon svgIcon="message-square" />
+                    </button>
+                  } @else {
+                    <span class="text-neutral-300">—</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="options">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let s">
+                  <div class="flex items-center">
+                    <button
+                      matIconButton
+                      matTooltip="Ver detalle"
+                      (click)="openDetalle(s)"
+                    >
+                      <mat-icon svgIcon="eye" />
+                    </button>
+                    @if (s.respuesta_nombre) {
+                      <button
+                        matIconButton
+                        matTooltip="Descargar respuesta"
+                        (click)="downloadRespuesta(s)"
+                      >
+                        <mat-icon svgIcon="download" />
+                      </button>
+                    }
+                    @if (isAdmin()) {
+                      <button
+                        matIconButton
+                        [matMenuTriggerFor]="menu"
+                      >
+                        <mat-icon svgIcon="ellipsis-vertical" />
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        @if (s.status === 'pendiente') {
+                          <button mat-menu-item (click)="setStatus(s, 'aprobada')">Aprobar solicitud</button>
+                          <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
+                          <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                        } @else if (s.status === 'aprobada') {
+                          <button mat-menu-item (click)="setStatus(s, 'en_proceso')">Iniciar gestión</button>
+                          <button mat-menu-item (click)="setStatus(s, 'rechazada')">Rechazar</button>
+                          <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                        } @else if (s.status === 'en_proceso') {
+                          <button mat-menu-item (click)="setStatus(s, 'completada')">Completar</button>
+                          <button mat-menu-item (click)="setStatus(s, 'cancelada')">Cancelar</button>
+                        }
+                        <button mat-menu-item (click)="openEntrega(s)">
+                          Fecha de entrega / observaciones
+                        </button>
+                      </mat-menu>
+                    }
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: columns"
+              ></tr>
+            </table>
+          </div>
+
+          @if (!solicitudes().length) {
+            <div class="py-16 text-center text-neutral-400">
+              No hay solicitudes
+            </div>
+          }
+
+          <mat-paginator
+            [length]="total()"
+            [pageSize]="25"
+            [pageIndex]="page() - 1"
+            (page)="onPage($event)"
+          />
+        </div>
+      }
+
+      <input
+        type="file"
+        #respuestaInput
+        hidden
+        (change)="onRespuestaFile($event)"
+      />
+    </div>
+  

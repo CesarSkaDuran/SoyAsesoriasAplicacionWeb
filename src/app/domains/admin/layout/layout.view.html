@@ -1,0 +1,45 @@
+
+    <mat-sidenav-container>
+      <mat-sidenav
+        class="w-70 border-r border-neutral-200 scheme-dark dark:border-neutral-800 dark:bg-neutral-900"
+        [mode]="isMobile() ? 'over' : 'side'"
+        [opened]="!isMobile()"
+        [disableClose]="!isMobile()"
+        fixedInViewport
+        #sidenav="matSidenav"
+      >
+        <admin-sidebar />
+      </mat-sidenav>
+
+      <mat-sidenav-content class="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
+        <!-- Toolbar -->
+        <div class="relative z-10 flex items-center border-b border-slate-200 bg-white px-4 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <button
+            matIconButton
+            (click)="sidenav.toggle()"
+          >
+            <mat-icon svgIcon="panel-left" />
+          </button>
+
+          <!-- Separator -->
+          <div class="mx-3 h-5 border-l"></div>
+
+          <shortcuts />
+
+          <!-- Spacer -->
+          <div class="flex-auto"></div>
+
+          <div class="flex items-center gap-x-2">
+            <language-switcher />
+            <scheme-switcher />
+            <notifications />
+          </div>
+        </div>
+
+        <!-- Content -->
+        <main class="flex min-h-0 flex-auto flex-col overflow-auto bg-slate-100 dark:bg-neutral-950">
+          <router-outlet />
+        </main>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  

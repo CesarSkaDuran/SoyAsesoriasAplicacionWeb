@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,6 +29,7 @@ import { ConceptoFormDialog } from '../components/concepto-form.dialog';
     MatProgressSpinner,
     PageHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './conceptos.page.html',
 })
 export default class ConceptosPage {

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -111,6 +111,7 @@ const JSON_GROUPS = [
     MatInputModule,
     DialogHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nomina-parametros.dialog.html',
 })
 export class NominaParametrosDialog {

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -31,6 +31,7 @@ export interface ConceptoFormData {
     MatCheckboxModule,
     DialogHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './concepto-form.dialog.html',
 })
 export class ConceptoFormDialog {

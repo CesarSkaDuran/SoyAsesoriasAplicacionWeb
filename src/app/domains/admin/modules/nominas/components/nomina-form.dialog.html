@@ -59,7 +59,7 @@
       <button matButton="text" mat-dialog-close>Cancelar</button>
       <button
         matButton="filled"
-        [disabled]="form.invalid || saving"
+        [disabled]="form.invalid || saving()"
         (click)="save()"
       >
         Crear y liquidar

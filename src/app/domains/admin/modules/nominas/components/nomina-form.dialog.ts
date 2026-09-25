@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -32,6 +32,7 @@ const MESES = [
     DialogHeader,
     SearchableSelect,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nomina-form.dialog.html',
 })
 export class NominaFormDialog {
@@ -44,7 +45,7 @@ export class NominaFormDialog {
 
   empresas = signal<Empresa[]>([]);
   meses = MESES;
-  saving = false;
+  saving = signal(false);
   isAdmin = () => this.creds.isAdmin();
 
   mesControl = this.fb.nonNullable.control(new Date().getMonth());
@@ -71,7 +72,7 @@ export class NominaFormDialog {
 
   save() {
     if (this.form.invalid) return;
-    this.saving = true;
+    this.saving.set(true);
 
     const empresaId = this.isAdmin()
       ? this.form.value.empresa_id
@@ -101,7 +102,7 @@ export class NominaFormDialog {
           this.router.navigate(['/admin/nominas', res.nomina.id, 'liquidar']);
         },
         error: () => {
-          this.saving = false;
+          this.saving.set(false);
           this.snack.open('No se pudo crear la nómina', 'Cerrar');
         },
       });

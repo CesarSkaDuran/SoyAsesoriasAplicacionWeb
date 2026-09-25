@@ -1,16 +1,10 @@
-Nomina: motivo SMMLV inline, factor prestacional y form de empleado
+Nominas: ChangeDetectionStrategy.OnPush en todo el módulo
 
-- SalarioMenorDialog: cuando la liquidación devuelve 400 con
-  empleados_bloqueados muestra el modal con motivo por empleado y
-  reintenta automáticamente sin salir de la pantalla
-- Form empleado: motivo obligatorio cuando salario_base < SMMLV, con
-  bloque visual; se guarda en la ficha (salario_menor_motivo)
-- Form empresa: campo factor_prestacional_pct (30–100, CST 132) con
-  hint; errores del backend se muestran en snackbar
-- Banner de liquidación: 3 líneas nuevas (parafiscales y base de
-  vacaciones de integral PENDIENTE_VERIFICAR; factor vigente)
-- Modelos: salario_menor_motivo, factor_prestacional_pct,
-  vacaciones_base_integral_pct y salario_integral_ibc_pct
+Las pantallas de nóminas re-evaluaban todos los bindings en cada
+ciclo de Zone (por eso la liquidación tardaba en cargar con muchos
+empleados). OnPush + signals en los 9 componentes del módulo;
+nomina-form.dialog convierte saving a signal para no depender de CD
+por defecto.
 
 Generated with [Devin](https://devin.ai)
 

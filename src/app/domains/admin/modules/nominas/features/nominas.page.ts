@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +35,7 @@ import { NominaParametrosDialog } from '../components/nomina-parametros.dialog';
     PageHeader,
     SearchableSelect,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nominas.page.html',
 })
 export default class NominasPage {

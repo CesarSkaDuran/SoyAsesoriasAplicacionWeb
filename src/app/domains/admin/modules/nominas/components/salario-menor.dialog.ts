@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -36,6 +36,7 @@ interface DialogData {
     CurrencyPipe,
     DialogHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './salario-menor.dialog.html',
 })
 export class SalarioMenorDialog {

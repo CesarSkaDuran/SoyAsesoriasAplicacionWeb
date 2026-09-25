@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -58,6 +58,7 @@ const diffDias = (a: string, b: string) =>
     CurrencyPipe,
     PageHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nomina-liquidar.page.html',
 })
 export default class NominaLiquidarPage {

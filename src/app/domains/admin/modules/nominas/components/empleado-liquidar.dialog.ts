@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -126,6 +126,7 @@ function corteVigente(cortes: CorteFecha[] | string | null | undefined, key: 'ho
     DatePipe,
     DialogHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empleado-liquidar.dialog.html',
 })
 export class EmpleadoLiquidarDialog {

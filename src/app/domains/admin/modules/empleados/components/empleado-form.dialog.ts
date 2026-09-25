@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,6 +36,7 @@ export interface EmpleadoFormData {
     MatCheckboxModule,
     DialogHeader,
     SearchableSelect,
+    CurrencyPipe,
   ],
   templateUrl: './empleado-form.dialog.html',
 })
@@ -52,6 +54,7 @@ export class EmpleadoFormDialog {
   protected arl = signal<CatalogoItem[]>([]);
   protected pensiones = signal<CatalogoItem[]>([]);
   protected cajas = signal<CatalogoItem[]>([]);
+  protected smmlv = signal(0);
 
   protected form = this.fb.group({
     primer_nombre: [this.data.empleado?.primer_nombre ?? '', Validators.required],
@@ -89,6 +92,7 @@ export class EmpleadoFormDialog {
     salario_variable: [!!this.data.empleado?.salario_variable],
     extranjero_sin_pension: [!!this.data.empleado?.extranjero_sin_pension],
     colombiano_exterior: [!!this.data.empleado?.colombiano_exterior],
+    salario_menor_motivo: [this.data.empleado?.salario_menor_motivo ?? ''],
   });
 
   constructor() {
@@ -99,10 +103,28 @@ export class EmpleadoFormDialog {
       this.pensiones.set(cat['pensiones'] ?? []);
       this.cajas.set(cat['cajas_compensacion'] ?? []);
     });
+    this.api.nominaParametros(new Date().getFullYear()).subscribe({
+      next: ({ parametros }) => this.smmlv.set(Number(parametros.salario_minimo) || 0),
+      error: () => {},
+    });
+  }
+
+  bajoMinimo(): boolean {
+    const salario = Number(this.form.get('salario_base')?.value) || 0;
+    return this.smmlv() > 0 && salario < this.smmlv();
   }
 
   save() {
     if (this.form.invalid) return;
+    if (this.bajoMinimo() && !String(this.form.get('salario_menor_motivo')?.value || '').trim()) {
+      this.snackBar.open(
+        'El salario es inferior al SMMLV: registra el motivo (medio tiempo, contrato especial…)',
+        'Cerrar',
+        { duration: 4000 }
+      );
+      this.form.get('salario_menor_motivo')?.markAsTouched();
+      return;
+    }
     this.saving.set(true);
 
     const payload: any = {

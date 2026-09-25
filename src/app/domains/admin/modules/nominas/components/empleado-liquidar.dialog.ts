@@ -38,6 +38,7 @@ export interface LiquidacionInput {
   vacaciones_motivo?: string;
   retencion_ajuste?: number;
   retencion_ajuste_motivo?: string;
+  salario_menor_motivo?: string;
   indemnizacion?: number;
 }
 
@@ -147,6 +148,7 @@ export class EmpleadoLiquidarDialog {
     vacaciones_motivo: [this.data.input?.vacaciones_motivo ?? ''],
     retencion_ajuste: [this.data.input?.retencion_ajuste ?? 0],
     retencion_ajuste_motivo: [this.data.input?.retencion_ajuste_motivo ?? ''],
+    salario_menor_motivo: [this.data.input?.salario_menor_motivo ?? ''],
     indemnizacion: [this.data.input?.indemnizacion ?? 0],
     horas: this.fb.array(
       (this.data.input?.horas ?? []).map((h) =>
@@ -289,12 +291,23 @@ export class EmpleadoLiquidarDialog {
     return this.horas.controls.reduce((t, _, i) => t + this.valorHoraRow(i), 0);
   }
 
+  bajoMinimo(): boolean {
+    const smmlv = Number(this.data.parametros?.salario_minimo) || 0;
+    return smmlv > 0 && Number(this.data.empleado?.salario_base) < smmlv;
+  }
+
   apply() {
     const raw = this.form.getRawValue();
     const incrPlano = Number(raw.ingreso_noc) > 0 && raw.ingreso_noc_incr;
     if (incrPlano && !String(raw.ingreso_noc_incr_motivo || '').trim()) {
       this.errorMsg.set(
         'El INCR manual requiere un motivo. Para casos recurrentes usa el catálogo de conceptos.'
+      );
+      return;
+    }
+    if (this.bajoMinimo() && !String(raw.salario_menor_motivo || '').trim()) {
+      this.errorMsg.set(
+        'El salario base es inferior al SMMLV vigente: registra el motivo (medio tiempo, contrato especial, etc.)'
       );
       return;
     }
@@ -310,6 +323,7 @@ export class EmpleadoLiquidarDialog {
       vacaciones_motivo: raw.vacaciones_motivo || '',
       retencion_ajuste: raw.retencion_ajuste ?? 0,
       retencion_ajuste_motivo: raw.retencion_ajuste_motivo || '',
+      salario_menor_motivo: raw.salario_menor_motivo || '',
       indemnizacion: raw.indemnizacion ?? 0,
       horas: (raw.horas || [])
         .filter((h) => Number(h?.cantidad) > 0)

@@ -1,0 +1,40 @@
+
+    <dialog-header title="Salario inferior al SMMLV" />
+
+    <mat-dialog-content class="mat-typography">
+      <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        Los siguientes empleados tienen salario base inferior al SMMLV vigente.
+        Registra el motivo de cada uno (medio tiempo, contrato especial…) y la
+        liquidación se reintentará automáticamente.
+      </div>
+
+      @for (e of data.empleados; track e.id; let i = $index) {
+        <div class="mb-3 rounded-lg border border-neutral-200 p-3">
+          <div class="mb-2 flex items-center justify-between text-sm">
+            <b class="uppercase">{{ e.nombre }}</b>
+            <span class="text-neutral-500">
+              {{ e.documento }} · {{ e.salario | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </span>
+          </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Motivo (obligatorio)</mat-label>
+            <input
+              matInput
+              [formControl]="motivos.at(i)"
+              placeholder="Ej: medio tiempo, contrato especial…"
+            />
+          </mat-form-field>
+        </div>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton="text" mat-dialog-close>Cancelar</button>
+      <button
+        matButton="filled"
+        [disabled]="!todosConMotivo"
+        (click)="apply()"
+      >
+        Guardar y reintentar liquidación
+      </button>
+    </mat-dialog-actions>

@@ -74,6 +74,10 @@ export class EmpresaFormDialog {
     arl_id: [this.data.empresa?.arl_id ?? null],
     eps_id: [this.data.empresa?.eps_id ?? null],
     exonerado_parafiscales: [this.data.empresa?.exonerado_parafiscales ?? ''],
+    factor_prestacional_pct: [
+      this.data.empresa?.factor_prestacional_pct ?? 30,
+      [Validators.required, Validators.min(30), Validators.max(100)],
+    ],
     observaciones: [this.data.empresa?.observaciones ?? ''],
   });
 
@@ -124,9 +128,9 @@ export class EmpresaFormDialog {
         );
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (err) => {
         this.saving.set(false);
-        this.snackBar.open('Error al guardar la empresa', 'Cerrar', { duration: 3000 });
+        this.snackBar.open(err?.error?.error || 'Error al guardar la empresa', 'Cerrar', { duration: 5000 });
       },
     });
   }

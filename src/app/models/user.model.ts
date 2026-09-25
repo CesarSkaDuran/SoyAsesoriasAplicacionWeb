@@ -46,6 +46,9 @@ export interface Empresa {
   caja_compensacion_id?: number | null;
   actividad_economica_id?: number | null;
   exonerado_parafiscales?: string;
+  // CST art. 132: factor prestacional (mínimo legal 30%) — piso del salario
+  // integral de la empresa = 10 SMMLV × (1 + factor/100)
+  factor_prestacional_pct?: number | string;
   arl_id?: number | null;
   eps_id?: number | null;
 }

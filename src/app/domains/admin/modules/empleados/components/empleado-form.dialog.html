@@ -158,6 +158,22 @@
           </mat-select>
           <mat-hint>Se prorratea por días liquidados. Valida modalidad de trabajo y excepciones.</mat-hint>
         </mat-form-field>
+        @if (bajoMinimo()) {
+          <div class="rounded-lg border border-amber-300 bg-amber-50 p-3 sm:col-span-2">
+            <div class="mb-2 text-xs font-semibold text-amber-900">
+              Salario inferior al SMMLV vigente ({{ smmlv() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}).
+              Se requiere motivo para guardar; en liquidación quedará como alerta auditada.
+            </div>
+            <mat-form-field class="w-full">
+              <mat-label>Motivo (obligatorio)</mat-label>
+              <input
+                matInput
+                formControlName="salario_menor_motivo"
+                placeholder="Ej: medio tiempo, contrato especial…"
+              />
+            </mat-form-field>
+          </div>
+        }
 
         <!-- Seguridad social -->
         <div

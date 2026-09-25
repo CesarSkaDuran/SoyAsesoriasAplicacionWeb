@@ -39,6 +39,8 @@ export interface Empleado {
   // CST art. 192: si el salario es variable, las vacaciones se liquidan
   // con el promedio del devengado del último año
   salario_variable?: boolean | number;
+  // CST art. 143: soporte cuando el salario base es inferior al SMMLV
+  salario_menor_motivo?: string | null;
   // joins
   cargo_nombre?: string;
   eps_nombre?: string;
@@ -150,6 +152,8 @@ export interface NominaParametros {
   incapacidad_laboral_pct?: number;
   licencia_maternidad_dias?: number;
   licencia_paternidad_dias?: number;
+  salario_integral_ibc_pct?: number;
+  vacaciones_base_integral_pct?: number;
   fuente_normativa?: string | null;
 }
 
@@ -246,6 +250,7 @@ export interface NominaDetalle {
   retencion_calculada?: number;
   retencion_ajuste?: number;
   retencion_ajuste_motivo?: string | null;
+  salario_menor_motivo?: string | null;
   dias_incapacidad?: number;
   valor_incapacidad_empleador?: number;
   valor_incapacidad_tercero?: number;

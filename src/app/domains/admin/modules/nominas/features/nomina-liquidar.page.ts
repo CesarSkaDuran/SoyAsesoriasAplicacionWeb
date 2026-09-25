@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '@/app/core/api/api.service';
 import { PageHeader } from '@/app/core/ui/page-header';
@@ -20,6 +21,7 @@ import {
   RetencionTramo,
 } from '@/app/models/empleado.model';
 import { EmpleadoLiquidarDialog, LiquidacionInput } from '../components/empleado-liquidar.dialog';
+import { SalarioMenorDialog, EmpleadoBloqueado } from '../components/salario-menor.dialog';
 
 function parseJson<T>(value: unknown, fallback: T): T {
   if (value == null) return fallback;
@@ -51,6 +53,7 @@ const diffDias = (a: string, b: string) =>
     MatButtonModule,
     MatIcon,
     MatTableModule,
+    MatTooltipModule,
     MatProgressSpinner,
     CurrencyPipe,
     PageHeader,
@@ -65,6 +68,7 @@ export default class NominaLiquidarPage {
   private snack = inject(MatSnackBar);
 
   nomina = signal<Nomina | null>(null);
+  factorPrestacional = signal<number | null>(null);
   empleados = signal<Empleado[]>([]);
   inputs = signal<Record<number, LiquidacionInput>>({});
   parametros = signal<NominaParametros | null>(null);
@@ -114,6 +118,7 @@ export default class NominaLiquidarPage {
             ).map((x) => ({ tipo: x.tipo, concepto: x.concepto, valor: Number(x.valor) })),
             retencion_ajuste: Number(d.retencion_ajuste) || 0,
             retencion_ajuste_motivo: d.retencion_ajuste_motivo || '',
+            salario_menor_motivo: d.salario_menor_motivo || '',
             indemnizacion: Number(d.indemnizacion) || 0,
           };
         }
@@ -130,6 +135,12 @@ export default class NominaLiquidarPage {
             this.loading.set(false);
             this.snack.open(err?.error?.error || 'Faltan parámetros para la vigencia de esta nómina', 'Cerrar', { duration: 5000 });
           },
+        });
+        this.api.empresa(r.nomina.empresa_id).subscribe({
+          next: (re: any) => this.factorPrestacional.set(
+            Number((re.empresa ?? re).factor_prestacional_pct ?? 30) || 30,
+          ),
+          error: () => {},
         });
         this.api.nominaNovedades(this.nominaId).subscribe({
           next: (r2) => {
@@ -243,7 +254,10 @@ export default class NominaLiquidarPage {
   private calcularEstimado(e: Empleado) {
     const input = this.inputs()[e.id] || {};
     const p = this.parametros();
-    if (!p) return { neto: 0, deducciones: 0, auxilio: 0, horas: 0, retencion: 0, diasNov: 0 };
+    if (!p) return {
+      neto: 0, deducciones: 0, auxilio: 0, horas: 0, retencion: 0, diasNov: 0,
+      devengado: 0, prestaciones: 0, aportesEmpleador: 0, costoEmpresa: 0,
+    };
     const dias = input.dias_laborados ?? this.nomina()?.dias_periodo ?? 30;
     const salarioMes = Number(e.salario_base) || 0;
     const nov = this.novedadCalc(e.id, salarioMes, dias);
@@ -285,31 +299,67 @@ export default class NominaLiquidarPage {
     const ingresoNoc = (input.ingreso_noc ?? 0) + nocGravable + nocIncr;
     const remuneracion = salario + valorIncap + horas + otros + ingresoNoc;
     const excesoNoSalarial = Math.max(0, ingresoNoc - remuneracion * p.limite_no_salarial_pct / 100);
+    // Salario integral: IBC sobre el 70% (Ley 100/93 art. 18, parametrizado)
+    const factorIntegral = e.salario_integral
+      ? Number((p as any).salario_integral_ibc_pct ?? 70) / 100
+      : 1;
     const ibc = Math.min(
-      salario + valorIncap + horas + otros + excesoNoSalarial,
+      (salario + valorIncap + horas + otros + excesoNoSalarial) * factorIntegral,
       p.salario_minimo * p.max_ibc_smmlv * dias / 30,
     );
     const factor = dias > 0 ? 30 / dias : 0;
     const ibcMensualizado = ibc * factor;
     const multiples = ibcMensualizado / p.salario_minimo;
-    const fspRate = multiples >= 20 ? p.fsp_mas_20_pct
-      : multiples >= 19 ? p.fsp_19_20_pct
-        : multiples >= 18 ? p.fsp_18_19_pct
-          : multiples >= 17 ? p.fsp_17_18_pct
-            : multiples >= 16 ? p.fsp_16_17_pct
-              : multiples >= p.fsp_tope_inicial_smmlv ? p.fsp_4_16_pct : 0;
-    const aportes = ibc * (p.salud_empleado_pct + p.pension_empleado_pct + fspRate) / 100;
+    // Los DECIMAL vienen como string desde la API: coerción explícita para no
+    // concatenar ("4.00004.0000") y terminar en NaN
+    const fspRate = Number(
+      multiples >= 20 ? p.fsp_mas_20_pct
+        : multiples >= 19 ? p.fsp_19_20_pct
+          : multiples >= 18 ? p.fsp_18_19_pct
+            : multiples >= 17 ? p.fsp_17_18_pct
+              : multiples >= 16 ? p.fsp_16_17_pct
+                : multiples >= Number(p.fsp_tope_inicial_smmlv) ? p.fsp_4_16_pct : 0,
+    );
+    const aportes = ibc * (Number(p.salud_empleado_pct) + Number(p.pension_empleado_pct) + fspRate) / 100;
     const baseRet = salario + valorIncap + horas + otros + nocGravable
       + (input.ingreso_noc_incr ? 0 : (input.ingreso_noc ?? 0));
     const retencion = this.retencionEstimada(e, { base: baseRet, aportes, factor }) + (input.retencion_ajuste ?? 0);
-    const deducciones = aportes + (input.deducciones ?? 0) + Math.max(0, retencion);
+    const descTipificados = (input.descuentos || [])
+      .reduce((s, d) => s + (Number(d.valor) || 0), 0);
+    const deducciones = aportes + (input.deducciones ?? 0) + descTipificados + Math.max(0, retencion);
+
+    // Devengado, provisiones y aportes del empleador (espejo del motor backend)
+    const devengado = salario + valorIncap + auxilio + horas + otros + ingresoNoc
+      + (input.indemnizacion ?? 0);
+    const esIntegral = !!e.salario_integral;
+    const exceso = excesoNoSalarial;
+    const exonerado = !!this.nomina()?.aplica_exoneracion
+      && (salario + valorIncap + horas + otros) * (dias > 0 ? 30 / dias : 0)
+        < p.salario_minimo * 10;
+    const basePrest = salario + valorIncap + horas + otros + auxilio + exceso;
+    const baseVac = esIntegral ? ibc
+      : salario + valorIncap + horas + otros + exceso;
+    const prestaciones = (esIntegral ? 0
+        : basePrest * (Number(p.prima_pct) + Number(p.cesantias_pct)) / 100
+          + basePrest * Number(p.intereses_cesantias_pct_anual) / 100 / 12)
+      + baseVac * Number(p.vacaciones_pct) / 100;
+    const arlRate = Number((p as any)[`arl_${String(e.riesgo || 'I').toLowerCase()}_pct`] ?? p.arl_i_pct);
+    const aportesEmpleador = ibc * (Number(p.pension_empleador_pct) + arlRate + Number(p.caja_pct)) / 100
+      + (exonerado ? 0
+        : ibc * (Number(p.salud_empleador_pct) + Number(p.sena_pct) + Number(p.icbf_pct)) / 100);
+    const costoEmpresa = devengado + aportesEmpleador + prestaciones;
+
     return {
-      neto: salario + valorIncap + auxilio + horas + otros + ingresoNoc + (input.indemnizacion ?? 0) - deducciones,
+      neto: devengado - deducciones,
       deducciones,
       auxilio,
       horas,
       retencion: Math.max(0, retencion),
       diasNov: nov.dias,
+      devengado,
+      prestaciones,
+      aportesEmpleador,
+      costoEmpresa,
     };
   }
 
@@ -349,6 +399,34 @@ export default class NominaLiquidarPage {
     return this.empleados().reduce((total, e) => total + this.deduccionesEmpleado(e), 0);
   }
 
+  devengado(e: Empleado): number { return this.calcularEstimado(e).devengado; }
+  provisiones(e: Empleado): number { return this.calcularEstimado(e).prestaciones; }
+  costoEmpresa(e: Empleado): number { return this.calcularEstimado(e).costoEmpresa; }
+
+  totalDevengado() {
+    return this.empleados().reduce((t, e) => t + this.devengado(e), 0);
+  }
+
+  totalProvisiones() {
+    return this.empleados().reduce((t, e) => t + this.provisiones(e), 0);
+  }
+
+  totalCostoEmpresa() {
+    return this.empleados().reduce((t, e) => t + this.costoEmpresa(e), 0);
+  }
+
+  filasHoras(): number {
+    return this.empleados().reduce((t, e) => t + (this.inputs()[e.id]?.horas || []).length, 0);
+  }
+
+  filasIngresos(): number {
+    return this.empleados().reduce((t, e) => t + (this.inputs()[e.id]?.ingresos || []).length, 0);
+  }
+
+  filasDescuentos(): number {
+    return this.empleados().reduce((t, e) => t + (this.inputs()[e.id]?.descuentos || []).length, 0);
+  }
+
   totalNovedades(): number {
     return this.empleados().filter((e) => this.novedadesDe(e.id).length > 0).length;
   }
@@ -359,7 +437,7 @@ export default class NominaLiquidarPage {
         width: '680px',
         data: {
           empleado: e,
-          input: this.inputs()[e.id],
+          input: { salario_menor_motivo: e.salario_menor_motivo || '', ...this.inputs()[e.id] },
           diasPeriodo: this.nomina()?.dias_periodo ?? 30,
           fechaInicio: this.periodoFechas()?.inicio,
           parametros: this.parametros(),
@@ -390,9 +468,33 @@ export default class NominaLiquidarPage {
         }
         this.router.navigate(['/admin/nominas', this.nominaId]);
       },
-      error: () => {
+      error: (err) => {
         this.saving.set(false);
-        this.snack.open('No se pudo liquidar', 'Cerrar');
+        const bloqueados: EmpleadoBloqueado[] | undefined = err?.error?.empleados_bloqueados;
+        if (Array.isArray(bloqueados) && bloqueados.length) {
+          const motivos: Record<number, string> = {};
+          for (const b of bloqueados) {
+            const prev = this.inputs()[b.id]?.salario_menor_motivo;
+            const ficha = this.empleados().find((e) => e.id === b.id)?.salario_menor_motivo;
+            motivos[b.id] = prev || ficha || '';
+          }
+          this.dialog
+            .open(SalarioMenorDialog, { width: '520px', data: { empleados: bloqueados, motivos } })
+            .afterClosed()
+            .subscribe((result: Record<number, string> | undefined) => {
+              if (!result) return;
+              this.inputs.update((m) => {
+                const next = { ...m };
+                for (const [id, motivo] of Object.entries(result)) {
+                  next[Number(id)] = { ...(next[Number(id)] || {}), salario_menor_motivo: motivo };
+                }
+                return next;
+              });
+              this.liquidar();
+            });
+          return;
+        }
+        this.snack.open(err?.error?.error || 'No se pudo liquidar', 'Cerrar');
       },
     });
   }

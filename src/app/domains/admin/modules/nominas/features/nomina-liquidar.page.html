@@ -20,6 +20,7 @@
             matButton="filled"
             [disabled]="!empleados().length || saving()"
             (click)="liquidar()"
+            matTooltip="Calcula y guarda la nómina de TODOS los empleados listados con los datos capturados"
           >
             <mat-icon svgIcon="check" />
             Liquidar nómina
@@ -36,15 +37,23 @@
               El excedente del 40% de pagos no salariales se incluye en IBC y prestaciones (interpretación mayoritaria, art. 30 Ley 1393/2010);
               si el contador aplica una interpretación restrictiva, el ajuste se hace fuera del sistema.
               Fuera de alcance: nómina electrónica DIAN, archivo PILA plano, procedimiento 2 de retención, deducciones personales del art. 388 y contratos de aprendizaje (Ley 2466).
+              <br />Salario integral: parafiscales sin reducción — pendiente verificación contable.
+              <br />Salario integral: base de vacaciones al {{ parametros()?.vacaciones_base_integral_pct ?? 70 }}% — pendiente confirmación contable.
+              <br />Factor prestacional vigente por empresa: {{ factorPrestacional() ?? 30 }}% (mínimo 30% según CST art. 132).
             </div>
           </div>
         }
 
-        @if (novedades().length) {
+        @if (novedades().length || filasHoras() || filasIngresos() || filasDescuentos()) {
           <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            {{ novedades().length }} novedad(es) de ausentismo activas en el período afectan
-            {{ totalNovedades() }} empleado(s): los días se descuentan del salario y del auxilio,
-            y se liquidan según quien las asume (empleador / EPS / ARL).
+            Cargadas al período:
+            {{ novedades().length }} novedad(es) de ausentismo,
+            {{ filasHoras() }} fila(s) de horas extra/recargo,
+            {{ filasIngresos() }} ingreso(s) por concepto,
+            {{ filasDescuentos() }} descuento(s) tipificado(s).
+            Las novedades afectan {{ totalNovedades() }} empleado(s): los días se descuentan
+            del salario y del auxilio, y se liquidan según quien las asume (empleador / EPS / ARL).
+            Vacaciones disfrutadas se pagan a tarifa propia sin descontar devengado.
           </div>
         }
 
@@ -71,6 +80,24 @@
               {{ totalDed() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
             </div>
           </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Devengado estimado</div>
+            <div class="text-xl font-bold">
+              {{ totalDevengado() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Provisiones estimadas</div>
+            <div class="text-xl font-bold">
+              {{ totalProvisiones() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-neutral-200 bg-white p-4">
+            <div class="text-xs font-semibold text-neutral-500">Costo empresa estimado</div>
+            <div class="text-xl font-bold">
+              {{ totalCostoEmpresa() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
         </div>
 
         <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
@@ -82,7 +109,7 @@
             <ng-container matColumnDef="nombre">
               <th mat-header-cell *matHeaderCellDef>Nombre</th>
               <td mat-cell *matCellDef="let e">
-                <div class="font-medium">
+                <div class="font-medium uppercase">
                   {{ e.primer_nombre }} {{ e.primer_apellido }}
                   @if (novedadesDe(e.id).length) {
                     <span class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
@@ -141,6 +168,7 @@
                 <button
                   matButton="outlined"
                   (click)="openEmpleado(e)"
+                  matTooltip="Captura días, recargos, ingresos y descuentos de este empleado; el pago se confirma con 'Liquidar nómina'"
                 >
                   <mat-icon svgIcon="calculator" />
                   Liquidar

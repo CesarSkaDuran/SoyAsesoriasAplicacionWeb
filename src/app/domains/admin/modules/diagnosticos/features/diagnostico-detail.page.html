@@ -198,6 +198,22 @@
                               </label>
                             </div>
                           }
+                          @case ('cumplimiento') {
+                            <div class="flex flex-wrap gap-3">
+                              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-emerald-300 px-4 py-2 text-sm text-emerald-700 dark:border-emerald-800 dark:text-emerald-400">
+                                <input type="radio" [value]="'Cumple'" [formControlName]="'p_' + p.id" />
+                                Cumple
+                              </label>
+                              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-amber-300 px-4 py-2 text-sm text-amber-700 dark:border-amber-800 dark:text-amber-400">
+                                <input type="radio" [value]="'Cumple parcialmente'" [formControlName]="'p_' + p.id" />
+                                Cumple parcialmente
+                              </label>
+                              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-red-300 px-4 py-2 text-sm text-red-700 dark:border-red-800 dark:text-red-400">
+                                <input type="radio" [value]="'No cumple'" [formControlName]="'p_' + p.id" />
+                                No cumple
+                              </label>
+                            </div>
+                          }
                           @case ('opciones') {
                             <select
                               class="w-full max-w-sm rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-800"

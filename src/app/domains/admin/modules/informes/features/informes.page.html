@@ -86,7 +86,7 @@
         <apx-chart
           [series]="barSeries()"
           [chart]="{ type: 'bar', height: chartHeight(), stacked: showPagado(), toolbar: { show: false }, fontFamily: 'inherit' }"
-          [xaxis]="{ categories: filas().map(f => f.grupo), labels: { formatter: copShort } }"
+          [xaxis]="{ categories: filas().map(f => f.grupo ?? '—'), labels: { formatter: copShort } }"
           [plotOptions]="{ bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } }"
           [dataLabels]="{ enabled: false }"
           [colors]="barColors()"
@@ -126,7 +126,7 @@
           </th>
           <td mat-cell *matCellDef="let f">
             @if (agrupar() === 'dia' && tab() !== 'servicios') {
-              {{ f.grupo | date: 'mediumDate' }}
+              {{ diaLabel(f) }}
             } @else {
               {{ f.grupo }}
             }

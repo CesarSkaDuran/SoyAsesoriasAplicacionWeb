@@ -330,6 +330,7 @@ export interface Lead {
   telefono: string | null;
   fuente: string | null;
   campania: string | null;
+  valor_propuesta: number | string | null;
   usuario_asignado_id: number | null;
   orden_pos: number;
   ultimo_contacto_en: string | null;
@@ -395,7 +396,7 @@ export interface DiagnosticoPregunta {
   slug: string;
   titulo: string;
   descripcion: string | null;
-  tipo_respuesta: 'texto' | 'textarea' | 'numero' | 'fecha' | 'opciones' | 'multiple' | 'booleano';
+  tipo_respuesta: 'texto' | 'textarea' | 'numero' | 'fecha' | 'opciones' | 'multiple' | 'booleano' | 'cumplimiento';
   opciones: string[] | null;
   es_obligatoria: boolean | number;
   ayuda_contextual: string | null;

@@ -22,6 +22,7 @@ const TIPOS_RESPUESTA = [
   { value: 'fecha', label: 'Fecha' },
   { value: 'opciones', label: 'Opciones (una)' },
   { value: 'booleano', label: 'Sí / No' },
+  { value: 'cumplimiento', label: 'Cumplimiento (Cumple / Parcial / No cumple)' },
 ];
 
 @Component({

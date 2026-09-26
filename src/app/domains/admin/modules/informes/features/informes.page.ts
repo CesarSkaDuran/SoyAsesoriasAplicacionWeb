@@ -106,8 +106,19 @@ export default class InformesPage {
   barColors = () => (this.showPagado() ? ['#10b981', '#f59e0b'] : [this.chartColor()]);
 
   private datePipe = new DatePipe('es-CO');
+  private asDate(v: string | null | undefined): Date | null {
+    const d = v ? new Date(v) : null;
+    return d && !isNaN(d.getTime()) ? d : null;
+  }
   diaCategories = () =>
-    this.filas().map((f) => this.datePipe.transform(f.grupo, 'dd MMM') ?? f.grupo);
+    this.filas().map((f) => {
+      const d = this.asDate(f.grupo);
+      return d ? (this.datePipe.transform(d, 'dd MMM') ?? f.grupo) : (f.grupo ?? 'Sin fecha');
+    });
+  diaLabel = (f: FilaInforme) => {
+    const d = this.asDate(f.grupo);
+    return d ? this.datePipe.transform(d, 'mediumDate') : f.grupo || 'Sin fecha';
+  };
 
   copShort = (v: number) =>
     new Intl.NumberFormat('es-CO', { notation: 'compact', maximumFractionDigits: 1 }).format(v);

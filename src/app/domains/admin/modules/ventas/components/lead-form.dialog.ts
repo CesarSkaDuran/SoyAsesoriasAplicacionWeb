@@ -61,6 +61,8 @@ export class LeadFormDialog {
 
   usuarios = signal<(Usuario & { nombre_completo: string })[]>([]);
   historial = signal<LeadHistorial[]>([]);
+  fuentes = signal<{ nombre: string }[]>([]);
+  campanias = signal<{ nombre: string }[]>([]);
   saving = false;
 
   form = this.fb.group({
@@ -70,8 +72,9 @@ export class LeadFormDialog {
     etapa_id: [this.lead?.etapa_id ?? this.data.etapaId ?? null as number | null],
     email: [this.lead?.email ?? ''],
     telefono: [this.lead?.telefono ?? ''],
-    fuente: [this.lead?.fuente ?? ''],
-    campania: [this.lead?.campania ?? ''],
+    fuente: [this.lead?.fuente ?? null as string | null],
+    campania: [this.lead?.campania ?? null as string | null],
+    valor_propuesta: [this.lead?.valor_propuesta ?? null as number | string | null],
     usuario_asignado_id: [this.lead?.usuario_asignado_id ?? null as number | null],
     notas: [this.lead?.notas ?? ''],
   });
@@ -79,6 +82,29 @@ export class LeadFormDialog {
   constructor() {
     this.api.usuarios({}).subscribe((r) =>
       this.usuarios.set(r.data.map((u) => ({ ...u, nombre_completo: `${u.name} ${u.lastname ?? ''}`.trim() })))
+    );
+    // Catalogos parametrizables (Configuracion > Fuentes/Campañas de leads).
+    // Si el lead tiene un valor que ya no esta en el catalogo, se agrega
+    // como opcion para no perderlo en edicion.
+    const mergeActual = (items: { nombre: string }[], actual?: string | null) =>
+      actual && !items.some((i) => i.nombre === actual)
+        ? [...items, { nombre: actual }]
+        : items;
+    this.api.maestroItems('lead_fuentes', { per_page: 200 }).subscribe((r) =>
+      this.fuentes.set(
+        mergeActual(
+          r.data.filter((i) => i['activo']).map((i) => ({ nombre: String(i['nombre']) })),
+          this.lead?.fuente
+        )
+      )
+    );
+    this.api.maestroItems('lead_campanas', { per_page: 200 }).subscribe((r) =>
+      this.campanias.set(
+        mergeActual(
+          r.data.filter((i) => i['activo']).map((i) => ({ nombre: String(i['nombre']) })),
+          this.lead?.campania
+        )
+      )
     );
     if (this.lead) {
       this.api.ventasLead(this.lead.id).subscribe((r) => this.historial.set(r.historial));

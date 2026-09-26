@@ -49,14 +49,29 @@
       Seguimiento
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Fuente</mat-label>
-      <input matInput formControlName="fuente" placeholder="web-publica, referido…" />
-    </mat-form-field>
+    <searchable-select
+      label="Fuente"
+      [items]="fuentes()"
+      displayKey="nombre"
+      valueKey="nombre"
+      nullLabel="Sin fuente"
+      formControlName="fuente"
+    />
 
-    <mat-form-field appearance="outline">
-      <mat-label>Campaña</mat-label>
-      <input matInput formControlName="campania" />
+    <searchable-select
+      label="Campaña"
+      [items]="campanias()"
+      displayKey="nombre"
+      valueKey="nombre"
+      nullLabel="Sin campaña"
+      formControlName="campania"
+    />
+
+    <mat-form-field appearance="outline" class="col-span-full">
+      <mat-label>Importe de la propuesta</mat-label>
+      <input matInput type="number" min="0" formControlName="valor_propuesta" />
+      <span matTextPrefix class="mr-1 text-neutral-400">$</span>
+      <mat-hint>Valor estimado de la propuesta para el cliente</mat-hint>
     </mat-form-field>
 
     <searchable-select

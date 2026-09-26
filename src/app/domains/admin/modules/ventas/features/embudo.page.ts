@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
   CdkDragDrop,
   DragDropModule,
@@ -46,6 +46,7 @@ const ETAPA_COLORS = [
     MatIcon,
     MatProgressSpinner,
     DatePipe,
+    CurrencyPipe,
   ],
   templateUrl: './embudo.page.html',
   styleUrl: './embudo.page.css',

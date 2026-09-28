@@ -92,12 +92,12 @@
           <mat-spinner diameter="48" />
         </div>
       } @else {
-        <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+        <div class="rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
           <div class="overflow-x-auto">
             <table
               mat-table
               [dataSource]="registros()"
-              class="w-full"
+              class="w-full min-w-[1600px]"
             >
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -157,7 +157,7 @@
                 <th mat-header-cell *matHeaderCellDef>Estado Pago</th>
                 <td mat-cell *matCellDef="let r">
                   <span
-                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
+                    class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
                     [ngClass]="pagoColor(r.status_pago)"
                   >
                     {{ pagoLabel(r.status_pago) }}
@@ -168,7 +168,7 @@
                 <th mat-header-cell *matHeaderCellDef>Estado Servicio</th>
                 <td mat-cell *matCellDef="let r">
                   <span
-                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
+                    class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
                     [ngClass]="statusColor(r.status)"
                   >
                     {{ statusLabel(r.status) }}
@@ -217,17 +217,22 @@
                 </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr mat-header-row *matHeaderRowDef="columns" class="bg-neutral-50 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800"></tr>
               <tr
                 mat-row
                 *matRowDef="let row; columns: columns"
+                class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60"
               ></tr>
             </table>
           </div>
 
           @if (!registros().length) {
-            <div class="py-16 text-center text-neutral-400">
-              No hay registros de este servicio
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="briefcase" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin servicios</h3>
+              <p class="mt-1 text-sm text-neutral-500">No hay registros de servicios en el sistema</p>
             </div>
           }
 

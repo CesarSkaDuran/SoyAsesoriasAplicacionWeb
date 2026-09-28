@@ -26,11 +26,13 @@ import { DocumentoEditDialog } from '../components/documento-edit.dialog';
 const ESTATUS_LABEL: Record<string, string> = {
   recibido: 'Recibido',
   en_revision: 'En revisión',
+  aprobado: 'Aprobado',
   rechazado: 'Rechazado',
 };
 const ESTATUS_CLASS: Record<string, string> = {
-  recibido: 'bg-emerald-50 text-emerald-700',
+  recibido: 'bg-neutral-100 text-neutral-600',
   en_revision: 'bg-amber-50 text-amber-700',
+  aprobado: 'bg-emerald-50 text-emerald-700',
   rechazado: 'bg-red-50 text-red-700',
 };
 

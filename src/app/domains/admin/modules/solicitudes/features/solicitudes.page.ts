@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -76,6 +76,7 @@ const STATUS_DOT: Record<string, string> = {
     SearchableSelect,
   ],
   templateUrl: './solicitudes.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SolicitudesPage {
   private api = inject(ApiService);

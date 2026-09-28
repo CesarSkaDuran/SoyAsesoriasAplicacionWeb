@@ -6,6 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import { Subject } from 'rxjs';
 import { ApiService, NotificationItem } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
+import { playNotificationSound } from '@/app/core/notifications/notification-sound';
 import { environment } from '@/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -116,6 +117,7 @@ export class NotificationsService {
     }
     if (notification.leida || this.toastedNotifications.has(notification.id)) return;
     this.toastedNotifications.add(notification.id);
+    playNotificationSound();
     this.snackBar.open(notification.titulo || notification.mensaje || 'Nueva notificación', 'Ver', {
       duration: 7000,
     }).onAction().subscribe(() => {

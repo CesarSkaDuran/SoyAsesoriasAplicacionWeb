@@ -1,5 +1,5 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -50,6 +50,7 @@ const STATUS_COLOR: Record<number, string> = {
     PageHeader,
   ],
   templateUrl: './soporte.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SoportePage {
   private api = inject(ApiService);

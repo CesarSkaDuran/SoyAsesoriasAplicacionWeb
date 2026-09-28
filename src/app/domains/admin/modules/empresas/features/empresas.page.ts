@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -32,8 +33,10 @@ import { EmpresaFormDialog } from '../components/empresa-form.dialog';
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinner,
+    NgClass,
     PageHeader,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empresas.page.html',
 })
 export default class EmpresasPage {
@@ -59,6 +62,16 @@ export default class EmpresasPage {
   protected desdeControl = new FormControl<Date | null>(null);
   protected hastaControl = new FormControl<Date | null>(null);
   protected isAdmin = () => this.credentials.isAdmin();
+
+  private static readonly OK = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+  private static readonly WARN = 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
+  private static readonly MUTED = 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300';
+
+  protected estadoColor(status?: string): string {
+    if (status === 'activo' || !status) return EmpresasPage.OK;
+    if (status === 'prospecto') return EmpresasPage.WARN;
+    return EmpresasPage.MUTED;
+  }
 
   constructor() {
     this.searchControl.valueChanges

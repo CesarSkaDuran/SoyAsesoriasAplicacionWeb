@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -45,6 +45,7 @@ import { GastoDialog } from '../components/gasto.dialog';
     PageHeader,
     SearchableSelect,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './gastos.page.html',
 })
 export default class GastosPage {

@@ -4,9 +4,21 @@ import { NgClass } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { formatDistance } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NotificationItem } from '@/app/core/api/api.service';
+import {
+  NOTIFICATION_TONES,
+  notificationsSoundEnabled,
+  notificationsTone,
+  notificationsVolume,
+  NotificationTone,
+  playNotificationSound,
+  setNotificationsSoundEnabled,
+  setNotificationsTone,
+  setNotificationsVolume,
+} from '@/app/core/notifications/notification-sound';
 import { NotificationsService } from '@/app/core/notifications/notifications.service';
 
 @Component({
@@ -19,6 +31,7 @@ import { NotificationsService } from '@/app/core/notifications/notifications.ser
     CdkOverlayOrigin,
     MatButton,
     MatDivider,
+    MatMenuModule,
   ],
   templateUrl: './notifications.html',
 })
@@ -29,6 +42,10 @@ export class Notifications {
   protected notificationsService = this.service;
   protected open = signal(false);
   protected onlyUnread = signal(false);
+  protected soundOn = signal(notificationsSoundEnabled());
+  protected soundVolume = signal(Math.round(notificationsVolume() * 100));
+  protected soundTone = signal<NotificationTone>(notificationsTone());
+  protected tones = NOTIFICATION_TONES;
 
   // Data
   protected visibleNotifications = computed(() =>
@@ -52,6 +69,29 @@ export class Notifications {
 
   markAllRead() {
     this.service.markAllRead();
+  }
+
+  toggleSound() {
+    const next = !this.soundOn();
+    this.soundOn.set(next);
+    setNotificationsSoundEnabled(next);
+    if (next) playNotificationSound();
+  }
+
+  selectTone(tone: NotificationTone) {
+    this.soundTone.set(tone);
+    setNotificationsTone(tone);
+    playNotificationSound(tone);
+  }
+
+  onVolumeInput(event: Event) {
+    const value = Number((event.target as HTMLInputElement).value);
+    this.soundVolume.set(value);
+    setNotificationsVolume(value / 100);
+  }
+
+  previewSound() {
+    playNotificationSound();
   }
 
   timeAgo(time: string) {

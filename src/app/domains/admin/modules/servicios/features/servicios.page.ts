@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -52,6 +52,7 @@ import { ServicioRegistroDialog } from '../components/servicio-registro.dialog';
     SearchableSelect,
   ],
   templateUrl: './servicios.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ServiciosPage {
   private api = inject(ApiService);

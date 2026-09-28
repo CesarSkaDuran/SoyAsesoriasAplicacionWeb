@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
@@ -45,6 +45,7 @@ const TIPOS_CONTRATO: Record<string, string> = {
     MatPaginatorModule,
     MatProgressSpinner,
     CurrencyPipe,
+    NgClass,
     PageHeader,
     SearchableSelect,
   ],
@@ -55,6 +56,7 @@ export default class EmpleadosPage {
   private credentials = inject(CredentialsService);
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
 
   // Mismas columnas de la tabla vieja
   protected columns = [
@@ -89,7 +91,23 @@ export default class EmpleadosPage {
     return t ? TIPOS_CONTRATO[t] ?? t : '—';
   }
 
+  // Badge de estado (patrón auditorías)
+  protected estadoColor(status?: string): string {
+    switch (status) {
+      case 'retirado':
+        return 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300';
+      case 'suspendido':
+        return 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
+      default:
+        return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+    }
+  }
+
   constructor() {
+    // Permite llegar prefiltrado desde el detalle de empresa (?empresa_id=)
+    const empresaParam = Number(this.route.snapshot.queryParamMap.get('empresa_id'));
+    if (empresaParam) this.empresaControl.setValue(empresaParam, { emitEvent: false });
+
     if (this.isAdmin()) {
       this.api.empresas(undefined, 1, 500).subscribe((res) => {
         this.empresas.set(res.data);

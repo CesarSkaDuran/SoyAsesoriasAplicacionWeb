@@ -1,95 +1,183 @@
-
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      @if (loading()) {
-        <div class="flex justify-center p-10">
-          <mat-spinner />
-        </div>
-      } @else if (persona(); as p) {
+<div class="flex flex-col gap-y-6 p-6 sm:p-10">
+  @if (loading()) {
+    <div class="flex min-h-64 items-center justify-center">
+      <mat-spinner diameter="42" />
+    </div>
+  } @else if (persona(); as p) {
+    <!-- Header -->
+    <div>
+      <a
+        routerLink="/admin/independientes"
+        class="mb-2 inline-flex items-center gap-x-1 text-sm text-neutral-500 hover:text-blue-600"
+      >
+        <mat-icon svgIcon="arrow-left" class="size-4" />
+        Volver a independientes
+      </a>
+      <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <a
-            routerLink="/admin/independientes"
-            class="mb-2 inline-flex items-center gap-x-1 text-sm text-neutral-500 hover:text-blue-600"
-          >
-            <mat-icon svgIcon="arrow-left" class="size-4" />
-            Volver a independientes
-          </a>
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div class="text-2xl font-bold">{{ nombreCompleto(p) }}</div>
-              <div class="text-neutral-500">
-                {{ p.tipo_documento }} {{ p.num_documento }}
-              </div>
-            </div>
-            <div class="flex gap-2">
+          <div class="text-2xl font-bold">{{ nombreCompleto(p) }}</div>
+          <div class="flex flex-wrap items-center gap-x-2 text-neutral-500">
+            <span>{{ p.tipo_documento }} {{ p.num_documento }}</span>
+            @if (isAdmin()) {
               <button
-                matButton="filled"
-                (click)="openEdit(p)"
+                type="button"
+                class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold transition hover:ring-2 hover:ring-neutral-300 dark:hover:ring-neutral-600"
+                [ngClass]="estadoColor(p.status)"
+                [matMenuTriggerFor]="estadoMenu"
+                title="Cambiar estado"
               >
-                <mat-icon svgIcon="pencil" />
-                Editar
+                {{ estadoLabel(p) }}
+                <mat-icon svgIcon="chevron-down" class="!size-3.5" />
               </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div class="rounded-xl border border-neutral-200 bg-white p-5">
-            <div class="text-sm font-semibold text-neutral-500">Contacto</div>
-            <div class="mt-2 text-sm">
-              <div>{{ p.email || '—' }}</div>
-              <div>{{ p.telefono || '—' }}</div>
-              <div>{{ p.direccion || '—' }}</div>
-            </div>
-          </div>
-          <div class="rounded-xl border border-neutral-200 bg-white p-5">
-            <div class="text-sm font-semibold text-neutral-500">Ubicación</div>
-            <div class="mt-2 text-sm">
-              <div>{{ p.ciudad_nombre || '—' }}</div>
-              <div>{{ p.departamento_nombre || '—' }}</div>
-            </div>
-          </div>
-          <div class="rounded-xl border border-neutral-200 bg-white p-5">
-            <div class="text-sm font-semibold text-neutral-500">Estado</div>
-            <div class="mt-2">
-              <span
-                class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium text-white"
-                [class.bg-green-500]="p.status === 'activo'"
-                [class.bg-neutral-400]="p.status !== 'activo'"
-              >
-                {{ p.status }}
+              <mat-menu #estadoMenu="matMenu">
+                @for (s of estados; track s.value) {
+                  <button mat-menu-item (click)="setEstado(p, s.value)">
+                    <mat-icon svgIcon="check" [class.invisible]="estadoActual(p) !== s.value" />
+                    <span>{{ s.label }}</span>
+                  </button>
+                }
+              </mat-menu>
+            } @else {
+              <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" [ngClass]="estadoColor(p.status)">
+                {{ estadoLabel(p) }}
               </span>
-            </div>
+            }
           </div>
         </div>
+        <button matButton="filled" (click)="openEdit(p)">
+          <mat-icon svgIcon="pencil" />
+          Editar
+        </button>
+      </div>
+    </div>
 
-        <mat-tab-group>
-          <mat-tab label="Servicios">
-            <div class="overflow-hidden rounded-b-xl border border-t-0 border-neutral-200 bg-white">
-              <table class="w-full">
-                <thead>
-                  <tr class="border-b border-neutral-200 text-left text-xs font-semibold uppercase text-neutral-500">
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-950">
+            <mat-icon svgIcon="briefcase" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">{{ totalServicios() }}</div>
+            <div class="text-xs text-neutral-500">Servicios registrados</div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-950">
+            <mat-icon svgIcon="file-text" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">{{ totalPagos() }}</div>
+            <div class="text-xs text-neutral-500">Cuentas de cobro</div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-950">
+            <mat-icon svgIcon="wallet" />
+          </div>
+          <div class="min-w-0">
+            <div class="truncate text-2xl font-bold">
+              {{ totalFacturado() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+            <div class="text-xs text-neutral-500">Facturado</div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-950">
+            <mat-icon svgIcon="shield-check" />
+          </div>
+          <div class="min-w-0">
+            <div class="truncate text-2xl font-bold text-neutral-800 dark:text-neutral-100">
+              {{ totalCobrado() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+            <div class="text-xs text-neutral-500">Cobrado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ficha: contacto / ubicación -->
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <mat-icon svgIcon="mail" class="size-4" />
+          Contacto
+        </div>
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Email</dt>
+            <dd class="min-w-0 break-all font-medium text-neutral-800 dark:text-neutral-100">{{ p.email || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Teléfono</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ p.telefono || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Dirección</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ p.direccion || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <mat-icon svgIcon="map-pin" class="size-4" />
+          Ubicación
+        </div>
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Ciudad</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ p.ciudad_nombre || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Departamento</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ p.departamento_nombre || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      <!-- Servicios -->
+      <mat-tab [label]="'Servicios (' + totalServicios() + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          @if (servicios().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[820px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
                     <th class="px-4 py-3">Fecha</th>
                     <th class="px-4 py-3">Servicio</th>
                     <th class="px-4 py-3">Detalle</th>
-                    <th class="px-4 py-3">Valor</th>
-                    <th class="px-4 py-3">Pago</th>
+                    <th class="px-4 py-3 text-right">Valor</th>
+                    <th class="px-4 py-3">Estado pago</th>
                     <th class="px-4 py-3">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (s of servicios(); track s.id) {
-                    <tr class="border-b border-neutral-100 text-sm">
-                      <td class="px-4 py-3">{{ s.fecha | date: 'dd/MM/yyyy' }}</td>
-                      <td class="px-4 py-3">{{ s.nombre || '—' }}</td>
-                      <td class="px-4 py-3">{{ s.paquete || '—' }}</td>
-                      <td class="px-4 py-3">{{ s.valor ? (s.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}</td>
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ s.fecha | date: 'dd/MM/yyyy' }}</td>
+                      <td class="px-4 py-3 font-medium text-neutral-800 dark:text-neutral-100">{{ s.nombre || '—' }}</td>
+                      <td class="px-4 py-3 text-neutral-600">{{ s.paquete || '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
+                        {{ s.valor ? (s.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}
+                      </td>
                       <td class="px-4 py-3">
-                        <span class="rounded-full px-2 py-0.5 text-xs text-white" [ngClass]="pagoColor(s.status_pago)">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="pagoColor(s.status_pago)">
                           {{ pagoLabel(s.status_pago) }}
                         </span>
                       </td>
                       <td class="px-4 py-3">
-                        <span class="rounded-full px-2 py-0.5 text-xs text-white" [ngClass]="servicioColor(s.status)">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="servicioColor(s.status)">
                           {{ servicioLabel(s.status) }}
                         </span>
                       </td>
@@ -97,33 +185,45 @@
                   }
                 </tbody>
               </table>
-              @if (!servicios().length) {
-                <div class="py-10 text-center text-neutral-400">Sin servicios registrados</div>
-              }
             </div>
-          </mat-tab>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="briefcase" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin servicios registrados</h3>
+              <p class="mt-1 text-sm text-neutral-500">Los servicios prestados aparecerán aquí.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
 
-          <mat-tab label="Pagos">
-            <div class="overflow-hidden rounded-b-xl border border-t-0 border-neutral-200 bg-white">
-              <table class="w-full">
-                <thead>
-                  <tr class="border-b border-neutral-200 text-left text-xs font-semibold uppercase text-neutral-500">
+      <!-- Cuentas de cobro (Pagos) -->
+      <mat-tab [label]="'Cuentas de cobro (' + totalPagos() + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          @if (cuentas().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[720px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
                     <th class="px-4 py-3">N°</th>
                     <th class="px-4 py-3">Concepto</th>
                     <th class="px-4 py-3">Fecha</th>
-                    <th class="px-4 py-3">Valor</th>
+                    <th class="px-4 py-3 text-right">Valor</th>
                     <th class="px-4 py-3">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (c of cuentas(); track c.id) {
-                    <tr class="border-b border-neutral-100 text-sm">
-                      <td class="px-4 py-3">{{ c.numero || c.id }}</td>
-                      <td class="px-4 py-3">{{ c.nombre || '—' }}</td>
-                      <td class="px-4 py-3">{{ c.fecha | date: 'dd/MM/yyyy' }}</td>
-                      <td class="px-4 py-3">{{ c.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</td>
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="whitespace-nowrap px-4 py-3 font-medium text-neutral-800 dark:text-neutral-100">{{ c.numero || c.id }}</td>
+                      <td class="px-4 py-3 text-neutral-800 dark:text-neutral-100">{{ c.nombre || '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ c.fecha | date: 'dd/MM/yyyy' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
+                        {{ c.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                      </td>
                       <td class="px-4 py-3">
-                        <span class="rounded-full px-2 py-0.5 text-xs text-white" [ngClass]="cuentaColor(c.status)">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="cuentaColor(c.status)">
                           {{ cuentaLabel(c.status) }}
                         </span>
                       </td>
@@ -131,37 +231,79 @@
                   }
                 </tbody>
               </table>
-              @if (!cuentas().length) {
-                <div class="py-10 text-center text-neutral-400">Sin cuentas de cobro</div>
-              }
             </div>
-          </mat-tab>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="file-text" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin cuentas de cobro</h3>
+              <p class="mt-1 text-sm text-neutral-500">Las facturas y cuentas de cobro aparecerán aquí.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
 
-          <mat-tab label="Documentos">
-            <div class="rounded-b-xl border border-t-0 border-neutral-200 bg-white">
-              <div class="flex justify-end border-b border-neutral-100 p-3">
-                <button
-                  matButton="filled"
-                  (click)="openUpload(p)"
-                >
-                  <mat-icon svgIcon="upload" />
-                  Subir documento
-                </button>
-              </div>
-              <table class="w-full">
+      <!-- Documentos -->
+      <mat-tab [label]="'Documentos (' + documentos().length + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <div class="flex justify-end border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
+            <button matButton="filled" (click)="openUpload(p)">
+              <mat-icon svgIcon="upload" />
+              Subir documento
+            </button>
+          </div>
+          @if (documentos().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[800px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
+                    <th class="px-4 py-3">Documento</th>
+                    <th class="px-4 py-3">Descripción</th>
+                    <th class="px-4 py-3">Fecha</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3"></th>
+                  </tr>
+                </thead>
                 <tbody>
                   @for (d of documentos(); track d.id) {
-                    <tr class="border-b border-neutral-100 text-sm">
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
                       <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
-                          <mat-icon svgIcon="file-text" class="text-neutral-400" />
-                          {{ d.nombre }}
+                        <div class="flex items-center gap-x-3">
+                          <mat-icon svgIcon="file-text" class="shrink-0 text-neutral-400" />
+                          <span class="font-medium text-neutral-800 dark:text-neutral-100">{{ d.nombre }}</span>
                         </div>
                       </td>
-                      <td class="px-4 py-3 text-neutral-500">{{ d.descripcion || '—' }}</td>
-                      <td class="px-4 py-3">{{ d.created_at | date: 'dd/MM/yyyy' }}</td>
-                      <td class="px-4 py-3 text-right">
-                        <button matIconButton (click)="download(d)">
+                      <td class="px-4 py-3 text-neutral-600">{{ d.descripcion || '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ d.created_at | date: 'dd/MM/yyyy' }}</td>
+                      <td class="px-4 py-3">
+                        @if (isAdmin()) {
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold transition hover:ring-2 hover:ring-neutral-300 dark:hover:ring-neutral-600"
+                            [ngClass]="docEstadoColor(d)"
+                            [matMenuTriggerFor]="docMenu"
+                            title="Cambiar estado del documento"
+                          >
+                            {{ docEstadoLabel(d) }}
+                            <mat-icon svgIcon="chevron-down" class="!size-3.5" />
+                          </button>
+                          <mat-menu #docMenu="matMenu">
+                            @for (s of docEstados; track s.value) {
+                              <button mat-menu-item (click)="setDocEstado(d, s.value)">
+                                <mat-icon svgIcon="check" [class.invisible]="docEstadoActual(d) !== s.value" />
+                                <span>{{ s.label }}</span>
+                              </button>
+                            }
+                          </mat-menu>
+                        } @else {
+                          <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="docEstadoColor(d)">
+                            {{ docEstadoLabel(d) }}
+                          </span>
+                        }
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <button matIconButton title="Descargar" (click)="download(d)">
                           <mat-icon svgIcon="download" />
                         </button>
                       </td>
@@ -169,12 +311,18 @@
                   }
                 </tbody>
               </table>
-              @if (!documentos().length) {
-                <div class="py-10 text-center text-neutral-400">Sin documentos</div>
-              }
             </div>
-          </mat-tab>
-        </mat-tab-group>
-      }
-    </div>
-  
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="file-text" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin documentos</h3>
+              <p class="mt-1 text-sm text-neutral-500">Sube cédula, RUT, certificados y otros documentos.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

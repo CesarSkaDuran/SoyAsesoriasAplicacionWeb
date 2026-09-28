@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -47,6 +47,7 @@ import { CuentaCobroDialog } from '../components/cuenta-cobro.dialog';
     PageHeader,
     SearchableSelect,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pagos.page.html',
 })
 export default class PagosPage {

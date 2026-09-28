@@ -42,9 +42,12 @@ export interface Empleado {
   // CST art. 143: soporte cuando el salario base es inferior al SMMLV
   salario_menor_motivo?: string | null;
   // joins
+  empresa_nombre?: string;
   cargo_nombre?: string;
   eps_nombre?: string;
   arl_nombre?: string;
+  pension_nombre?: string;
+  caja_cf_nombre?: string;
 }
 
 export interface Documento {
@@ -60,7 +63,7 @@ export interface Documento {
   cliente_nombre?: string | null;
   version?: string | null;
   fecha_emision?: string | null;
-  estatus?: 'recibido' | 'en_revision' | 'rechazado';
+  estatus?: 'recibido' | 'en_revision' | 'aprobado' | 'rechazado';
   nombre: string;
   descripcion?: string | null;
   path?: string;

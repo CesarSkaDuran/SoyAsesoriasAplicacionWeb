@@ -32,6 +32,62 @@
           {{ notificationsService.unreadCount() }} sin leer
         </div>
       </div>
+      <button
+        matIconButton
+        [attr.aria-label]="soundOn() ? 'Silenciar sonido de notificaciones' : 'Activar sonido de notificaciones'"
+        [title]="soundOn() ? 'Sonido activado' : 'Sonido silenciado'"
+        class="size-8"
+        (click)="toggleSound()"
+      >
+        <mat-icon svgIcon="volume-2" [class.hidden]="!soundOn()" />
+        <mat-icon svgIcon="volume-x" [class.hidden]="soundOn()" />
+      </button>
+      <button
+        matIconButton
+        aria-label="Ajustes de sonido"
+        title="Ajustes de sonido"
+        class="size-8"
+        [matMenuTriggerFor]="soundMenu"
+      >
+        <mat-icon svgIcon="sliders-horizontal" />
+      </button>
+      <mat-menu #soundMenu="matMenu">
+        <div class="w-60 px-4 py-3" (click)="$event.stopPropagation()">
+          <div class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Tono</div>
+          <div class="mt-1.5 grid grid-cols-2 gap-1">
+            @for (t of tones; track t.value) {
+              <button
+                type="button"
+                class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                [class.bg-blue-50]="soundTone() === t.value"
+                [class.text-blue-700]="soundTone() === t.value"
+                (click)="selectTone(t.value)"
+              >
+                <mat-icon
+                  svgIcon="check"
+                  class="!size-4"
+                  [class.invisible]="soundTone() !== t.value"
+                />
+                {{ t.label }}
+              </button>
+            }
+          </div>
+          <div class="mt-4 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-neutral-500">
+            <span>Volumen</span>
+            <span class="font-normal text-neutral-400">{{ soundVolume() }}%</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            [value]="soundVolume()"
+            (input)="onVolumeInput($event)"
+            (change)="previewSound()"
+            class="mt-1.5 w-full accent-blue-600"
+          />
+        </div>
+      </mat-menu>
       @if (notificationsService.unreadCount()) {
         <button matButton="text" class="small" (click)="markAllRead()">Marcar todas leídas</button>
       }

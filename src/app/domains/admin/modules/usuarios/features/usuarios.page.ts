@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -46,6 +46,7 @@ const ROLE_LABEL: Record<string, string> = {
     PageHeader,
   ],
   templateUrl: './usuarios.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class UsuariosPage {
   private api = inject(ApiService);

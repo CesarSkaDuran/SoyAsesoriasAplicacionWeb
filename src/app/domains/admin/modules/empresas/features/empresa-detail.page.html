@@ -1,255 +1,500 @@
-
-    <div class="flex flex-col gap-y-6 p-6 sm:p-10">
-      @if (loading()) {
-        <div class="flex justify-center p-10">
-          <mat-spinner />
-        </div>
-      } @else if (empresa(); as e) {
-        <!-- Header -->
+<div class="flex flex-col gap-y-6 p-6 sm:p-10">
+  @if (loading()) {
+    <div class="flex justify-center p-10">
+      <mat-spinner />
+    </div>
+  } @else if (empresa(); as e) {
+    <!-- Header -->
+    <div>
+      <a
+        routerLink="/admin/empresas"
+        class="mb-2 inline-flex items-center gap-x-1 text-sm text-neutral-500 hover:text-blue-600"
+      >
+        <mat-icon
+          svgIcon="arrow-left"
+          class="size-4"
+        />
+        Volver a empresas
+      </a>
+      <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <a
-            routerLink="/admin/empresas"
-            class="mb-2 inline-flex items-center gap-x-1 text-sm text-neutral-500 hover:text-blue-600"
-          >
-            <mat-icon
-              svgIcon="arrow-left"
-              class="size-4"
-            />
-            Volver a empresas
-          </a>
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div class="text-2xl font-bold">{{ e.razon_social }}</div>
-              <div class="text-neutral-500">
-                NIT {{ e.num_documento }}{{ e.dv ? '-' + e.dv : '' }}
-                @if (e.tipo_empresa) {
-                  · {{ e.tipo_empresa }}
-                }
-              </div>
-            </div>
+          <div class="text-2xl font-bold">{{ e.razon_social }}</div>
+          <div class="flex flex-wrap items-center gap-x-2 text-neutral-500">
+            <span>NIT {{ e.num_documento }}{{ e.dv ? '-' + e.dv : '' }}</span>
+            @if (e.tipo_empresa) {
+              <span>· {{ e.tipo_empresa }}</span>
+            }
             @if (isAdmin()) {
-              <div class="flex gap-2">
-                <button
-                  matButton="outlined"
-                  (click)="openUsuario()"
-                >
-                  <mat-icon svgIcon="user-round" />
-                  Usuario de acceso
-                </button>
-                <button
-                  matButton="filled"
-                  (click)="openEdit()"
-                >
-                  <mat-icon svgIcon="pencil" />
-                  Editar
-                </button>
-              </div>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold transition hover:ring-2 hover:ring-neutral-300 dark:hover:ring-neutral-600"
+                [ngClass]="empresaEstadoColor(e)"
+                [matMenuTriggerFor]="estadoMenu"
+                title="Cambiar estado"
+              >
+                {{ empresaEstadoLabel(e) }}
+                <mat-icon svgIcon="chevron-down" class="!size-3.5" />
+              </button>
+              <mat-menu #estadoMenu="matMenu">
+                @for (s of estados; track s.value) {
+                  <button mat-menu-item (click)="setEstado(e, s.value)">
+                    <mat-icon svgIcon="check" [class.invisible]="empresaEstadoActual(e) !== s.value" />
+                    <span>{{ s.label }}</span>
+                  </button>
+                }
+              </mat-menu>
+            } @else {
+              <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" [ngClass]="empresaEstadoColor(e)">
+                {{ empresaEstadoLabel(e) }}
+              </span>
             }
           </div>
         </div>
+        @if (isAdmin()) {
+          <div class="flex gap-2">
+            <button
+              matButton="outlined"
+              (click)="openUsuario()"
+            >
+              <mat-icon svgIcon="user-round" />
+              Usuario de acceso
+            </button>
+            <button
+              matButton="filled"
+              (click)="openEdit()"
+            >
+              <mat-icon svgIcon="pencil" />
+              Editar
+            </button>
+          </div>
+        }
+      </div>
+    </div>
 
-        <!-- Info cards -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Contacto</div>
-            <div class="mt-1 font-medium">{{ e.email || '—' }}</div>
-            <div class="text-sm text-neutral-500">
-              {{ e.telefono_movil || e.telefono_fijo || '—' }}
-            </div>
+    <!-- KPIs (patrón stat-card de Diagnósticos) -->
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-950">
+            <mat-icon svgIcon="users" />
           </div>
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Representante legal</div>
-            <div class="mt-1 font-medium">
-              {{ e.representante_legal || '—' }}
-            </div>
-            <div class="text-sm text-neutral-500">
-              {{ e.direccion || '' }}
-            </div>
-          </div>
-          <div class="rounded-2xl border bg-white p-5 dark:bg-neutral-900">
-            <div class="text-sm text-neutral-500">Empleados</div>
-            <div class="mt-1 text-2xl font-bold">{{ empleadosTotal() }}</div>
+          <div>
+            <div class="text-2xl font-bold">{{ empleadosTotal() }}</div>
+            <div class="text-xs text-neutral-500">Empleados</div>
           </div>
         </div>
-
-        <!-- Tabs -->
-        <mat-tab-group>
-          <!-- Empleados -->
-          <mat-tab label="Empleados">
-            <div class="py-4">
-              <div class="mb-3 flex justify-end">
-                <button
-                  matButton="outlined"
-                  (click)="openEmpleado()"
-                >
-                  <mat-icon svgIcon="plus" />
-                  Nuevo empleado
-                </button>
-              </div>
-              @if (!empleados().length) {
-                <div class="p-6 text-neutral-500">Sin empleados</div>
-              }
-              <div class="overflow-hidden rounded-xl border">
-                @for (emp of empleados(); track emp.id) {
-                  <div
-                    class="flex items-center justify-between border-b px-4 py-3 last:border-0"
-                  >
-                    <div>
-                      <div class="font-medium">
-                        {{ emp.primer_nombre }} {{ emp.primer_apellido }}
-                      </div>
-                      <div class="text-sm text-neutral-500">
-                        {{ emp.numero_documento }}
-                        @if (emp.cargo_nombre) {
-                          · {{ emp.cargo_nombre }}
-                        }
-                      </div>
-                    </div>
-                    <div class="text-sm text-neutral-500">
-                      {{ emp.eps_nombre || '' }}
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          </mat-tab>
-
-          <!-- Nominas -->
-          <mat-tab label="Nóminas">
-            <div class="py-4">
-              @if (!nominas().length) {
-                <div class="p-6 text-neutral-500">Sin nóminas generadas</div>
-              }
-              @for (n of nominas(); track n.id) {
-                <div
-                  class="mb-2 flex items-center justify-between rounded-xl border px-4 py-3"
-                >
-                  <div>
-                    <div class="font-medium">
-                      Nómina #{{ n.id }}
-                      @if (n.nombre_periodo) {
-                        — {{ n.nombre_periodo }}
-                      }
-                    </div>
-                    <div class="text-sm text-neutral-500">
-                      {{ n.num_empleados }} empleados · {{ n.status }}
-                    </div>
-                  </div>
-                  <div class="font-semibold">
-                    {{ n.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-                  </div>
-                </div>
-              }
-            </div>
-          </mat-tab>
-
-          <!-- Servicios contratados (empresa_servicios) -->
-          <mat-tab label="Servicios">
-            <div class="py-4">
-              @if (isAdmin()) {
-                <div class="mb-3 flex justify-end">
-                  <button
-                    matButton="outlined"
-                    (click)="openServicio()"
-                  >
-                    <mat-icon svgIcon="plus" />
-                    Asignar servicio
-                  </button>
-                </div>
-              }
-              @if (!servicios().length) {
-                <div class="p-6 text-neutral-500">
-                  La empresa no tiene servicios contratados
-                </div>
-              }
-              @for (s of servicios(); track s.id) {
-                <div
-                  class="mb-2 flex items-center justify-between rounded-xl border px-4 py-3"
-                >
-                  <div>
-                    <div class="font-medium">{{ s.servicio_nombre }}</div>
-                    <div class="text-sm text-neutral-500">
-                      {{ s.tipo || 'servicio' }}
-                      @if (s.fecha_inicio) {
-                        · desde {{ s.fecha_inicio | date: 'mediumDate' }}
-                      }
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-x-3">
-                    <span class="font-semibold">
-                      {{
-                        s.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0'
-                      }}
-                    </span>
-                    <span
-                      class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                      [class.bg-green-100]="s.status === 'activo'"
-                      [class.text-green-700]="s.status === 'activo'"
-                      [class.bg-neutral-200]="s.status !== 'activo'"
-                      [class.text-neutral-600]="s.status !== 'activo'"
-                    >
-                      {{ s.status }}
-                    </span>
-                    @if (isAdmin()) {
-                      <button
-                        matIconButton
-                        title="Quitar"
-                        (click)="removeServicio(s)"
-                      >
-                        <mat-icon
-                          svgIcon="trash"
-                          class="text-neutral-400"
-                        />
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          </mat-tab>
-
-          <!-- Documentos -->
-          <mat-tab label="Documentos">
-            <div class="py-4">
-              <div class="mb-3 flex justify-end">
-                <button
-                  matButton="outlined"
-                  (click)="openUpload()"
-                >
-                  <mat-icon svgIcon="upload" />
-                  Subir documento
-                </button>
-              </div>
-              @if (!documentos().length) {
-                <div class="p-6 text-neutral-500">Sin documentos</div>
-              }
-              @for (d of documentos(); track d.id) {
-                <div
-                  class="mb-2 flex items-center justify-between rounded-xl border px-4 py-3"
-                >
-                  <div class="flex items-center gap-x-3">
-                    <mat-icon
-                      svgIcon="file-text"
-                      class="text-neutral-400"
-                    />
-                    <div>
-                      <div class="font-medium">{{ d.nombre }}</div>
-                      <div class="text-sm text-neutral-500">
-                        {{ d.created_at | date: 'mediumDate' }}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    class="text-blue-600 hover:underline"
-                    (click)="download(d)"
-                  >
-                    Descargar
-                  </button>
-                </div>
-              }
-            </div>
-          </mat-tab>
-        </mat-tab-group>
-      }
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-950">
+            <mat-icon svgIcon="calculator" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">{{ nominas().length }}</div>
+            <div class="text-xs text-neutral-500">Nóminas</div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-950">
+            <mat-icon svgIcon="briefcase" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">{{ serviciosActivos() }}</div>
+            <div class="text-xs text-neutral-500">Servicios activos</div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-950">
+            <mat-icon svgIcon="badge-percent" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">{{ e.factor_prestacional_pct ?? 30 }}%</div>
+            <div class="text-xs text-neutral-500">Factor prestacional</div>
+          </div>
+        </div>
+      </div>
     </div>
-  
+
+    <!-- Ficha: contacto / representante / seguridad social -->
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <mat-icon svgIcon="mail" class="size-4" />
+          Contacto
+        </div>
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Email</dt>
+            <dd class="min-w-0 break-all font-medium text-neutral-800 dark:text-neutral-100">{{ e.email || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Móvil</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ e.telefono_movil || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Fijo</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ e.telefono_fijo || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-20 shrink-0 text-neutral-500">Dirección</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ e.direccion || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <mat-icon svgIcon="user-round" class="size-4" />
+          Representante legal y contacto
+        </div>
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Representante</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ e.representante_legal || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Email</dt>
+            <dd class="min-w-0 break-all font-medium text-neutral-800 dark:text-neutral-100">{{ e.email_responsable || '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Contacto</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">
+              {{ e.nombre_contacto || '—' }}
+              @if (e.telefono_contacto) {
+                <span class="font-normal text-neutral-500"> · {{ e.telefono_contacto }}</span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+        <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <mat-icon svgIcon="shield-check" class="size-4" />
+          Seguridad social
+        </div>
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Riesgo ARL</dt>
+            <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ e.riesgo ? 'Clase ' + e.riesgo : '—' }}</dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Parafiscales</dt>
+            <dd>
+              <span
+                class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                [ngClass]="e.exonerado_parafiscales === 'si' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'"
+              >
+                {{ e.exonerado_parafiscales === 'si' ? 'Exonerada (114-1)' : 'Tarifa completa' }}
+              </span>
+            </dd>
+          </div>
+          <div class="flex items-start gap-2">
+            <dt class="w-24 shrink-0 text-neutral-500">Estado</dt>
+            <dd>
+              <span
+                class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                [ngClass]="empresaEstadoColor(e)"
+              >
+                {{ empresaEstadoLabel(e) }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      <!-- Empleados -->
+      <mat-tab [label]="'Empleados (' + empleadosTotal() + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <div class="flex items-center justify-between gap-3 border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
+            <span class="text-sm text-neutral-500">
+              @if (empleadosTotal() > empleados().length) {
+                Mostrando {{ empleados().length }} de {{ empleadosTotal() }} ·
+                <a [routerLink]="['/admin/empleados']" [queryParams]="{ empresa_id: e.id }" class="text-blue-700 hover:underline">ver todos</a>
+              } @else {
+                {{ empleadosTotal() }} empleados
+              }
+            </span>
+            <button matButton="filled" (click)="openEmpleado()">
+              <mat-icon svgIcon="plus" />
+              Nuevo empleado
+            </button>
+          </div>
+          @if (empleados().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[820px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
+                    <th class="px-4 py-3">Empleado</th>
+                    <th class="px-4 py-3">Documento</th>
+                    <th class="px-4 py-3">Cargo</th>
+                    <th class="px-4 py-3">EPS</th>
+                    <th class="px-4 py-3 text-right">Salario</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (emp of empleados(); track emp.id) {
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="px-4 py-3">
+                        <a [routerLink]="['/admin/empleados', emp.id]" class="font-medium text-blue-700 hover:underline dark:text-blue-300">
+                          {{ emp.primer_nombre }} {{ emp.primer_apellido }}
+                        </a>
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ emp.tipo_documento }} {{ emp.numero_documento }}</td>
+                      <td class="px-4 py-3 text-neutral-800 dark:text-neutral-100">{{ emp.cargo_nombre || '—' }}</td>
+                      <td class="px-4 py-3 text-neutral-600">{{ emp.eps_nombre || '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
+                        {{ emp.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                      </td>
+                      <td class="px-4 py-3">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="empleadoColor(emp.status)">
+                          {{ emp.status || 'activo' }}
+                        </span>
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <button matIconButton title="Ver detalle" [routerLink]="['/admin/empleados', emp.id]">
+                          <mat-icon svgIcon="eye" />
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="users" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin empleados</h3>
+              <p class="mt-1 text-sm text-neutral-500">Registra el primer empleado de la empresa.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Nominas -->
+      <mat-tab [label]="'Nóminas (' + nominas().length + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          @if (nominas().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[820px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
+                    <th class="px-4 py-3">Periodo</th>
+                    <th class="px-4 py-3 text-right">Empleados</th>
+                    <th class="px-4 py-3 text-right">Neto a pagar</th>
+                    <th class="px-4 py-3 text-right">Costo empresa</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (n of nominas(); track n.id) {
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="px-4 py-3">
+                        <a [routerLink]="['/admin/nominas', n.id]" class="font-medium text-blue-700 hover:underline dark:text-blue-300">
+                          {{ n.nombre_periodo || 'Nómina #' + n.id }}
+                        </a>
+                        <div class="text-xs text-neutral-500">
+                          #{{ n.id }}
+                          @if (n.fecha_inicio) { · {{ n.fecha_inicio | date: 'dd/MM/yyyy' }} → {{ n.fecha_fin | date: 'dd/MM/yyyy' }} }
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-right text-neutral-600">{{ n.num_empleados ?? 0 }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
+                        {{ (n.total_neto_pagar || n.valor_total) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right text-neutral-600">
+                        {{ n.total_costo_empresa ? (n.total_costo_empresa | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}
+                      </td>
+                      <td class="px-4 py-3">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="nominaColor(n.status)">
+                          {{ n.status }}
+                        </span>
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <button matIconButton title="Ver detalle" [routerLink]="['/admin/nominas', n.id]">
+                          <mat-icon svgIcon="eye" />
+                        </button>
+                        @if (isAdmin() && n.status === 'borrador') {
+                          <button matIconButton title="Liquidar" [routerLink]="['/admin/nominas', n.id, 'liquidar']">
+                            <mat-icon svgIcon="calculator" />
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="calculator" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin nóminas generadas</h3>
+              <p class="mt-1 text-sm text-neutral-500">Las nóminas de esta empresa aparecerán aquí.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Servicios contratados (empresa_servicios) -->
+      <mat-tab [label]="'Servicios (' + servicios().length + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          @if (isAdmin()) {
+            <div class="flex justify-end border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
+              <button matButton="filled" (click)="openServicio()">
+                <mat-icon svgIcon="plus" />
+                Asignar servicio
+              </button>
+            </div>
+          }
+          @if (servicios().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[720px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
+                    <th class="px-4 py-3">Servicio</th>
+                    <th class="px-4 py-3">Tipo</th>
+                    <th class="px-4 py-3">Desde</th>
+                    <th class="px-4 py-3 text-right">Valor</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of servicios(); track s.id) {
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="px-4 py-3 font-medium text-neutral-800 dark:text-neutral-100">{{ s.servicio_nombre }}</td>
+                      <td class="px-4 py-3 capitalize text-neutral-600">{{ s.tipo || 'servicio' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ s.fecha_inicio ? (s.fecha_inicio | date: 'dd/MM/yyyy') : '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
+                        {{ s.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                      </td>
+                      <td class="px-4 py-3">
+                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="servicioColor(s.status)">
+                          {{ s.status }}
+                        </span>
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right">
+                        @if (isAdmin()) {
+                          <button matIconButton title="Quitar" (click)="removeServicio(s)">
+                            <mat-icon svgIcon="trash" class="text-neutral-400" />
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="briefcase" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin servicios contratados</h3>
+              <p class="mt-1 text-sm text-neutral-500">Asigna un servicio o plan a la empresa.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Documentos -->
+      <mat-tab [label]="'Documentos (' + documentos().length + ')'">
+        <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <div class="flex justify-end border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
+            <button matButton="filled" (click)="openUpload()">
+              <mat-icon svgIcon="upload" />
+              Subir documento
+            </button>
+          </div>
+          @if (documentos().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[720px] text-sm">
+                <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
+                  <tr>
+                    <th class="px-4 py-3">Documento</th>
+                    <th class="px-4 py-3">Tipo</th>
+                    <th class="px-4 py-3">Fecha</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (d of documentos(); track d.id) {
+                    <tr class="border-t border-neutral-100 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60">
+                      <td class="px-4 py-3">
+                        <div class="flex items-center gap-x-3">
+                          <mat-icon svgIcon="file-text" class="shrink-0 text-neutral-400" />
+                          <div>
+                            <div class="font-medium text-neutral-800 dark:text-neutral-100">{{ d.nombre }}</div>
+                            @if (d.descripcion) {
+                              <div class="text-xs text-neutral-500">{{ d.descripcion }}</div>
+                            }
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-neutral-600">{{ d.tipo_nombre || '—' }}</td>
+                      <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ d.created_at | date: 'dd/MM/yyyy' }}</td>
+                      <td class="px-4 py-3">
+                        @if (isAdmin()) {
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold transition hover:ring-2 hover:ring-neutral-300 dark:hover:ring-neutral-600"
+                            [ngClass]="documentoColor(docEstadoActual(d))"
+                            [matMenuTriggerFor]="docMenu"
+                            title="Cambiar estado del documento"
+                          >
+                            {{ documentoLabel(docEstadoActual(d)) }}
+                            <mat-icon svgIcon="chevron-down" class="!size-3.5" />
+                          </button>
+                          <mat-menu #docMenu="matMenu">
+                            @for (s of docEstados; track s.value) {
+                              <button mat-menu-item (click)="setDocEstado(d, s.value)">
+                                <mat-icon svgIcon="check" [class.invisible]="docEstadoActual(d) !== s.value" />
+                                <span>{{ s.label }}</span>
+                              </button>
+                            }
+                          </mat-menu>
+                        } @else {
+                          <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="documentoColor(docEstadoActual(d))">
+                            {{ documentoLabel(docEstadoActual(d)) }}
+                          </span>
+                        }
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <button matIconButton title="Descargar" (click)="download(d)">
+                          <mat-icon svgIcon="download" />
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
+              <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <mat-icon svgIcon="file-text" />
+              </span>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin documentos</h3>
+              <p class="mt-1 text-sm text-neutral-500">Sube el primer documento de la empresa.</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

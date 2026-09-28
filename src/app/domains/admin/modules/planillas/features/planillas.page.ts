@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -52,6 +52,7 @@ const STATUS_COLOR: Record<string, string> = {
     SearchableSelect,
   ],
   templateUrl: './planillas.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PlanillasPage {
   private api = inject(ApiService);

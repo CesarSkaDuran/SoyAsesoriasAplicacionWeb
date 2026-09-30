@@ -128,9 +128,9 @@ export default class IndependienteDetailPage {
   }
 
   servicioLabel = (s: number) => SERVICIO_STATUS[s] || '—';
-  servicioColor = (s: number) => SERVICIO_STATUS_COLOR[s] || 'bg-neutral-400';
+  servicioColor = (s: number) => SERVICIO_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
   pagoLabel = (s: number) => PAGO_STATUS[s] || '—';
-  pagoColor = (s: number) => PAGO_STATUS_COLOR[s] || 'bg-neutral-400';
+  pagoColor = (s: number) => PAGO_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
   cuentaLabel = (s: number) => CUENTA_STATUS[s] || '—';
   cuentaColor = (s: number) => CUENTA_STATUS_COLOR[s] || 'bg-neutral-400';
 

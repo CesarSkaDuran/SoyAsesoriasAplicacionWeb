@@ -151,7 +151,7 @@ export default class ServiciosPage {
   }
 
   statusLabel = (s: number) => SERVICIO_STATUS[s] || '—';
-  statusColor = (s: number) => SERVICIO_STATUS_COLOR[s] || 'bg-neutral-400';
+  statusColor = (s: number) => SERVICIO_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
   pagoLabel = (s: number) => PAGO_STATUS[s] || '—';
   pagoColor = (s: number) => PAGO_STATUS_COLOR[s] || 'bg-neutral-400';
 

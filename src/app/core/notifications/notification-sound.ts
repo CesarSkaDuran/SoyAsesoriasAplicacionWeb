@@ -7,6 +7,29 @@
 const SOUND_KEY = 'notificaciones.sonido';
 const VOLUME_KEY = 'notificaciones.volumen';
 const TONE_KEY = 'notificaciones.tono';
+const CREDENTIALS_KEY = 'credentials';
+
+function scopedKey(key: string): string {
+  if (typeof localStorage === 'undefined') return key;
+  try {
+    const id = JSON.parse(localStorage.getItem(CREDENTIALS_KEY) || 'null')?.user?.id;
+    return id ? `${key}.${id}` : key;
+  } catch {
+    return key;
+  }
+}
+
+function readPreference(key: string): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  const scoped = scopedKey(key);
+  return scoped === key
+    ? localStorage.getItem(key)
+    : localStorage.getItem(scoped);
+}
+
+function savePreference(key: string, value: string) {
+  if (typeof localStorage !== 'undefined') localStorage.setItem(scopedKey(key), value);
+}
 
 export type NotificationTone = 'campana' | 'ding' | 'suave' | 'pop';
 
@@ -18,36 +41,32 @@ export const NOTIFICATION_TONES: { value: NotificationTone; label: string }[] = 
 ];
 
 export function notificationsSoundEnabled(): boolean {
-  if (typeof localStorage === 'undefined') return true;
-  return localStorage.getItem(SOUND_KEY) !== 'false';
+  return readPreference(SOUND_KEY) !== 'false';
 }
 
 export function setNotificationsSoundEnabled(enabled: boolean) {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(SOUND_KEY, String(enabled));
+  savePreference(SOUND_KEY, String(enabled));
 }
 
-/** Volumen 0..1 (default 0.32) */
+/** Volumen 0..1 (default 1) */
 export function notificationsVolume(): number {
-  if (typeof localStorage === 'undefined') return 0.32;
-  const v = Number(localStorage.getItem(VOLUME_KEY));
-  return Number.isFinite(v) && v >= 0 && v <= 1 ? v : 0.32;
+  const stored = readPreference(VOLUME_KEY);
+  if (stored === null) return 1;
+  const v = Number(stored);
+  return Number.isFinite(v) && v >= 0 && v <= 1 ? v : 1;
 }
 
 export function setNotificationsVolume(volume: number) {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(VOLUME_KEY, String(Math.min(1, Math.max(0, volume))));
+  savePreference(VOLUME_KEY, String(Math.min(1, Math.max(0, volume))));
 }
 
 export function notificationsTone(): NotificationTone {
-  if (typeof localStorage === 'undefined') return 'campana';
-  const t = localStorage.getItem(TONE_KEY);
+  const t = readPreference(TONE_KEY);
   return NOTIFICATION_TONES.some((x) => x.value === t) ? (t as NotificationTone) : 'campana';
 }
 
 export function setNotificationsTone(tone: NotificationTone) {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(TONE_KEY, tone);
+  savePreference(TONE_KEY, tone);
 }
 
 let audioContext: AudioContext | null = null;
@@ -57,8 +76,13 @@ function context(): AudioContext | null {
   const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!Ctor) return null;
   if (!audioContext) audioContext = new Ctor();
-  if (audioContext.state === 'suspended') void audioContext.resume();
+  if (audioContext.state === 'suspended') void audioContext.resume().catch(() => {});
   return audioContext;
+}
+
+export function unlockNotificationSound() {
+  const ctx = context();
+  if (ctx?.state === 'suspended') void ctx.resume().catch(() => {});
 }
 
 function tone(

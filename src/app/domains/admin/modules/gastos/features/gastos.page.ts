@@ -109,7 +109,7 @@ export default class GastosPage {
   }
 
   statusLabel = (s: number) => CUENTA_STATUS[s] || '—';
-  statusColor = (s: number) => CUENTA_STATUS_COLOR[s] || 'bg-neutral-400';
+  statusColor = (s: number) => CUENTA_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
 
   setStatus(g: Gasto, status: number) {
     this.api.updateGasto(g.id, { status }).subscribe(() => {

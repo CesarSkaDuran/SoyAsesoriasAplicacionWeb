@@ -61,6 +61,14 @@ export class CredentialsService {
     return !!user.modulos?.[modulo as keyof User['modulos']];
   }
 
+  /** Marca los terminos como aceptados en la sesion guardada */
+  markTerminosAceptados() {
+    const c = this._credentials();
+    if (c?.user) {
+      this.setCredentials({ ...c, user: { ...c.user, terminos_aceptados: true } });
+    }
+  }
+
   setCredentials(credentials?: Credentials) {
     this._credentials.set(credentials || null);
 

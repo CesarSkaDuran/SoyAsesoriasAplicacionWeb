@@ -297,13 +297,15 @@
           </div>
           @if (incapacidades().length) {
             <div class="overflow-x-auto">
-              <table class="w-full min-w-[760px] text-sm">
+              <table class="w-full min-w-[1050px] text-sm">
                 <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
                   <tr>
                     <th class="px-4 py-3">Inicio</th>
                     <th class="px-4 py-3">Fin</th>
                     <th class="px-4 py-3 text-right">Días</th>
-                    <th class="px-4 py-3">Tipo</th>
+                    <th class="px-4 py-3">Origen / tipo</th>
+                    <th class="px-4 py-3">Continuidad</th>
+                    <th class="px-4 py-3">Certificado</th>
                     <th class="px-4 py-3 text-right">Valor</th>
                     <th class="px-4 py-3">Estado</th>
                     <th class="px-4 py-3"></th>
@@ -315,7 +317,14 @@
                       <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ i.fecha_inicio | date: 'dd/MM/yyyy' }}</td>
                       <td class="whitespace-nowrap px-4 py-3 text-neutral-600">{{ i.fecha_fin ? (i.fecha_fin | date: 'dd/MM/yyyy') : '—' }}</td>
                       <td class="px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">{{ i.dias || '—' }}</td>
-                      <td class="px-4 py-3 capitalize text-neutral-600">{{ i.tipo }}</td>
+                      <td class="px-4 py-3 text-neutral-600">
+                        {{ i.origen === 'laboral' ? 'Laboral (ARL)' : i.origen === 'comun' ? 'Común (EPS)' : i.tipo }}
+                        @if (i.retroactiva) { <span class="ml-1 text-xs text-amber-700">Retroactiva</span> }
+                      </td>
+                      <td class="px-4 py-3 text-neutral-600">
+                        {{ i.prorroga_de_id ? 'Prórroga · acumulado ' + diasAcumulados(i) + ' días' : 'Inicial' }}
+                      </td>
+                      <td class="px-4 py-3 text-neutral-600">{{ i.numero_certificado || '—' }}</td>
                       <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-800 dark:text-neutral-100">
                         {{ i.valor ? (i.valor | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}
                       </td>

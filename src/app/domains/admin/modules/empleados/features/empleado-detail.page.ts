@@ -141,6 +141,10 @@ export default class EmpleadoDetailPage {
     return EmpleadoDetailPage.MUTED;
   }
 
+  diasAcumulados(i: Record<string, any>): number {
+    return Number(i['dias_acumulado'] || 0) + Number(i['dias'] || 0);
+  }
+
   load() {
     this.loading.set(true);
     this.api.empleado(this.empleadoId).subscribe({
@@ -188,7 +192,7 @@ export default class EmpleadoDetailPage {
 
   openIncapacidad(e: Empleado) {
     this.dialog
-      .open(IncapacidadDialog, { width: '520px', data: { empleado: e } })
+      .open(IncapacidadDialog, { width: '640px', maxWidth: '95vw', data: { empleado: e, incapacidades: this.incapacidades() } })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
   }

@@ -28,10 +28,10 @@ const ESTADO_LABEL: Record<string, string> = {
   cancelado: 'Cancelado',
 };
 const ESTADO_COLOR: Record<string, string> = {
-  pendiente: 'bg-amber-500',
-  en_progreso: 'bg-sky-500',
-  logrado: 'bg-emerald-500',
-  cancelado: 'bg-neutral-400',
+  pendiente: 'bg-amber-500 text-white',
+  en_progreso: 'bg-sky-500 text-white',
+  logrado: 'bg-emerald-500 text-white',
+  cancelado: 'bg-neutral-400 text-white',
 };
 const ESTADO_HEX: Record<string, string> = {
   pendiente: '#f59e0b',
@@ -131,7 +131,7 @@ export default class DiagnosticosPage {
   }
 
   estadoLabel = (s: string) => ESTADO_LABEL[s] || s;
-  estadoColor = (s: string) => ESTADO_COLOR[s] || 'bg-neutral-400';
+  estadoColor = (s: string) => ESTADO_COLOR[s] || 'bg-neutral-400 text-white';
   estadoHex = (s: string) => ESTADO_HEX[s] || '#4b4e56';
 
   openCreate() {

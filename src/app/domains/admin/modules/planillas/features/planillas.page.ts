@@ -27,9 +27,9 @@ const STATUS_LABEL: Record<string, string> = {
   verificada: 'Verificada',
 };
 const STATUS_COLOR: Record<string, string> = {
-  generada: 'bg-blue-500',
-  pagada: 'bg-green-500',
-  verificada: 'bg-indigo-500',
+  generada: 'bg-blue-500 text-white',
+  pagada: 'bg-green-500 text-white',
+  verificada: 'bg-indigo-500 text-white',
 };
 
 @Component({
@@ -113,7 +113,7 @@ export default class PlanillasPage {
   }
 
   statusLabel = (s: string) => STATUS_LABEL[s] || s;
-  statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-400';
+  statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-400 text-white';
 
   setStatus(p: Planilla, status: Planilla['status']) {
     this.api.updatePlanilla(p.id, { status }).subscribe(() => {

@@ -17,7 +17,7 @@ import { PageHeader } from '@/app/core/ui/page-header';
 type Tab = 'ingresos' | 'egresos' | 'servicios';
 
 interface FilaInforme {
-  grupo: string;
+  grupo: string | null;
   registros: number;
   total: number;
   pagado?: number;
@@ -40,7 +40,6 @@ interface FilaInforme {
     MatTabsModule,
     MatProgressSpinner,
     CurrencyPipe,
-    DatePipe,
     PageHeader,
     NgApexchartsModule,
   ],

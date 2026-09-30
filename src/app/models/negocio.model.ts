@@ -48,11 +48,11 @@ export const SERVICIO_STATUS: Record<number, string> = {
 };
 
 export const SERVICIO_STATUS_COLOR: Record<number, string> = {
-  1: 'bg-red-500',
-  2: 'bg-green-500',
-  3: 'bg-blue-500',
-  4: 'bg-indigo-500',
-  5: 'bg-amber-500',
+  1: 'bg-red-500 text-white',
+  2: 'bg-green-500 text-white',
+  3: 'bg-blue-500 text-white',
+  4: 'bg-indigo-500 text-white',
+  5: 'bg-amber-500 text-white',
 };
 
 export const PAGO_STATUS: Record<number, string> = {
@@ -62,9 +62,9 @@ export const PAGO_STATUS: Record<number, string> = {
 };
 
 export const PAGO_STATUS_COLOR: Record<number, string> = {
-  1: 'bg-green-500',
-  2: 'bg-red-500',
-  3: 'bg-neutral-400',
+  1: 'bg-green-500 text-white',
+  2: 'bg-red-500 text-white',
+  3: 'bg-neutral-400 text-white',
 };
 
 // Categorías del submenú Servicios (valores de detalle_servicios.nombre)
@@ -115,11 +115,11 @@ export const CUENTA_STATUS: Record<number, string> = {
 };
 
 export const CUENTA_STATUS_COLOR: Record<number, string> = {
-  1: 'bg-green-500',
-  2: 'bg-red-500',
-  3: 'bg-blue-500',
-  4: 'bg-indigo-500',
-  5: 'bg-amber-500',
+  1: 'bg-green-500 text-white',
+  2: 'bg-red-500 text-white',
+  3: 'bg-blue-500 text-white',
+  4: 'bg-indigo-500 text-white',
+  5: 'bg-amber-500 text-white',
 };
 
 // ── Planillas PILA ────────────────────────────────────────────────────────────

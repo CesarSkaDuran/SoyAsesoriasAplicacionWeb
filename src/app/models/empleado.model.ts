@@ -201,9 +201,16 @@ export interface Incapacidad {
   id: number;
   empleado_id: number;
   eps_id?: number | null;
+  arl_id?: number | null;
   fecha_inicio: string;
   fecha_fin?: string | null;
+  fecha_expedicion?: string | null;
   dias?: number | null;
+  dias_acumulado?: number;
+  prorroga_de_id?: number | null;
+  origen?: 'comun' | 'laboral' | null;
+  retroactiva?: boolean | number;
+  numero_certificado?: string | null;
   tipo?: 'comun' | 'laboral' | 'maternidad' | 'paternidad' | 'no_remunerada' | 'vacaciones' | 'otra';
   valor?: number | null;
   status?: string;

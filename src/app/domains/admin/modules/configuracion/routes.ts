@@ -9,6 +9,12 @@ const routes: Routes = [
     loadComponent: () => import('./features/auditorias.page'),
   },
   {
+    path: 'correo',
+    canActivate: [ModuloGuard],
+    data: { adminOnly: true },
+    loadComponent: () => import('./features/correo.page'),
+  },
+  {
     path: '',
     loadComponent: () => import('./features/configuracion.page'),
   },

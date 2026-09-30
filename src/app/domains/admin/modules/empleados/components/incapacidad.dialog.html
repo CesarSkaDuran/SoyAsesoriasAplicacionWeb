@@ -1,82 +1,130 @@
+<dialog-header title="Registrar incapacidad o licencia" />
 
-    <dialog-header title="Reportar incapacidad o licencia" />
+<mat-dialog-content class="mat-typography">
+  <div class="mb-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-100">
+    <div class="font-semibold">
+      {{ data.empleado.primer_nombre }} {{ data.empleado.segundo_nombre || '' }}
+      {{ data.empleado.primer_apellido || '' }} {{ data.empleado.segundo_apellido || '' }}
+    </div>
+    <div class="mt-0.5 text-xs">Empleado #{{ data.empleado.id }} · {{ data.empleado.tipo_documento || 'Documento' }} {{ data.empleado.numero_documento || '—' }}</div>
+    <div class="mt-2 text-xs leading-5">
+      El empleado queda asociado automáticamente. Registra la información del certificado; la nómina determina los valores según origen, días previos y parámetros vigentes. La EPS/ARL debe validar el reconocimiento.
+    </div>
+  </div>
 
-    <mat-dialog-content class="mat-typography">
-      <form
-        [formGroup]="form"
-        class="grid grid-cols-2 gap-x-4 pt-2"
-      >
-        <searchable-select
-          class="col-span-2"
-          label="EPS"
-          [items]="eps()"
-          displayKey="nombre"
-          formControlName="eps_id"
-        />
+  <form [formGroup]="form" class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+    <mat-form-field appearance="outline" class="sm:col-span-2">
+      <mat-label>Tipo / origen de la novedad</mat-label>
+      <mat-select formControlName="tipo" (selectionChange)="onTipoChange($event.value)">
+        <mat-option value="comun">Incapacidad de origen común (EPS)</mat-option>
+        <mat-option value="laboral">Incapacidad de origen laboral (ARL)</mat-option>
+        <mat-option value="maternidad">Licencia de maternidad</mat-option>
+        <mat-option value="paternidad">Licencia de paternidad</mat-option>
+        <mat-option value="no_remunerada">Licencia no remunerada</mat-option>
+        <mat-option value="vacaciones">Vacaciones disfrutadas</mat-option>
+        <mat-option value="otra">Otra novedad</mat-option>
+      </mat-select>
+      <mat-hint>La selección de origen común o laboral se usa en el cálculo de nómina.</mat-hint>
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha inicio</mat-label>
-          <input
-            matInput
-            [matDatepicker]="pIni"
-            formControlName="fecha_inicio"
-          />
-          <mat-datepicker-toggle matIconSuffix [for]="pIni" />
-          <mat-datepicker #pIni />
-        </mat-form-field>
+    @if (form.controls.tipo.value === 'laboral') {
+      <searchable-select
+        class="sm:col-span-2"
+        label="ARL que expide o reconoce"
+        [items]="arl()"
+        displayKey="nombre"
+        formControlName="arl_id"
+      />
+    } @else if (['comun', 'maternidad', 'paternidad'].includes(form.controls.tipo.value || '')) {
+      <searchable-select
+        class="sm:col-span-2"
+        label="EPS que expide o valida"
+        [items]="eps()"
+        displayKey="nombre"
+        formControlName="eps_id"
+      />
+    }
 
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha fin</mat-label>
-          <input
-            matInput
-            [matDatepicker]="pFin"
-            formControlName="fecha_fin"
-          />
-          <mat-datepicker-toggle matIconSuffix [for]="pFin" />
-          <mat-datepicker #pFin />
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha de expedición del certificado</mat-label>
+      <input matInput [matDatepicker]="pExp" formControlName="fecha_expedicion" />
+      <mat-datepicker-toggle matIconSuffix [for]="pExp" />
+      <mat-datepicker #pExp />
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Tipo</mat-label>
-          <mat-select formControlName="tipo">
-            <mat-option value="comun">Común (EPS)</mat-option>
-            <mat-option value="laboral">Laboral (ARL)</mat-option>
-            <mat-option value="maternidad">Licencia de maternidad</mat-option>
-            <mat-option value="paternidad">Licencia de paternidad</mat-option>
-            <mat-option value="no_remunerada">Licencia no remunerada</mat-option>
-            <mat-option value="vacaciones">Vacaciones disfrutadas</mat-option>
-            <mat-option value="otra">Otra</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Número del certificado</mat-label>
+      <input matInput formControlName="numero_certificado" maxlength="100" />
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Días</mat-label>
-          <input
-            matInput
-            type="number"
-            formControlName="dias"
-          />
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha inicial</mat-label>
+      <input matInput [matDatepicker]="pIni" formControlName="fecha_inicio" />
+      <mat-datepicker-toggle matIconSuffix [for]="pIni" />
+      <mat-datepicker #pIni />
+    </mat-form-field>
 
-        <mat-form-field class="col-span-2" appearance="outline">
-          <mat-label>Valor</mat-label>
-          <input
-            matInput
-            type="number"
-            formControlName="valor"
-          />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha final certificada</mat-label>
+      <input matInput [matDatepicker]="pFin" formControlName="fecha_fin" />
+      <mat-datepicker-toggle matIconSuffix [for]="pFin" />
+      <mat-datepicker #pFin />
+    </mat-form-field>
 
-    <mat-dialog-actions align="end">
-      <button matButton="text" mat-dialog-close>Cancelar</button>
-      <button
-        matButton="filled"
-        [disabled]="form.invalid || saving"
-        (click)="save()"
-      >
-        Reportar
-      </button>
-    </mat-dialog-actions>
-  
+    <mat-form-field appearance="outline">
+      <mat-label>Días calendario certificados</mat-label>
+      <input matInput type="number" [value]="diasCalculados() ?? ''" readonly />
+      <mat-hint>Se calcula incluyendo fecha inicial y final.</mat-hint>
+    </mat-form-field>
+
+    <div class="flex items-center">
+      <mat-checkbox formControlName="retroactiva">Certificado retroactivo</mat-checkbox>
+    </div>
+
+    @if (form.controls.tipo.value === 'comun' || form.controls.tipo.value === 'laboral') {
+      <div class="rounded-xl border border-neutral-200 px-3 py-2 sm:col-span-2">
+        <mat-checkbox formControlName="prorroga">Es prórroga de una incapacidad anterior</mat-checkbox>
+        @if (form.controls.prorroga.value) {
+          <mat-form-field appearance="outline" class="mt-2 w-full">
+            <mat-label>Incapacidad anterior relacionada</mat-label>
+            <mat-select formControlName="prorroga_de_id">
+              @for (anterior of prorrogaOptions(); track anterior.id) {
+                <mat-option [value]="anterior.id">
+                  {{ anterior.fecha_inicio | date: 'dd/MM/yyyy' }} – {{ anterior.fecha_fin | date: 'dd/MM/yyyy' }} · {{ anterior.dias || 0 }} días
+                </mat-option>
+              }
+            </mat-select>
+            @if (!prorrogaOptions().length) {
+              <mat-hint>No hay incapacidades previas del mismo origen para relacionar.</mat-hint>
+            } @else {
+              <mat-hint>Debe corresponder a la misma enfermedad o una directamente relacionada y respetar el intervalo legal.</mat-hint>
+            }
+          </mat-form-field>
+        }
+      </div>
+    }
+
+    <mat-form-field appearance="outline" class="sm:col-span-2">
+      <mat-label>Valor reconocido (opcional)</mat-label>
+      <input matInput type="number" min="0" formControlName="valor" />
+      <mat-hint>Déjalo vacío si EPS/ARL aún no ha liquidado o reconocido el valor.</mat-hint>
+    </mat-form-field>
+
+    @if (form.controls.tipo.value === 'comun') {
+      <div class="rounded-xl bg-neutral-50 px-4 py-3 text-xs leading-5 text-neutral-600 sm:col-span-2 dark:bg-neutral-800 dark:text-neutral-300">
+        Como referencia general, los primeros dos días de incapacidad común están a cargo del empleador y desde el tercero corresponde el reconocimiento a EPS, sujeto a requisitos y validación. La regla efectiva se calcula con los parámetros de nómina vigentes.
+      </div>
+    } @else if (form.controls.tipo.value === 'laboral') {
+      <div class="rounded-xl bg-neutral-50 px-4 py-3 text-xs leading-5 text-neutral-600 sm:col-span-2 dark:bg-neutral-800 dark:text-neutral-300">
+        Para origen laboral se requiere identificación de la ARL y certificado. El reconocimiento está sujeto a la calificación del origen y a las reglas vigentes del Sistema General de Riesgos Laborales.
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="text" mat-dialog-close>Cancelar</button>
+  <button matButton="filled" [disabled]="form.invalid || saving" (click)="save()">
+    {{ saving ? 'Guardando…' : 'Registrar incapacidad' }}
+  </button>
+</mat-dialog-actions>

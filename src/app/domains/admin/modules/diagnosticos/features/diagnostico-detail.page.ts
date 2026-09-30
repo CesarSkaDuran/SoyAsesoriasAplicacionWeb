@@ -33,10 +33,10 @@ const ESTADO_LABEL: Record<string, string> = {
   cancelado: 'Cancelado',
 };
 const ESTADO_COLOR: Record<string, string> = {
-  pendiente: 'bg-amber-500',
-  en_progreso: 'bg-sky-500',
-  logrado: 'bg-emerald-500',
-  cancelado: 'bg-neutral-400',
+  pendiente: 'bg-amber-500 text-white',
+  en_progreso: 'bg-sky-500 text-white',
+  logrado: 'bg-emerald-500 text-white',
+  cancelado: 'bg-neutral-400 text-white',
 };
 const DOC_ESTADO_LABEL: Record<string, string> = {
   pendiente: 'Pendiente',
@@ -156,7 +156,7 @@ export default class DiagnosticoDetailPage {
   }
 
   estadoLabel = (s: string) => ESTADO_LABEL[s] || s;
-  estadoColor = (s: string) => ESTADO_COLOR[s] || 'bg-neutral-400';
+  estadoColor = (s: string) => ESTADO_COLOR[s] || 'bg-neutral-400 text-white';
   docEstadoLabel = (s: string) => DOC_ESTADO_LABEL[s] || s;
   docEstadoClass = (s: string) => DOC_ESTADO_CLASS[s] || DOC_ESTADO_CLASS['pendiente'];
 

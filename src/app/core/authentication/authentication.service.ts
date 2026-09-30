@@ -12,6 +12,8 @@ const routes = {
   logout: () => `/auth/logout`,
   changePassword: () => `/auth/change-password`,
   me: () => `/auth/me`,
+  terminos: () => `/auth/terminos`,
+  aceptarTerminos: () => `/auth/aceptar-terminos`,
 };
 
 // Marca para que el jwtInterceptor no intente refrescar sobre la propia
@@ -100,6 +102,18 @@ export class AuthenticationService {
         .subscribe({ error: () => {} });
     }
     return of(true);
+  }
+
+  /** Terminos y condiciones vigentes (version + texto legal) */
+  terminos(): Observable<{ version: string; texto: string }> {
+    return this.httpClient.get<{ version: string; texto: string }>(routes.terminos());
+  }
+
+  /** Registra la aceptacion de la version vigente (prueba legal en backend) */
+  aceptarTerminos(version: string): Observable<{ ok: boolean; terminos_aceptados: boolean }> {
+    return this.httpClient
+      .post<{ ok: boolean; terminos_aceptados: boolean }>(routes.aceptarTerminos(), { version })
+      .pipe(tap(() => this.credentialsService.markTerminosAceptados()));
   }
 
   /**

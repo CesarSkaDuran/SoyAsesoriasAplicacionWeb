@@ -7,6 +7,12 @@ export const routes: Route[] = [
     loadChildren: () => import('./domains/auth/routes'),
   },
 
+  // Aceptación de términos (pantalla bloqueante post-login)
+  {
+    path: 'terminos',
+    loadChildren: () => import('./domains/terminos/routes'),
+  },
+
   // Admin
   {
     path: '',

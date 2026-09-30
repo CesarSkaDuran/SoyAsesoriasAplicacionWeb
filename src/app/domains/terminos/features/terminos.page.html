@@ -1,0 +1,58 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-100 p-4 dark:bg-neutral-900 sm:p-8">
+  <div class="flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-neutral-800">
+
+    <!-- Header -->
+    <div class="bg-sky-600 px-6 py-5 sm:px-8">
+      <h1 class="text-lg font-bold text-white sm:text-xl">Términos y condiciones de uso</h1>
+      <p class="mt-1 text-sm text-sky-100">
+        Lee y acepta los términos para continuar
+        @if (version()) { — versión {{ version() }} }
+      </p>
+    </div>
+
+    @if (loading()) {
+      <div class="flex justify-center p-16">
+        <mat-spinner />
+      </div>
+    } @else {
+      <!-- Texto legal scrollable -->
+      <div class="max-h-[50vh] overflow-y-auto px-6 py-5 sm:px-8">
+        <p class="whitespace-pre-wrap text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+          {{ texto() }}
+        </p>
+      </div>
+
+      <!-- Aviso de canales -->
+      <div class="mx-6 mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300 sm:mx-8">
+        <mat-icon svgIcon="alert-triangle" class="!h-4 !w-4 mt-0.5 flex-shrink-0" />
+        <span>
+          Al aceptar autorizas las notificaciones por correo electrónico, WhatsApp y demás
+          canales electrónicos registrados. <strong>Si no aceptas, no recibirás
+          notificaciones fuera de la plataforma.</strong>
+        </span>
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex flex-col gap-4 border-t border-neutral-200 px-6 py-5 dark:border-neutral-700 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <mat-checkbox [(ngModel)]="acepta" class="text-sm">
+          He leído y acepto los términos y condiciones
+        </mat-checkbox>
+        <div class="flex items-center gap-3">
+          <button matButton="text" (click)="salir()" [disabled]="saving()">
+            Salir
+          </button>
+          <button
+            matButton="filled"
+            [disabled]="!acepta || saving()"
+            (click)="aceptar()"
+          >
+            @if (saving()) {
+              <mat-spinner [diameter]="18" class="mr-2 inline-block" />
+            }
+            Aceptar y continuar
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

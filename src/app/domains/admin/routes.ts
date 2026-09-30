@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthenticationGuard } from '@/app/core/authentication/authentication.guard';
+import { TerminosGuard } from '@/app/core/authentication/terminos.guard';
 import { ModuloGuard } from '@/app/core/authentication/modulo.guard';
 import { AdminLayout } from './layout/layout';
 
@@ -7,7 +8,7 @@ const routes: Routes = [
   {
     path: '',
     component: AdminLayout,
-    canActivate: [AuthenticationGuard],
+    canActivate: [AuthenticationGuard, TerminosGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'home' },
 

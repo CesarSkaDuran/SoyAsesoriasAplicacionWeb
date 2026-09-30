@@ -147,7 +147,7 @@ export default class PagosPage {
   }
 
   statusLabel = (s: number) => CUENTA_STATUS[s] || '—';
-  statusColor = (s: number) => CUENTA_STATUS_COLOR[s] || 'bg-neutral-400';
+  statusColor = (s: number) => CUENTA_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
 
   setStatus(c: CuentaCobro, status: number) {
     this.api.updatePago(c.id, { status }).subscribe(() => {

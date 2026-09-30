@@ -77,6 +77,8 @@ export interface User {
   empresa?: Empresa | null;
   persona?: Persona | null;
   modulos?: UserModulos;
+  terminos_aceptados?: boolean;
+  terminos_version_actual?: string;
 }
 
 export function userFullName(user: User | null | undefined): string {

@@ -6,7 +6,10 @@ import { io, Socket } from 'socket.io-client';
 import { Subject } from 'rxjs';
 import { ApiService, NotificationItem } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
-import { playNotificationSound } from '@/app/core/notifications/notification-sound';
+import {
+  playNotificationSound,
+  unlockNotificationSound,
+} from '@/app/core/notifications/notification-sound';
 import { environment } from '@/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +31,16 @@ export class NotificationsService {
   readonly realtimeEvents$ = this.realtimeEvents.asObservable();
 
   constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      const unlock = () => {
+        unlockNotificationSound();
+        document.removeEventListener('pointerdown', unlock);
+        document.removeEventListener('keydown', unlock);
+      };
+      document.addEventListener('pointerdown', unlock, { once: true, passive: true });
+      document.addEventListener('keydown', unlock, { once: true });
+    }
+
     effect(() => {
       const credentials = this.credentials.credentialsState();
       const token = credentials?.access_token ?? null;

@@ -60,6 +60,27 @@ export interface AuditEntry {
   created_at: string;
 }
 
+export interface CorreoConfig {
+  host: string;
+  port: number;
+  secure: boolean;
+  username: string;
+  remitente: string | null;
+  correos_admin: string | null;
+  password_configurada: boolean;
+  origen: 'bd' | 'env';
+}
+
+export interface CorreoConfigPayload {
+  host: string;
+  port: number;
+  secure: boolean;
+  username: string;
+  password?: string;
+  remitente?: string;
+  correos_admin?: string;
+}
+
 export interface NotificationItem {
   id: number;
   titulo: string | null;
@@ -801,9 +822,14 @@ export class ApiService {
     empleadoId: number | string,
     data: {
       eps_id?: number;
+      arl_id?: number;
       fecha_inicio: string;
-      fecha_fin?: string;
+      fecha_fin: string;
+      fecha_expedicion?: string;
       dias?: number;
+      prorroga_de_id?: number;
+      retroactiva?: boolean;
+      numero_certificado?: string;
       tipo?: string;
       valor?: number;
     }
@@ -925,6 +951,26 @@ export class ApiService {
     id: number | string
   ): Observable<{ ok: boolean }> {
     return this.http.delete<{ ok: boolean }>(`/maestros/${catalogo}/${id}`);
+  }
+
+  // ── Configuracion de correo SMTP (admin) ───────────────────────────────────
+  correoConfig(): Observable<CorreoConfig> {
+    return this.http.get<CorreoConfig>('/configuracion/correo');
+  }
+
+  guardarCorreoConfig(
+    data: CorreoConfigPayload
+  ): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>('/configuracion/correo', data);
+  }
+
+  probarCorreoConfig(
+    data: CorreoConfigPayload
+  ): Observable<{ ok: boolean; error?: string }> {
+    return this.http.post<{ ok: boolean; error?: string }>(
+      '/configuracion/correo/probar',
+      data
+    );
   }
 
   // ── Ventas / Comercial (embudos y leads) ────────────────────────────────────

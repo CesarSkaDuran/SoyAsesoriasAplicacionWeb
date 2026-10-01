@@ -10,7 +10,7 @@ import {
   playNotificationSound,
   unlockNotificationSound,
 } from '@/app/core/notifications/notification-sound';
-import { environment } from '@/environments/environment';
+import { AppConfigService } from '@/app/core/config/app-config.service';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
@@ -19,6 +19,7 @@ export class NotificationsService {
   private platformId = inject(PLATFORM_ID);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private config = inject(AppConfigService);
   private socket: Socket | null = null;
   private socketToken: string | null = null;
   private socketUserId: number | null = null;
@@ -66,7 +67,7 @@ export class NotificationsService {
       this.disconnect();
       this.socketToken = token;
       this.socketUserId = userId;
-      const socketUrl = environment.serverUrl.replace(/\/api\/?$/, '');
+      const socketUrl = this.config.serverUrl().replace(/\/api\/?$/, '');
       const socket = io(socketUrl, { auth: { token } });
       this.socket = socket;
       socket.on('notification:new', (notification: NotificationItem) => this.receive(notification));

@@ -4,6 +4,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import {
+  APP_INITIALIZER,
   ApplicationConfig,
   isDevMode,
   provideBrowserGlobalErrorListeners,
@@ -20,6 +21,7 @@ import {
   withInMemoryScrolling,
 } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
+import { loadAppConfig } from '@/app/core/config/app-config.service';
 import { provideIcons } from '@/app/core/icons/provider';
 import { provideTheming } from '@/app/core/theming';
 import { TranslocoHttpLoader } from '@/app/core/transloco/transloco-http-loader';
@@ -30,6 +32,12 @@ import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Carga public/config.json antes de arrancar (serverUrl configurable sin recompilar)
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => loadAppConfig,
+      multi: true,
+    },
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(
       withFetch(),

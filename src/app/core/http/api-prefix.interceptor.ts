@@ -1,11 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 
-import { environment } from '@/environments/environment';
+import { AppConfigService } from '@/app/core/config/app-config.service';
 
 export const apiPrefixInterceptor: HttpInterceptorFn = (request, next) => {
   if (!/^(http|https):/i.test(request.url)) {
     request = request.clone({
-      url: environment.serverUrl + request.url,
+      url: inject(AppConfigService).serverUrl() + request.url,
     });
   }
   return next(request);

@@ -23,6 +23,7 @@ import { UsuarioPasswordResetDialog } from '../components/usuario-password-reset
 
 const ROLE_LABEL: Record<string, string> = {
   admin: 'Administrador',
+  asesor: 'Asesor',
   empresa: 'Empresa',
   independiente: 'Independiente',
 };

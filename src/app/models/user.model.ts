@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'empresa' | 'independiente';
+export type UserRole = 'admin' | 'asesor' | 'empresa' | 'independiente';
 
 export interface UserModulos {
   home?: boolean;

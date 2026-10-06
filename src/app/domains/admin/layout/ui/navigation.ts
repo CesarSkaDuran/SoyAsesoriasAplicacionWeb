@@ -68,7 +68,17 @@ export class Navigation {
       .map((section) => ({
         ...section,
         children: (section.children ?? []).filter((item) => {
-          if (item.adminOnly) return this.credentialsService.isAdmin();
+          // adminOnly: superadmin siempre; asesor solo si el item declara
+          // su modulo y lo tiene habilitado (items sin modulo siguen
+          // siendo exclusivos del admin: usuarios, configuración, ventas).
+          if (item.adminOnly) {
+            if (this.credentialsService.isSuperAdmin()) return true;
+            return (
+              this.credentialsService.role === 'asesor' &&
+              !!item.modulo &&
+              this.credentialsService.hasModulo(item.modulo)
+            );
+          }
           if (item.empresaOnly) {
             return !!this.credentialsService.user?.empresa?.id;
           }

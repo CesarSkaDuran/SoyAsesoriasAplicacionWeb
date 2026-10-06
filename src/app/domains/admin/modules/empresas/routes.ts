@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '',
     canActivate: [ModuloGuard],
-    data: { adminOnly: true },
+    data: { adminOnly: true, modulo: 'empresas' },
     loadComponent: () => import('./features/empresas.page'),
   },
   {

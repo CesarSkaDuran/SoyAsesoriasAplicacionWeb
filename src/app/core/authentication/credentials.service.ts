@@ -49,7 +49,17 @@ export class CredentialsService {
     return this.user?.role ?? null;
   }
 
+  /**
+   * Staff interno (admin o asesor): ve las acciones de módulo en la UI.
+   * La diferencia real la impone el API: el asesor necesita el módulo
+   * habilitado en user_modulos; el admin tiene acceso irrestricto.
+   */
   isAdmin(): boolean {
+    return this.role === 'admin' || this.role === 'asesor';
+  }
+
+  /** Solo el administrador irrestricto (configuración, usuarios, auditoría). */
+  isSuperAdmin(): boolean {
     return this.role === 'admin';
   }
 

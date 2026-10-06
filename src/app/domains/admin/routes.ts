@@ -95,13 +95,13 @@ const routes: Routes = [
       {
         path: 'gastos',
         canActivate: [ModuloGuard],
-        data: { adminOnly: true },
+        data: { adminOnly: true, modulo: 'gastos' },
         loadChildren: () => import('./modules/gastos/routes'),
       },
       {
         path: 'informes',
         canActivate: [ModuloGuard],
-        data: { adminOnly: true },
+        data: { adminOnly: true, modulo: 'informes' },
         loadChildren: () => import('./modules/informes/routes'),
       },
       {

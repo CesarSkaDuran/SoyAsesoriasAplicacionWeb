@@ -177,6 +177,7 @@ export const NAVIGATION: NavigationItem[] = [
         label: 'Informes',
         icon: 'chart-column',
         route: '/admin/informes',
+        modulo: 'informes',
         adminOnly: true,
       },
     ],

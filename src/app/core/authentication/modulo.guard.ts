@@ -23,14 +23,21 @@ export const ModuloGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     return true;
   }
 
-  if (credentials.isAdmin()) {
+  // Solo el admin irrestricto salta todos los chequeos; el asesor
+  // (staff limitado) sigue evaluado por user_modulos.
+  if (credentials.isSuperAdmin()) {
     return true;
   }
 
   const adminOnly = route.data['adminOnly'] === true;
   const modulo = route.data['modulo'] as string | undefined;
 
-  if (adminOnly || (modulo && !credentials.hasModulo(modulo))) {
+  // Zonas adminOnly solo las abre un asesor si el item declara su modulo
+  // y lo tiene habilitado (p. ej. { adminOnly: true, modulo: 'gastos' }).
+  const asesorConModulo =
+    credentials.role === 'asesor' && !!modulo && credentials.hasModulo(modulo);
+
+  if ((adminOnly && !asesorConModulo) || (modulo && !credentials.hasModulo(modulo))) {
     router.navigate(['/admin/home'], { replaceUrl: true });
     return false;
   }

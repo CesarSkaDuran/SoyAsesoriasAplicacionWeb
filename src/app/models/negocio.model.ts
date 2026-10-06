@@ -225,7 +225,7 @@ export interface Usuario {
   name: string;
   lastname: string | null;
   email: string;
-  role: 'admin' | 'empresa' | 'independiente';
+  role: 'admin' | 'asesor' | 'empresa' | 'independiente';
   is_active: number;
   created_at: string;
   empresa_id?: number | null;

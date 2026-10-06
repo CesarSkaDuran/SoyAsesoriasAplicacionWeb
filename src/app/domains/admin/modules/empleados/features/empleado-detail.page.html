@@ -42,7 +42,7 @@
                 @for (s of estados; track s.value) {
                   <button mat-menu-item (click)="setEstado(e, s.value)">
                     <mat-icon svgIcon="check" [class.invisible]="estadoActual(e) !== s.value" />
-                    <span>{{ s.label }}</span>
+                    <span>{{ e.status === 'retirado' && s.value === 'activo' ? 'Corregir retiro (Activo)' : s.label }}</span>
                   </button>
                 }
               </mat-menu>
@@ -53,10 +53,18 @@
             }
           </div>
         </div>
-        <button matButton="filled" (click)="openEdit(e)">
-          <mat-icon svgIcon="pencil" />
-          Editar
-        </button>
+        <div class="flex flex-wrap gap-2">
+          @if (isAdmin() && e.status === 'retirado') {
+            <button matButton="outlined" (click)="openRecontratar(e)">
+              <mat-icon svgIcon="plus" />
+              Recontratar
+            </button>
+          }
+          <button matButton="filled" (click)="openEdit(e)">
+            <mat-icon svgIcon="pencil" />
+            Editar
+          </button>
+        </div>
       </div>
     </div>
 
@@ -236,6 +244,39 @@
 
     <!-- Tabs -->
     <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      <mat-tab [label]="'Períodos laborales (' + (periodos().length + 1) + ')'">
+        <div class="rounded-b-2xl border border-t-0 bg-white p-4 dark:bg-neutral-900">
+          <p class="mb-4 text-sm text-neutral-500">El vínculo actual está en la ficha. Cada recontratación conserva aquí el período anterior y sus condiciones al cierre.</p>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[700px] text-sm">
+              <thead class="text-left text-neutral-500">
+                <tr>
+                  <th class="p-3">Período</th><th class="p-3">Ingreso</th><th class="p-3">Retiro</th>
+                  <th class="p-3">Contrato</th><th class="p-3 text-right">Salario al cierre / actual</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-t">
+                  <td class="p-3 font-semibold">Actual · {{ estadoLabel(e) }}</td>
+                  <td class="p-3">{{ e.fecha_ingreso ? (e.fecha_ingreso | date: 'dd/MM/yyyy') : '—' }}</td>
+                  <td class="p-3">{{ e.fecha_retiro ? (e.fecha_retiro | date: 'dd/MM/yyyy') : '—' }}</td>
+                  <td class="p-3">{{ tipoContrato(e.tipo_contrato) }}</td>
+                  <td class="p-3 text-right">{{ e.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</td>
+                </tr>
+                @for (periodo of periodos(); track periodo.id) {
+                  <tr class="border-t">
+                    <td class="p-3">Anterior #{{ periodo.id }}</td>
+                    <td class="p-3">{{ periodo.fecha_ingreso ? (periodo.fecha_ingreso | date: 'dd/MM/yyyy') : '—' }}</td>
+                    <td class="p-3">{{ periodo.fecha_retiro | date: 'dd/MM/yyyy' }}</td>
+                    <td class="p-3">{{ tipoContrato(periodo.tipo_contrato || undefined) }}</td>
+                    <td class="p-3 text-right">{{ periodo.salario_base | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
       <!-- Beneficiarios -->
       <mat-tab [label]="'Beneficiarios (' + beneficiarios().length + ')'">
         <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">

@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -15,6 +17,8 @@ import { Documento, Empleado, Nomina } from '@/app/models/empleado.model';
 import { EmpresaServicio } from '@/app/models/negocio.model';
 import { DocumentoUploadDialog } from '../../documentos/components/documento-upload.dialog';
 import { EmpleadoFormDialog } from '../../empleados/components/empleado-form.dialog';
+import { RetirarLoteDialog } from '../../empleados/components/retirar-lote.dialog';
+import { RecontratarDialog } from '../../empleados/components/recontratar.dialog';
 import { EmpresaFormDialog } from '../components/empresa-form.dialog';
 import { EmpresaServicioDialog } from '../components/empresa-servicio.dialog';
 import { EmpresaUsuarioDialog } from '../components/empresa-usuario.dialog';
@@ -26,6 +30,8 @@ import { EmpresaUsuarioDialog } from '../components/empresa-usuario.dialog';
     MatButtonModule,
     MatIcon,
     MatMenuModule,
+    MatFormFieldModule,
+    MatSelectModule,
     MatTabsModule,
     MatProgressSpinner,
     CurrencyPipe,
@@ -47,6 +53,8 @@ export default class EmpresaDetailPage {
   protected empresa = signal<Empresa | null>(null);
   protected empleados = signal<Empleado[]>([]);
   protected empleadosTotal = signal(0);
+  protected empleadosEstado = signal('activo');
+  protected empleadosLoading = signal(false);
   protected nominas = signal<Nomina[]>([]);
   protected documentos = signal<Documento[]>([]);
   protected servicios = signal<EmpresaServicio[]>([]);
@@ -160,14 +168,56 @@ export default class EmpresaDetailPage {
       },
       error: () => this.loading.set(false),
     });
-    this.api.empleados(id).subscribe((res) => {
-      this.empleados.set(res.data);
-      this.empleadosTotal.set(res.total);
-    });
+    this.loadEmpleados();
     this.api.nominas(id).subscribe((res) => this.nominas.set(res.data));
     this.api
       .documentos({ empresa_id: id })
       .subscribe((res) => this.documentos.set(res.data));
+  }
+
+  protected setEmpleadoFiltro(estado: string) {
+    this.empleadosEstado.set(estado);
+    this.loadEmpleados();
+  }
+
+  private loadEmpleados() {
+    const estado = this.empleadosEstado();
+    this.empleadosLoading.set(true);
+    this.api.empleados(this.empresaId, undefined, 1, estado).subscribe({
+      next: (res) => {
+        if (estado !== this.empleadosEstado()) return;
+        this.empleados.set(res.data);
+        this.empleadosTotal.set(res.total);
+        this.empleadosLoading.set(false);
+      },
+      error: () => {
+        if (estado !== this.empleadosEstado()) return;
+        this.empleadosLoading.set(false);
+        this.snack.open('No se pudieron cargar los empleados', 'Cerrar', { duration: 3000 });
+      },
+    });
+  }
+
+  protected recontratarEmpleado(empleado: Empleado) {
+    if (!this.isAdmin() || empleado.status !== 'retirado') return;
+    this.dialog.open(RecontratarDialog, {
+      width: '640px', maxWidth: '95vw', data: { empleado },
+    }).afterClosed().subscribe(ok => {
+      if (ok) this.loadEmpleados();
+    });
+  }
+
+  protected retirarEmpleado(empleado: Empleado) {
+    if (!this.isAdmin() || empleado.status === 'retirado') return;
+    const nombre = [empleado.primer_nombre, empleado.segundo_nombre, empleado.primer_apellido, empleado.segundo_apellido]
+      .filter(Boolean).join(' ').trim();
+    this.dialog.open(RetirarLoteDialog, {
+      width: '520px',
+      maxWidth: '95vw',
+      data: { empleados: [{ id: empleado.id, nombre }] },
+    }).afterClosed().subscribe((retirado) => {
+      if (retirado) this.loadEmpleados();
+    });
   }
 
   openEdit() {

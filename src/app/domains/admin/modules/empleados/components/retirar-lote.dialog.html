@@ -1,0 +1,40 @@
+<dialog-header title="Retirar empleados" />
+
+<mat-dialog-content class="mat-typography">
+  <p class="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+    Se retirarán <strong>{{ data.empleados.length }} empleado(s)</strong>:
+  </p>
+
+  <div class="mt-2 max-h-40 overflow-auto rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+    <ul class="list-inside list-disc space-y-1">
+      @for (e of data.empleados; track e.id) {
+        <li>{{ e.nombre }}</li>
+      }
+    </ul>
+  </div>
+
+  <p class="mt-3 text-xs leading-5 text-neutral-500">
+    El retiro es un cambio de estado con fecha: la historia del empleado,
+    sus nóminas y documentos se conservan. No se elimina el registro.
+  </p>
+
+  <form [formGroup]="form" class="mt-4">
+    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+      <mat-label>Fecha de retiro</mat-label>
+      <input matInput [matDatepicker]="pRetiro" formControlName="fecha_retiro" />
+      <mat-datepicker-toggle matIconSuffix [for]="pRetiro" />
+      <mat-datepicker #pRetiro />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="text" mat-dialog-close>Cancelar</button>
+  <button
+    matButton="filled"
+    [disabled]="saving || !data.empleados.length"
+    (click)="retirar()"
+  >
+    {{ saving ? 'Retirando…' : 'Retirar empleados' }}
+  </button>
+</mat-dialog-actions>

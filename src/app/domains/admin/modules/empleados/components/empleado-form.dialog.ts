@@ -13,10 +13,21 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
+import { CredentialsService } from '@/app/core/authentication/credentials.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
 import { SearchableSelect } from '@/app/core/ui/searchable-select';
-import { CatalogoItem, Empleado } from '@/app/models/empleado.model';
+import { CatalogoItem, Empleado, PersonaIdentidad } from '@/app/models/empleado.model';
+
+const IDENTIDAD_CAMPOS = [
+  'primer_nombre',
+  'segundo_nombre',
+  'primer_apellido',
+  'segundo_apellido',
+  'tipo_documento',
+  'fecha_nacimiento',
+] as const;
 
 export interface EmpleadoFormData {
   empresaId: number;
@@ -43,6 +54,7 @@ export interface EmpleadoFormData {
 export class EmpleadoFormDialog {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
+  private credentials = inject(CredentialsService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<EmpleadoFormDialog>);
   private data = inject<EmpleadoFormData>(MAT_DIALOG_DATA, { optional: true }) ?? {} as EmpleadoFormData;
@@ -55,6 +67,9 @@ export class EmpleadoFormDialog {
   protected pensiones = signal<CatalogoItem[]>([]);
   protected cajas = signal<CatalogoItem[]>([]);
   protected smmlv = signal(0);
+  protected personaExistente = signal<PersonaIdentidad | null>(null);
+  protected buscandoIdentidad = signal(false);
+  private ultimoDocBuscado = '';
 
   protected form = this.fb.group({
     primer_nombre: [this.data.empleado?.primer_nombre ?? '', Validators.required],
@@ -69,6 +84,7 @@ export class EmpleadoFormDialog {
       this.data.empleado?.numero_documento ?? '',
       Validators.required,
     ],
+    fecha_nacimiento: [this.toDate(this.data.empleado?.fecha_nacimiento)],
     direccion: [this.data.empleado?.direccion ?? ''],
     movil: [this.data.empleado?.movil ?? ''],
     email: [this.data.empleado?.email ?? ''],
@@ -96,6 +112,7 @@ export class EmpleadoFormDialog {
   });
 
   constructor() {
+    if (this.editing && !this.credentials.isAdmin()) this.form.controls.fecha_ingreso.disable();
     this.api.catalogos().subscribe((cat) => {
       this.cargos.set(cat['cargos'] ?? []);
       this.eps.set(cat['eps'] ?? []);
@@ -106,6 +123,49 @@ export class EmpleadoFormDialog {
     this.api.nominaParametros(new Date().getFullYear()).subscribe({
       next: ({ parametros }) => this.smmlv.set(Number(parametros.salario_minimo) || 0),
       error: () => {},
+    });
+  }
+
+  private toDate(value?: string | null): Date | null {
+    if (!value) return null;
+    const d = new Date(String(value).slice(0, 10) + 'T00:00:00');
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  // Búsqueda ciega al salir del campo de cédula: si la persona ya existe,
+  // precarga la identidad (readonly) sin exponer datos de otras empresas.
+  buscarDocumento() {
+    if (this.editing || this.buscandoIdentidad()) return;
+    const doc = String(this.form.controls.numero_documento.value || '')
+      .trim()
+      .toUpperCase();
+    if (!doc || doc === this.ultimoDocBuscado) return;
+    this.ultimoDocBuscado = doc;
+    this.buscandoIdentidad.set(true);
+    this.api.buscarPersona(doc).subscribe({
+      next: (r) => {
+        this.buscandoIdentidad.set(false);
+        if (r.existe && r.persona) {
+          this.personaExistente.set(r.persona);
+          this.form.patchValue({
+            primer_nombre: r.persona.primer_nombre ?? '',
+            segundo_nombre: r.persona.segundo_nombre ?? '',
+            primer_apellido: r.persona.primer_apellido ?? '',
+            segundo_apellido: r.persona.segundo_apellido ?? '',
+            tipo_documento: r.persona.tipo_documento ?? 'CC',
+            fecha_nacimiento: this.toDate(r.persona.fecha_nacimiento),
+          });
+          for (const campo of IDENTIDAD_CAMPOS) {
+            this.form.controls[campo].disable();
+          }
+        } else {
+          this.personaExistente.set(null);
+          for (const campo of IDENTIDAD_CAMPOS) {
+            this.form.controls[campo].enable();
+          }
+        }
+      },
+      error: () => this.buscandoIdentidad.set(false),
     });
   }
 
@@ -127,19 +187,21 @@ export class EmpleadoFormDialog {
     }
     this.saving.set(true);
 
+    // getRawValue incluye los campos de identidad deshabilitados al
+    // precargar una persona existente.
     const payload: any = {
-      ...this.form.value,
+      ...this.form.getRawValue(),
       empresa_id: this.data.empresaId,
     };
-    if (payload.fecha_ingreso instanceof Date) {
-      payload.fecha_ingreso = payload.fecha_ingreso
-        .toISOString()
-        .substring(0, 10);
+    for (const campo of ['fecha_ingreso', 'fecha_nacimiento'] as const) {
+      if (payload[campo] instanceof Date) {
+        payload[campo] = (payload[campo] as Date).toISOString().substring(0, 10);
+      }
     }
 
-    const request = this.editing
+    const request: Observable<unknown> = this.editing
       ? this.api.updateEmpleado(this.data.empleado!.id, payload)
-      : this.api.createEmpleado(payload);
+      : this.api.contratarEmpleado(payload);
 
     request.subscribe({
       next: () => {

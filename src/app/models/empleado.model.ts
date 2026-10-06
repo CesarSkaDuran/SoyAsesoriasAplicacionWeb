@@ -1,6 +1,7 @@
 export interface Empleado {
   id: number;
   empresa_id: number;
+  persona_id?: number;
   primer_nombre: string;
   segundo_nombre?: string;
   primer_apellido?: string;
@@ -48,6 +49,48 @@ export interface Empleado {
   arl_nombre?: string;
   pension_nombre?: string;
   caja_cf_nombre?: string;
+  fecha_nacimiento?: string | null;
+}
+
+// Identidad global segura (búsqueda ciega): nunca trae empresa, salario,
+// documentos ni historial de otros tenants.
+export interface PersonaIdentidad {
+  id: number;
+  nombre: string;
+  documento: string;
+  fecha_nacimiento?: string | null;
+  primer_nombre?: string;
+  segundo_nombre?: string | null;
+  primer_apellido?: string | null;
+  segundo_apellido?: string | null;
+  tipo_documento?: string;
+}
+
+export interface ContratacionResponse {
+  empleado: { id: number; persona_id: number; status: string; fecha_ingreso?: string };
+  persona: PersonaIdentidad;
+  persona_existente: boolean;
+}
+
+export interface PeriodoLaboral {
+  id: number;
+  empleado_id: number;
+  empresa_id: number;
+  fecha_ingreso: string | null;
+  fecha_retiro: string;
+  tipo_contrato: string | null;
+  salario_base: number | string;
+  condiciones: Record<string, unknown> | string;
+  registrado_por: number | null;
+}
+
+export interface RecontratacionInput {
+  fecha_ingreso: string;
+  tipo_contrato: string;
+  salario_base: number;
+  periodo_pago: string;
+  salario_integral: boolean;
+  salario_menor_motivo?: string;
 }
 
 export interface Documento {

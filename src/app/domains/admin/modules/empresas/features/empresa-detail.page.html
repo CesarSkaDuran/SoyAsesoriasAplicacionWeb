@@ -213,21 +213,34 @@
       <!-- Empleados -->
       <mat-tab [label]="'Empleados (' + empleadosTotal() + ')'">
         <div class="overflow-hidden rounded-b-2xl border border-t-0 border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-          <div class="flex items-center justify-between gap-3 border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-4 py-3 dark:border-neutral-800">
             <span class="text-sm text-neutral-500">
               @if (empleadosTotal() > empleados().length) {
                 Mostrando {{ empleados().length }} de {{ empleadosTotal() }} ·
-                <a [routerLink]="['/admin/empleados']" [queryParams]="{ empresa_id: e.id }" class="text-blue-700 hover:underline">ver todos</a>
+                <a [routerLink]="['/admin/empleados']" [queryParams]="{ empresa_id: e.id, status: empleadosEstado() }" class="text-blue-700 hover:underline">ver todos</a>
               } @else {
                 {{ empleadosTotal() }} empleados
               }
             </span>
-            <button matButton="filled" (click)="openEmpleado()">
-              <mat-icon svgIcon="plus" />
-              Nuevo empleado
-            </button>
+            <div class="flex flex-wrap items-center gap-3">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-44">
+                <!-- <mat-label>Estado del empleado</mat-label> -->
+                <mat-select [value]="empleadosEstado()" (selectionChange)="setEmpleadoFiltro($event.value)">
+                  <mat-option value="activo">Activos</mat-option>
+                  <mat-option value="retirado">Retirados</mat-option>
+                  <mat-option value="suspendido">Suspendidos</mat-option>
+                  <mat-option value="todos">Todos</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button matButton="filled" (click)="openEmpleado()">
+                <mat-icon svgIcon="plus" />
+                Nuevo empleado
+              </button>
+            </div>
           </div>
-          @if (empleados().length) {
+          @if (empleadosLoading()) {
+            <div class="flex min-h-48 items-center justify-center"><mat-spinner diameter="36" /></div>
+          } @else if (empleados().length) {
             <div class="overflow-x-auto">
               <table class="w-full min-w-[820px] text-sm">
                 <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">
@@ -259,8 +272,19 @@
                         <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="empleadoColor(emp.status)">
                           {{ emp.status || 'activo' }}
                         </span>
+                        @if (emp.status === 'retirado' && emp.fecha_retiro) {
+                          <div class="mt-1 text-xs text-neutral-500">{{ emp.fecha_retiro | date: 'dd/MM/yyyy' }}</div>
+                        }
                       </td>
                       <td class="whitespace-nowrap px-4 py-3 text-right">
+                        @if (isAdmin() && emp.status === 'retirado') {
+                          <button matButton="text" (click)="recontratarEmpleado(emp)">Recontratar</button>
+                        }
+                        @if (isAdmin() && emp.status !== 'retirado') {
+                          <button matIconButton title="Retirar empleado" aria-label="Retirar empleado" (click)="retirarEmpleado(emp)">
+                            <mat-icon svgIcon="log-out" class="text-red-600" />
+                          </button>
+                        }
                         <button matIconButton title="Ver detalle" [routerLink]="['/admin/empleados', emp.id]">
                           <mat-icon svgIcon="eye" />
                         </button>
@@ -275,8 +299,8 @@
               <span class="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                 <mat-icon svgIcon="users" />
               </span>
-              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin empleados</h3>
-              <p class="mt-1 text-sm text-neutral-500">Registra el primer empleado de la empresa.</p>
+              <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin empleados para este estado</h3>
+              <p class="mt-1 text-sm text-neutral-500">Cambia el filtro de estado o registra un nuevo empleado.</p>
             </div>
           }
         </div>

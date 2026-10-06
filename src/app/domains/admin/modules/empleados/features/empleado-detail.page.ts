@@ -10,11 +10,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '@/app/core/api/api.service';
 import { CredentialsService } from '@/app/core/authentication/credentials.service';
-import { Documento, Empleado } from '@/app/models/empleado.model';
+import { Documento, Empleado, PeriodoLaboral } from '@/app/models/empleado.model';
 import { DocumentoUploadDialog } from '../../documentos/components/documento-upload.dialog';
 import { BeneficiarioDialog } from '../components/beneficiario.dialog';
 import { IncapacidadDialog } from '../components/incapacidad.dialog';
 import { EmpleadoFormDialog } from '../components/empleado-form.dialog';
+import { RecontratarDialog } from '../components/recontratar.dialog';
 
 @Component({
   selector: 'empleado-detail-page',
@@ -43,6 +44,7 @@ export default class EmpleadoDetailPage {
   beneficiarios = signal<any[]>([]);
   documentos = signal<Documento[]>([]);
   incapacidades = signal<any[]>([]);
+  periodos = signal<PeriodoLaboral[]>([]);
   loading = signal(true);
   smmlv = signal(0);
   isAdmin = () => this.creds.isAdmin();
@@ -90,7 +92,9 @@ export default class EmpleadoDetailPage {
       fijo: 'Término fijo',
       obra_labor: 'Obra o labor',
       aprendizaje: 'Aprendizaje',
+      prestacion: 'Prestación de servicios',
       prestacion_servicios: 'Prestación de servicios',
+      otro: 'Otro',
     };
     return t ? map[t] ?? t : '—';
   }
@@ -153,6 +157,7 @@ export default class EmpleadoDetailPage {
         this.beneficiarios.set(r.beneficiarios || []);
         this.documentos.set(r.documentos || []);
         this.incapacidades.set(r.incapacidades || []);
+        this.periodos.set(r.periodos || []);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -163,6 +168,15 @@ export default class EmpleadoDetailPage {
     return [e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido]
       .filter(Boolean)
       .join(' ');
+  }
+
+  openRecontratar(e: Empleado) {
+    if (!this.isAdmin() || e.status !== 'retirado') return;
+    this.dialog.open(RecontratarDialog, {
+      width: '640px', maxWidth: '95vw', data: { empleado: e },
+    }).afterClosed().subscribe(ok => {
+      if (ok) this.load();
+    });
   }
 
   openEdit(e: Empleado) {

@@ -18,6 +18,10 @@ import {
   NominaParametros,
   Paginated,
   PilaEstado,
+  PeriodoLaboral,
+  PersonaIdentidad,
+  ContratacionResponse,
+  RecontratacionInput,
 } from '@/app/models/empleado.model';
 import {
   CuentaCobro,
@@ -197,6 +201,7 @@ export class ApiService {
     beneficiarios?: any[];
     documentos?: Documento[];
     incapacidades?: any[];
+    periodos?: PeriodoLaboral[];
   }> {
     return this.http.get<any>(`/empleados/${id}`);
   }
@@ -205,11 +210,30 @@ export class ApiService {
     return this.http.post<Empleado>('/empleados', data);
   }
 
+  // Búsqueda ciega de identidad: solo devuelve nombre/documento/nacimiento.
+  buscarPersona(documento: string): Observable<{ existe: boolean; persona?: PersonaIdentidad }> {
+    return this.http.get<{ existe: boolean; persona?: PersonaIdentidad }>(
+      '/personas/buscar',
+      { params: { documento } }
+    );
+  }
+
+  // Contratación con identidad global: reutiliza la persona si la cédula ya existe.
+  contratarEmpleado(
+    data: Partial<Empleado> & { documento?: string }
+  ): Observable<ContratacionResponse> {
+    return this.http.post<ContratacionResponse>('/empleados/contratar', data);
+  }
+
   updateEmpleado(
     id: number | string,
     data: Partial<Empleado>
   ): Observable<Empleado> {
     return this.http.put<Empleado>(`/empleados/${id}`, data);
+  }
+
+  recontratarEmpleado(id: number | string, data: RecontratacionInput): Observable<{ empleado: Empleado; periodo_anterior: PeriodoLaboral }> {
+    return this.http.post<{ empleado: Empleado; periodo_anterior: PeriodoLaboral }>(`/empleados/${id}/recontratar`, data);
   }
 
   deleteEmpleado(id: number | string): Observable<void> {
@@ -854,6 +878,16 @@ export class ApiService {
   ): Observable<void> {
     return this.http.delete<void>(
       `/empleados/${empleadoId}/incapacidades/${incapacidadId}`
+    );
+  }
+
+  retirarEmpleados(
+    empleado_ids: number[],
+    fecha_retiro?: string
+  ): Observable<{ message: string; retirados: number; no_afectados: number }> {
+    return this.http.post<{ message: string; retirados: number; no_afectados: number }>(
+      '/empleados/retirar-lote',
+      { empleado_ids, fecha_retiro: fecha_retiro || undefined }
     );
   }
 

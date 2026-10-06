@@ -1,7 +1,9 @@
 <!doctype html>
 <html
   id="fuse"
-  lang="en"
+  lang="es"
+  translate="no"
+  class="notranslate"
 >
   <head>
     <base href="/" />
@@ -9,6 +11,9 @@
 
     <!-- Meta -->
     <meta charset="utf-8" />
+    <!-- Google Translate muta el DOM y rompe el tracking de Angular
+         (TypeError 'M_ID' / NG02100). La app ya está en español. -->
+    <meta name="google" content="notranslate" />
     <meta
       name="description"
       content="Soy Asesorias — Portal"

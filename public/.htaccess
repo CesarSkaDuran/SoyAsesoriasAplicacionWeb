@@ -1,0 +1,23 @@
+RewriteEngine On
+
+# Compresion para JS/CSS/JSON
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript text/css application/json text/html
+</IfModule>
+
+# Cache de assets con hash (chunks Angular)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# SPA fallback: todo lo que no sea archivo/directorio real va a index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]

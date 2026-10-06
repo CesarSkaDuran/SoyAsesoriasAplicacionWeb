@@ -27,12 +27,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles/styles.css"],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "styles": ["src/styles/styles.css"]
           },
           "configurations": {
             "production": {

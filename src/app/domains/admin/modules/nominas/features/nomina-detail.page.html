@@ -187,7 +187,7 @@
               <th mat-header-cell *matHeaderCellDef>Incapacidad</th>
               <td mat-cell *matCellDef="let d">
                 @if (d.dias_incapacidad) {
-                  <div>{{ (d.valor_incapacidad_empleador || 0) + (d.valor_incapacidad_tercero || 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</div>
+                  <div>{{ (+d.valor_incapacidad_empleador || 0) + (+d.valor_incapacidad_tercero || 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</div>
                   <div class="text-xs text-neutral-400">
                     Emp. {{ d.valor_incapacidad_empleador | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
                     · EPS/ARL {{ d.valor_incapacidad_tercero | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}

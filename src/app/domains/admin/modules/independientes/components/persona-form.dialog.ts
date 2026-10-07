@@ -91,7 +91,6 @@ export class PersonaFormDialog {
         (payload as any)[k] = val;
       }
     }
-
     const req = this.isEdit
       ? this.api.updatePersona(this.data.persona!.id, payload)
       : this.api.createPersona(payload);

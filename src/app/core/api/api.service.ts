@@ -479,6 +479,10 @@ export class ApiService {
     );
   }
 
+  planillaIngresos(): Observable<{ ingreso_mensual: number | string | null; ingreso_adicional: number | string | null }> {
+    return this.http.get<{ ingreso_mensual: number | string | null; ingreso_adicional: number | string | null }>('/planillas/ingresos');
+  }
+
   createPlanilla(data: Partial<Planilla>): Observable<{ planilla: Planilla }> {
     return this.http.post<{ planilla: Planilla }>('/planillas', data);
   }

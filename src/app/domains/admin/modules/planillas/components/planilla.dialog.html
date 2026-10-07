@@ -6,13 +6,22 @@
         [formGroup]="form"
         class="grid grid-cols-2 gap-x-4 pt-2"
       >
-        <searchable-select
-          class="col-span-2"
-          label="Empresa"
-          [items]="data.empresas || []"
-          displayKey="razon_social"
-          formControlName="empresa_id"
-        />
+        @if (isIndependent) {
+          <div class="col-span-2 mb-2 rounded-lg bg-blue-50 p-3 text-sm dark:bg-blue-950/40">
+            <div class="font-semibold">Planilla de {{ data.planilla?.persona_nombre || 'independiente' }}</div>
+            <div class="text-neutral-600 dark:text-neutral-300">
+              Ingreso informado: {{ (data.planilla?.ingreso_total || 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </div>
+          </div>
+        } @else {
+          <searchable-select
+            class="col-span-2"
+            label="Empresa"
+            [items]="data.empresas || []"
+            displayKey="razon_social"
+            formControlName="empresa_id"
+          />
+        }
 
         <mat-form-field appearance="outline">
           <mat-label>N° planilla</mat-label>
@@ -47,6 +56,20 @@
           <mat-datepicker-toggle matIconSuffix [for]="picker" />
           <mat-datepicker #picker />
         </mat-form-field>
+
+        @if (isEdit) {
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="status">
+              @if (isIndependent) {
+                <mat-option value="solicitada">Pendiente de revisión</mat-option>
+              }
+              <mat-option value="generada">Generada</mat-option>
+              <mat-option value="pagada">Pagada</mat-option>
+              <mat-option value="verificada">Verificada</mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
       </form>
     </mat-dialog-content>
 

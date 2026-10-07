@@ -64,20 +64,19 @@
             />
           }
         }
+        <div class="col-span-2 mt-2">
+          <div class="mb-2 text-sm font-semibold text-neutral-600">
+            Permisos por módulo
+          </div>
+          <div class="grid grid-cols-3 gap-1">
+            @for (m of modulos; track m.key) {
+              <mat-checkbox [formControlName]="'mod_' + m.key">
+                {{ m.label }}
+              </mat-checkbox>
+            }
+          </div>
+        </div>
       </form>
-
-      <div class="mt-2">
-        <div class="mb-2 text-sm font-semibold text-neutral-600">
-          Permisos por módulo
-        </div>
-        <div class="grid grid-cols-3 gap-1">
-          @for (m of modulos; track m.key) {
-            <mat-checkbox [formControlName]="'mod_' + m.key">
-              {{ m.label }}
-            </mat-checkbox>
-          }
-        </div>
-      </div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">

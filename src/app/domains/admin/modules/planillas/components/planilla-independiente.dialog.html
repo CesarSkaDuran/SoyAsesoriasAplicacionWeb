@@ -1,0 +1,42 @@
+<dialog-header [title]="isEdit ? 'Editar diligenciamiento' : 'Diligenciar planilla'" />
+
+<mat-dialog-content class="mat-typography">
+  <p class="mb-4 text-sm text-neutral-500">
+    Registra tus ingresos del periodo. El sistema los sumará y enviará el diligenciamiento a SoyAsesorías para su gestión.
+  </p>
+
+  <form [formGroup]="form" class="grid grid-cols-1 gap-x-4 pt-2 sm:grid-cols-2">
+    <mat-form-field appearance="outline">
+      <mat-label>Periodo</mat-label>
+      <input matInput type="month" formControlName="periodo" />
+    </mat-form-field>
+
+    <span class="hidden sm:block"></span>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ingreso mensual</mat-label>
+      <input matInput type="number" min="0" step="1000" formControlName="ingreso_mensual" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ingreso adicional</mat-label>
+      <input matInput type="number" min="0" step="1000" formControlName="ingreso_adicional" />
+      <mat-hint>Si no tienes, deja 0</mat-hint>
+    </mat-form-field>
+  </form>
+
+  <div class="rounded-lg bg-blue-50 px-4 py-3 dark:bg-blue-950/40">
+    <div class="text-sm text-neutral-600 dark:text-neutral-300">Ingreso total informado</div>
+    <div class="text-xl font-bold text-blue-800 dark:text-blue-200">
+      {{ ingresoTotal | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+    </div>
+    <div class="mt-1 text-xs text-neutral-500">Ingreso mensual + ingreso adicional. No es una liquidación de nómina.</div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="text" mat-dialog-close>Cancelar</button>
+  <button matButton="filled" [disabled]="form.invalid || ingresoTotal <= 0 || saving" (click)="save()">
+    {{ isEdit ? 'Guardar cambios' : 'Enviar diligenciamiento' }}
+  </button>
+</mat-dialog-actions>

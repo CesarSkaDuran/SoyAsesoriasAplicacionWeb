@@ -39,7 +39,7 @@ const MODULOS: { key: string; label: string }[] = [
 const MODULOS_CLIENTE: Record<string, string[]> = {
   empresa: ['home', 'empresas', 'documentos', 'empleados', 'nominas',
     'planillas', 'servicios', 'pagos', 'solicitudes', 'soportes', 'diagnosticos'],
-  independiente: ['home', 'documentos', 'empleados', 'nominas', 'planillas',
+  independiente: ['home', 'documentos', 'nominas', 'planillas',
     'servicios', 'pagos', 'solicitudes', 'soportes', 'diagnosticos', 'independientes'],
 };
 

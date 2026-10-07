@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +21,7 @@ import { Empresa } from '@/app/models/user.model';
 @Component({
   selector: 'planilla-dialog',
   imports: [
+    CurrencyPipe,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -41,14 +43,16 @@ export class PlanillaDialog {
   data = inject<{ planilla?: Planilla; empresas?: Empresa[] }>(MAT_DIALOG_DATA, { optional: true }) ?? {} as { planilla?: Planilla; empresas?: Empresa[] };
 
   isEdit = !!this.data.planilla;
+  isIndependent = !!this.data.planilla?.persona_id;
   saving = false;
 
   form = this.fb.group({
-    empresa_id: [this.data.planilla?.empresa_id ?? (null as number | null), Validators.required],
+    empresa_id: [this.data.planilla?.empresa_id ?? (null as number | null), this.isIndependent ? [] : [Validators.required]],
     numero_planilla: [this.data.planilla?.numero_planilla || ''],
     periodo: [this.data.planilla?.periodo || ''],
     valor_total: [this.data.planilla?.valor_total ? Number(this.data.planilla.valor_total) : 0],
     fecha_pago: [this.data.planilla?.fecha_pago || ''],
+    status: [this.data.planilla?.status || 'generada'],
   });
 
   save() {
@@ -64,6 +68,7 @@ export class PlanillaDialog {
       fecha_pago: v.fecha_pago
         ? new Date(v.fecha_pago).toISOString().slice(0, 10)
         : undefined,
+      status: v.status as Planilla['status'],
     };
 
     const req = this.isEdit

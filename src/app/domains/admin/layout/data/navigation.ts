@@ -15,6 +15,8 @@ export type NavigationItem = {
   adminOnly?: boolean;
   /** Solo usuarios con empresa (rol empresa) lo ven */
   empresaOnly?: boolean;
+  /** No aplica al cliente independiente (staff sí lo ve) */
+  empresaClienteOnly?: boolean;
   /** Clave de user_modulos requerida para usuarios no-admin */
   modulo?: string;
 };
@@ -67,6 +69,7 @@ export const NAVIGATION: NavigationItem[] = [
         icon: 'users',
         route: '/admin/empleados',
         modulo: 'empleados',
+        empresaClienteOnly: true,
       },
     ],
   },

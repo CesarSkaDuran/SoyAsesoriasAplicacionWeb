@@ -21,13 +21,16 @@ import { Planilla } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 import { PlanillaDialog } from '../components/planilla.dialog';
 import { PlanillaDocsDialog } from '../components/planilla-docs.dialog';
+import { PlanillaIndependienteDialog } from '../components/planilla-independiente.dialog';
 
 const STATUS_LABEL: Record<string, string> = {
+  solicitada: 'Pendiente de revisión',
   generada: 'Generada',
   pagada: 'Pagada',
   verificada: 'Verificada',
 };
 const STATUS_COLOR: Record<string, string> = {
+  solicitada: 'bg-amber-500 text-white',
   generada: 'bg-blue-500 text-white',
   pagada: 'bg-green-500 text-white',
   verificada: 'bg-indigo-500 text-white',
@@ -63,10 +66,12 @@ export default class PlanillasPage {
 
   planillas = signal<Planilla[]>([]);
   empresas = signal<Empresa[]>([]);
+  ingresos = signal<{ ingreso_mensual: number | string | null; ingreso_adicional: number | string | null } | null>(null);
   total = signal(0);
   page = signal(1);
   loading = signal(true);
   isAdmin = () => this.creds.isAdmin();
+  isIndependent = () => this.creds.role === 'independiente';
 
   periodoControl = new FormControl('');
   empresaControl = new FormControl<number | null>(null);
@@ -76,12 +81,16 @@ export default class PlanillasPage {
   constructor() {
     // Mismo orden que la tabla vieja de planillas
     this.columns.set(
-      ['periodo', 'empleados', 'salarios', 'pago_ss', 'otros', 'fecha_pago', 'status', 'acciones']
+      this.isIndependent()
+        ? ['periodo', 'ingresos', 'pago_ss', 'fecha_pago', 'status', 'acciones']
+        : ['periodo', 'empleados', 'salarios', 'ingresos', 'pago_ss', 'otros', 'fecha_pago', 'status', 'acciones']
     );
 
     if (this.isAdmin()) {
       this.api.empresas().subscribe((r) => this.empresas.set(r.data));
       this.empresaControl.valueChanges.subscribe(() => { this.page.set(1); this.load(); });
+    } else if (this.isIndependent()) {
+      this.api.planillaIngresos().subscribe((r) => this.ingresos.set(r));
     }
     this.periodoControl.valueChanges
       .pipe(debounceTime(350), distinctUntilChanged())
@@ -115,6 +124,9 @@ export default class PlanillasPage {
 
   statusLabel = (s: string) => STATUS_LABEL[s] || s;
   statusColor = (s: string) => STATUS_COLOR[s] || 'bg-neutral-400 text-white';
+  totalPendiente(p: Planilla): boolean {
+    return p.status === 'solicitada' && !(Number(p.valor_total) || 0);
+  }
 
   setStatus(p: Planilla, status: Planilla['status']) {
     this.api.updatePlanilla(p.id, { status }).subscribe(() => {
@@ -126,6 +138,21 @@ export default class PlanillasPage {
   openCreate() {
     this.dialog
       .open(PlanillaDialog, { width: '520px', data: { empresas: this.empresas() } })
+      .afterClosed()
+      .subscribe((ok) => ok && this.load());
+  }
+
+  openIndependentDiligence(planilla?: Planilla) {
+    const ingresos = this.ingresos();
+    if (!ingresos) {
+      this.snack.open('No se encontró la ficha de independiente asociada', 'Cerrar', { duration: 3500 });
+      return;
+    }
+    this.dialog
+      .open(PlanillaIndependienteDialog, {
+        width: '560px',
+        data: { ingresos, planilla },
+      })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
   }

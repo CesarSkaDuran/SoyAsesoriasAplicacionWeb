@@ -127,6 +127,10 @@ export default class IndependienteDetailPage {
       .join(' ');
   }
 
+  ingresoTotal(p: Persona): number {
+    return (Number(p.salario_base) || 0) + (Number(p.ingresos_adicionales) || 0);
+  }
+
   servicioLabel = (s: number) => SERVICIO_STATUS[s] || '—';
   servicioColor = (s: number) => SERVICIO_STATUS_COLOR[s] || 'bg-neutral-400 text-white';
   pagoLabel = (s: number) => PAGO_STATUS[s] || '—';

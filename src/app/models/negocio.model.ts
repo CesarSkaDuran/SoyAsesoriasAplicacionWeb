@@ -125,14 +125,19 @@ export const CUENTA_STATUS_COLOR: Record<number, string> = {
 // ── Planillas PILA ────────────────────────────────────────────────────────────
 export interface Planilla {
   id: number;
-  empresa_id: number;
+  empresa_id: number | null;
+  persona_id: number | null;
   nomina_id: number | null;
   numero_planilla: string | null;
   periodo: string | null;
+  ingreso_mensual?: number | string | null;
+  ingreso_adicional?: number | string | null;
+  ingreso_total?: number | string | null;
   valor_total: number | string;
   fecha_pago: string | null;
-  status: 'generada' | 'pagada' | 'verificada';
+  status: 'solicitada' | 'generada' | 'pagada' | 'verificada';
   empresa_nombre?: string;
+  persona_nombre?: string;
   nombre_periodo?: string;
   num_empleados?: number;
   salario_dias?: number;
@@ -212,6 +217,8 @@ export interface Persona {
   telefono: string | null;
   email: string | null;
   status: string;
+  salario_base?: number | string | null;
+  ingresos_adicionales?: number | string | null;
   created_at?: string;
   departamento_nombre?: string;
   ciudad_nombre?: string;

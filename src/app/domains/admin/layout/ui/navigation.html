@@ -41,17 +41,20 @@
             ngTreeItem
             routerLinkActive="bg-neutral-700/10 dark:bg-neutral-300/10"
             class="navigation-item flex cursor-pointer items-center gap-x-2 rounded-lg px-2.5 py-2 select-none hover:bg-neutral-700/10 dark:hover:bg-neutral-300/10"
+            [class.cursor-not-allowed]="node.disabled && !lockedClickable"
+            [class.opacity-50]="node.disabled"
             [parent]="parent"
             [value]="node.id"
             [label]="node.label"
             [disabled]="node.disabled"
-            [selectable]="!node.children"
+            [selectable]="!node.children && !node.disabled"
             [(expanded)]="node.expanded"
-            [routerLink]="node.route"
+            [routerLink]="node.disabled ? null : node.route"
             [routerLinkActiveOptions]="
               node.activeOptions ?? { exact: true }
             "
-            (click)="$event.preventDefault()"
+            [attr.title]="node.disabled ? lockedMessage : null"
+            (click)="node.disabled ? onLockedClick(node, $event) : $event.preventDefault()"
             #rla="routerLinkActive"
             #treeItem="ngTreeItem"
           >
@@ -74,6 +77,14 @@
                 </div>
               }
             </div>
+
+            <!-- Candado: módulo sin permiso -->
+            @if (node.disabled) {
+              <mat-icon
+                svgIcon="lock"
+                class="pointer-events-none size-3.5 text-neutral-400"
+              />
+            }
 
             <!-- Badge -->
             @if (node.badge) {

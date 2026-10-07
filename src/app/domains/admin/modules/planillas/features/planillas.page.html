@@ -34,6 +34,14 @@
             <mat-icon svgIcon="plus" />
             Nueva planilla
           </button>
+        } @else if (isIndependent()) {
+          <button style="margin-top:27px"
+            matButton="filled"
+            (click)="openIndependentDiligence()"
+          >
+            <mat-icon svgIcon="plus" />
+            Diligenciar planilla
+          </button>
         }
       </page-header>
 
@@ -56,7 +64,11 @@
                   {{ p.nombre_periodo || p.periodo || '—' }}
                 </div>
                 <div class="text-xs text-neutral-500">
-                  {{ p.empresa_nombre }} · Planilla {{ p.numero_planilla || '#' + p.id }}
+                  @if (p.persona_id) {
+                    {{ p.persona_nombre }} · Independiente
+                  } @else {
+                    {{ p.empresa_nombre }} · Planilla {{ p.numero_planilla || '#' + p.id }}
+                  }
                 </div>
               </td>
             </ng-container>
@@ -70,10 +82,20 @@
                 {{ p.salario_dias | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
               </td>
             </ng-container>
+            <ng-container matColumnDef="ingresos">
+              <th mat-header-cell *matHeaderCellDef>Ingreso informado</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.ingreso_total ? (p.ingreso_total | currency: 'COP' : 'symbol-narrow' : '1.0-0') : '—' }}
+              </td>
+            </ng-container>
             <ng-container matColumnDef="pago_ss">
               <th mat-header-cell *matHeaderCellDef>Total Planilla</th>
               <td mat-cell *matCellDef="let p" class="font-semibold">
-                {{ p.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                @if (totalPendiente(p)) {
+                  Pendiente
+                } @else {
+                  {{ p.valor_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                }
               </td>
             </ng-container>
             <ng-container matColumnDef="otros">
@@ -111,9 +133,14 @@
                     Documentos / soporte de pago
                   </button>
                   @if (isAdmin()) {
+                    @if (p.status === 'solicitada') {
+                      <button mat-menu-item (click)="setStatus(p, 'generada')">Marcar generada</button>
+                    }
                     <button mat-menu-item (click)="setStatus(p, 'pagada')">Marcar pagada</button>
                     <button mat-menu-item (click)="setStatus(p, 'verificada')">Verificada</button>
                     <button mat-menu-item (click)="openEdit(p)">Editar</button>
+                  } @else if (isIndependent() && p.status === 'solicitada') {
+                    <button mat-menu-item (click)="openIndependentDiligence(p)">Editar diligenciamiento</button>
                   }
                 </mat-menu>
               </td>
@@ -134,7 +161,9 @@
                 <mat-icon svgIcon="file-text" />
               </span>
               <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Sin planillas</h3>
-              <p class="mt-1 text-sm text-neutral-500">No hay planillas registradas en el sistema</p>
+              <p class="mt-1 text-sm text-neutral-500">
+                {{ isIndependent() ? 'Diligencia tu planilla para el periodo correspondiente.' : 'No hay planillas registradas en el sistema' }}
+              </p>
             </div>
           }
 

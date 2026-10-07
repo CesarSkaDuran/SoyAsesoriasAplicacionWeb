@@ -31,15 +31,23 @@
             </span>
           </div>
 
-          <!-- Estado con menú -->
+          <!-- Estado con menú (solo staff; el cliente lo ve como badge) -->
           <div class="mt-4">
-            <button
-              class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white {{ estadoColor(d.estado) }}"
-              [matMenuTriggerFor]="estadoMenu"
-            >
-              {{ estadoLabel(d.estado) }}
-              <mat-icon svgIcon="chevron-right" class="!h-4 !w-4 rotate-90" />
-            </button>
+            @if (isAdmin()) {
+              <button
+                class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white {{ estadoColor(d.estado) }}"
+                [matMenuTriggerFor]="estadoMenu"
+              >
+                {{ estadoLabel(d.estado) }}
+                <mat-icon svgIcon="chevron-right" class="!h-4 !w-4 rotate-90" />
+              </button>
+            } @else {
+              <span
+                class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white {{ estadoColor(d.estado) }}"
+              >
+                {{ estadoLabel(d.estado) }}
+              </span>
+            }
             <mat-menu #estadoMenu="matMenu">
               @for (e of estados; track e) {
                 <button
@@ -117,11 +125,11 @@
               </button>
               <button
                 matButton="text"
-                class="w-full !text-red-600"
-                (click)="remove()"
+                class="w-full {{ d.estado === 'suspendido' ? '!text-emerald-600' : '!text-violet-600' }}"
+                (click)="toggleSuspender()"
               >
-                <mat-icon svgIcon="trash" />
-                Eliminar diagnóstico
+                <mat-icon svgIcon="{{ d.estado === 'suspendido' ? 'play' : 'pause' }}" />
+                {{ d.estado === 'suspendido' ? 'Reactivar diagnóstico' : 'Suspender diagnóstico' }}
               </button>
             </div>
           }
@@ -138,6 +146,18 @@
               </ng-template>
 
               <div class="mt-6 max-w-3xl">
+                @if (isAdmin() && preguntas().length) {
+                  <div class="mb-4 flex justify-end">
+                    <button
+                      matButton="outlined"
+                      [disabled]="exporting()"
+                      (click)="exportEntrevista()"
+                    >
+                      <mat-icon svgIcon="download" />
+                      {{ exporting() ? 'Exportando…' : 'Exportar entrevista (CSV)' }}
+                    </button>
+                  </div>
+                }
                 @if (!preguntas().length) {
                   <div class="rounded-xl border border-dashed border-neutral-300 py-14 text-center text-neutral-400 dark:border-neutral-700">
                     <mat-icon svgIcon="message-circle-dashed" class="!h-10 !w-10" />
@@ -290,61 +310,173 @@
                           </p>
                         }
                       </div>
-                      <span class="flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold {{ docEstadoClass(item.documento?.estado || 'pendiente') }}">
-                        {{ docEstadoLabel(item.documento?.estado || 'pendiente') }}
+                      <span class="flex-shrink-0 rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                        {{ item.archivos.length }}/{{ maxFor(item.config) }}
                       </span>
                     </header>
 
+                    <!-- Archivos cargados: cada uno con su estado y revisión -->
+                    @for (a of item.archivos; track a.id) {
+                      <div class="border-t border-neutral-100 px-5 py-3 dark:border-neutral-800">
+                        <div class="flex flex-wrap items-center gap-3">
+                          <button
+                            matButton="tonal"
+                            class="!py-1.5"
+                            (click)="downloadDoc(a)"
+                          >
+                            <mat-icon svgIcon="eye" />
+                            {{ a.nombre_original }}
+                          </button>
+                          <span class="rounded-full px-3 py-1 text-xs font-semibold {{ docEstadoClass(a.estado || 'pendiente') }}">
+                            {{ docEstadoLabel(a.estado || 'pendiente') }}
+                          </span>
+                          <button
+                            type="button"
+                            class="ml-auto inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700"
+                            (click)="removeDoc(a)"
+                          >
+                            <mat-icon svgIcon="trash" class="!h-4 !w-4" />
+                            Eliminar
+                          </button>
+                        </div>
+
+                        @if (a.comentarios_revision) {
+                          <p class="mt-2 text-xs text-neutral-500">
+                            <strong>Revisión{{ a.revisado_por_nombre ? ' · ' + a.revisado_por_nombre : '' }}:</strong>
+                            {{ a.comentarios_revision }}
+                          </p>
+                        }
+
+                        <!-- Revisión del staff -->
+                        @if (isAdmin() && docEstados().length) {
+                          <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-medium text-neutral-500">Revisar:</span>
+                            @for (s of docEstados(); track s.value) {
+                              <button
+                                class="rounded-full border border-neutral-300 px-3 py-1 text-xs hover:border-sky-500 hover:text-sky-600 dark:border-neutral-600"
+                                [class.!border-sky-500]="a.estado === s.value"
+                                [class.!text-sky-600]="a.estado === s.value"
+                                (click)="revisar(a, s)"
+                              >
+                                {{ s.label }}{{ s.requiere_comentario ? ' *' : '' }}
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <!-- Cargar (hasta el máximo permitido) -->
                     <div class="flex flex-wrap items-center gap-3 border-t border-neutral-100 px-5 py-3 dark:border-neutral-800">
-                      @if (item.documento?.ruta_archivo) {
-                        <button
-                          matButton="tonal"
-                          class="!py-1.5"
-                          (click)="downloadDoc(item.documento!)"
+                      @if (item.archivos.length < maxFor(item.config)) {
+                        <label
+                          class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-neutral-300 px-4 py-2 text-sm text-neutral-600 hover:border-sky-400 hover:text-sky-600 dark:border-neutral-600 dark:text-neutral-400"
                         >
-                          <mat-icon svgIcon="eye" />
-                          {{ item.documento!.nombre_original }}
-                        </button>
+                          <mat-icon svgIcon="upload" />
+                          {{ item.archivos.length ? 'Agregar otro archivo' : 'Cargar archivo' }}
+                          <input
+                            type="file"
+                            hidden
+                            [accept]="acceptFor(item.config.tipo_archivo)"
+                            (change)="uploadDoc(item.config, $event)"
+                          />
+                        </label>
+                      } @else {
+                        <span class="text-xs text-neutral-400">
+                          Límite alcanzado ({{ maxFor(item.config) }} archivos) — elimina uno para cargar otro.
+                        </span>
                       }
-                      <label
-                        class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-neutral-300 px-4 py-2 text-sm text-neutral-600 hover:border-sky-400 hover:text-sky-600 dark:border-neutral-600 dark:text-neutral-400"
-                      >
-                        <mat-icon svgIcon="upload" />
-                        {{ item.documento?.ruta_archivo ? 'Reemplazar archivo' : 'Cargar archivo' }}
-                        <input
-                          type="file"
-                          hidden
-                          [accept]="acceptFor(item.config.tipo_archivo)"
-                          (change)="uploadDoc(item.config, $event)"
-                        />
-                      </label>
                       @if (uploadingId() === item.config.id) {
                         <mat-spinner diameter="20" />
                       }
                     </div>
+                  </article>
+                }
+              </div>
+            </mat-tab>
 
-                    @if (item.documento?.comentarios_revision) {
-                      <div class="border-t border-neutral-100 px-5 py-3 text-xs text-neutral-500 dark:border-neutral-800">
-                        <strong>Revisión{{ item.documento!.revisado_por_nombre ? ' · ' + item.documento!.revisado_por_nombre : '' }}:</strong>
-                        {{ item.documento!.comentarios_revision }}
-                      </div>
-                    }
+            <!-- ══ ENTREGABLES ══ -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon svgIcon="package" class="mr-2" />
+                Entregables
+                @if (entregables().length) {
+                  <span class="ml-1 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                    {{ entregables().length }}
+                  </span>
+                }
+              </ng-template>
 
-                    <!-- Revisión del staff -->
-                    @if (isAdmin() && item.documento?.ruta_archivo) {
-                      <div class="flex flex-wrap items-center gap-2 border-t border-neutral-100 bg-neutral-50 px-5 py-3 dark:border-neutral-800 dark:bg-neutral-800/40">
-                        <span class="text-xs font-medium text-neutral-500">Revisar:</span>
-                        @for (s of docEstados; track s.value) {
-                          <button
-                            class="rounded-full border border-neutral-300 px-3 py-1 text-xs hover:border-sky-500 hover:text-sky-600 dark:border-neutral-600"
-                            [class.!border-sky-500]="item.documento!.estado === s.value"
-                            [class.!text-sky-600]="item.documento!.estado === s.value"
-                            (click)="revisar(item.documento!, s.value)"
-                          >
-                            {{ s.label }}
-                          </button>
+              <div class="mt-6 max-w-3xl space-y-4">
+                <!-- Publicar (solo staff): documento corregido/final para el cliente -->
+                @if (isAdmin()) {
+                  <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+                    <h3 class="font-semibold">Publicar documento al cliente</h3>
+                    <p class="mt-1 text-xs text-neutral-400">
+                      Sube la versión corregida o final. El cliente la verá aquí y recibirá una notificación.
+                    </p>
+                    <div class="mt-4 flex flex-wrap items-end gap-3">
+                      <mat-form-field class="w-64" appearance="outline" subscriptSizing="dynamic">
+                        <mat-label>Título del entregable</mat-label>
+                        <input matInput [formControl]="entregableTitulo" placeholder="Ej. Cámara de comercio corregida" />
+                      </mat-form-field>
+                      <label
+                        class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-sky-700"
+                      >
+                        <mat-icon svgIcon="upload" />
+                        Seleccionar archivo
+                        <input type="file" hidden (change)="uploadEntregable($event)" />
+                      </label>
+                      @if (uploadingEntregable()) {
+                        <mat-spinner diameter="22" />
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (!entregables().length) {
+                  <div class="rounded-xl border border-dashed border-neutral-300 py-14 text-center text-neutral-400 dark:border-neutral-700">
+                    <mat-icon svgIcon="package" class="!h-10 !w-10" />
+                    <h3 class="mt-2 font-semibold text-neutral-500">Sin entregables</h3>
+                    <p class="mt-1 text-sm">
+                      {{ isAdmin() ? 'Publica aquí los documentos corregidos para el cliente.' : 'Aquí aparecerán los documentos que el equipo te entregue.' }}
+                    </p>
+                  </div>
+                }
+
+                @for (e of entregables(); track e.id) {
+                  <article class="flex items-center gap-4 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+                    <span class="flex size-11 flex-shrink-0 items-center justify-center rounded-lg bg-sky-50 text-sky-600 dark:bg-sky-950">
+                      <mat-icon svgIcon="file-down" />
+                    </span>
+                    <div class="min-w-0 flex-1">
+                      <h4 class="truncate font-semibold">{{ e.titulo || e.nombre_original }}</h4>
+                      <p class="truncate text-xs text-neutral-400">
+                        {{ e.nombre_original }}
+                        @if (e.created_at) {
+                          · {{ e.created_at | date: 'dd/MM/yyyy hh:mm a' }}
                         }
-                      </div>
+                        @if (e.subido_por_nombre) {
+                          · por {{ e.subido_por_nombre }}
+                        }
+                      </p>
+                    </div>
+                    <button
+                      matButton="tonal"
+                      class="flex-shrink-0"
+                      (click)="downloadEntregable(e)"
+                    >
+                      <mat-icon svgIcon="download" />
+                      Descargar
+                    </button>
+                    @if (isAdmin()) {
+                      <button
+                        type="button"
+                        class="flex-shrink-0 text-xs text-red-500 hover:text-red-700"
+                        (click)="removeEntregable(e)"
+                      >
+                        <mat-icon svgIcon="trash" class="!h-4 !w-4" />
+                      </button>
                     }
                   </article>
                 }

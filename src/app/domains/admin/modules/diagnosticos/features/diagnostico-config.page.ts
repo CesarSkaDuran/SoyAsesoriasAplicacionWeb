@@ -13,7 +13,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Observable } from 'rxjs';
 import { ApiService } from '@/app/core/api/api.service';
 import { PageHeader } from '@/app/core/ui/page-header';
-import { DiagnosticoDocConfig, DiagnosticoPregunta } from '@/app/models/negocio.model';
+import { DiagnosticoDocConfig, DiagnosticoDocEstado, DiagnosticoPregunta } from '@/app/models/negocio.model';
 
 const TIPOS_RESPUESTA = [
   { value: 'texto', label: 'Texto corto' },
@@ -49,10 +49,13 @@ export default class DiagnosticoConfigPage {
 
   preguntas = signal<DiagnosticoPregunta[]>([]);
   docConfigs = signal<DiagnosticoDocConfig[]>([]);
+  docEstados = signal<DiagnosticoDocEstado[]>([]);
   loadingP = signal(true);
   loadingD = signal(true);
+  loadingE = signal(true);
   editingP = signal<DiagnosticoPregunta | null>(null);
   editingD = signal<DiagnosticoDocConfig | null>(null);
+  editingE = signal<DiagnosticoDocEstado | null>(null);
   tipos = TIPOS_RESPUESTA;
 
   preguntaForm = this.fb.group({
@@ -76,9 +79,17 @@ export default class DiagnosticoConfigPage {
     activo: [true],
   });
 
+  estadoForm = this.fb.group({
+    label: ['', Validators.required],
+    orden: [99],
+    requiere_comentario: [false],
+    activo: [true],
+  });
+
   constructor() {
     this.loadPreguntas();
     this.loadDocs();
+    this.loadEstados();
   }
 
   tipoLabel = (t: string) => TIPOS_RESPUESTA.find(x => x.value === t)?.label || t;
@@ -198,6 +209,57 @@ export default class DiagnosticoConfigPage {
     this.api.deleteDiagDocConfig(c.id).subscribe({
       next: () => this.loadDocs(),
       error: (e) => this.snack.open(e?.error?.message || 'No se pudo eliminar', 'Cerrar', { duration: 3500 }),
+    });
+  }
+
+  loadEstados() {
+    this.api.diagDocEstados().subscribe((r) => {
+      this.docEstados.set(r.data);
+      this.loadingE.set(false);
+    });
+  }
+
+  editEstado(e: DiagnosticoDocEstado) {
+    this.editingE.set(e);
+    this.estadoForm.setValue({
+      label: e.label,
+      orden: e.orden,
+      requiere_comentario: !!e.requiere_comentario,
+      activo: !!e.activo,
+    });
+  }
+
+  cancelE() {
+    this.editingE.set(null);
+    this.estadoForm.reset({ orden: 99, activo: true, requiere_comentario: false });
+  }
+
+  saveEstado() {
+    if (this.estadoForm.invalid) return;
+    const v = this.estadoForm.getRawValue();
+    const payload: Partial<DiagnosticoDocEstado> = {
+      label: v.label!,
+      orden: v.orden ?? 99,
+      requiere_comentario: !!v.requiere_comentario,
+      activo: !!v.activo,
+    };
+    const edit = this.editingE();
+    const req: Observable<unknown> = edit ? this.api.updateDiagDocEstado(edit.id, payload) : this.api.createDiagDocEstado(payload);
+    req.subscribe({
+      next: () => {
+        this.snack.open(edit ? 'Estado actualizado' : 'Estado creado', 'OK', { duration: 2000 });
+        this.cancelE();
+        this.loadEstados();
+      },
+      error: (e) => this.snack.open(e?.error?.message || 'No se pudo guardar', 'Cerrar', { duration: 3000 }),
+    });
+  }
+
+  removeEstado(e: DiagnosticoDocEstado) {
+    if (!confirm(`¿Eliminar el estado "${e.label}"? Los documentos que ya lo tengan conservarán su valor.`)) return;
+    this.api.deleteDiagDocEstado(e.id).subscribe({
+      next: () => this.loadEstados(),
+      error: (err) => this.snack.open(err?.error?.message || 'No se pudo eliminar', 'Cerrar', { duration: 3500 }),
     });
   }
 }

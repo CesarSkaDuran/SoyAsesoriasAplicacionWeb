@@ -251,5 +251,107 @@
         </div>
       </div>
     </mat-tab>
+
+    <!-- ══ ESTADOS DE REVISIÓN ══ -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon svgIcon="list-check" class="mr-2" />
+        Estados de documentos
+        <span class="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-xs dark:bg-neutral-800">{{ docEstados().length }}</span>
+      </ng-template>
+
+      <div class="grid grid-cols-1 gap-6 p-5 lg:grid-cols-3">
+        <!-- Lista -->
+        <div class="space-y-3 lg:col-span-2">
+          <p class="text-sm text-neutral-400">
+            Los estados activos aparecen como botones de revisión en cada documento del diagnóstico.
+            Si un estado pide explicación, al elegirlo se abre una caja de texto obligatoria que el cliente verá.
+          </p>
+          @for (e of docEstados(); track e.id) {
+            <div
+              class="rounded-xl border border-neutral-200 p-4 transition-shadow hover:shadow-sm dark:border-neutral-700"
+              [class.opacity-50]="!e.activo"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 gap-3">
+                  <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-xs font-bold text-emerald-600 dark:bg-emerald-950">
+                    {{ e.orden }}
+                  </span>
+                  <div class="min-w-0">
+                    <div class="font-medium leading-snug">
+                      {{ e.label }}
+                      <code class="ml-1 rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-500 dark:bg-neutral-800">{{ e.value }}</code>
+                    </div>
+                    <div class="mt-2 flex flex-wrap gap-1.5 text-xs">
+                      @if (e.requiere_comentario) {
+                        <span class="rounded bg-sky-50 px-2 py-0.5 text-sky-600 dark:bg-sky-950 dark:text-sky-400">pide explicación</span>
+                      }
+                      @if (e.es_sistema) {
+                        <span class="rounded bg-neutral-100 px-2 py-0.5 dark:bg-neutral-800">base</span>
+                      }
+                      @if (!e.activo) {
+                        <span class="rounded bg-neutral-200 px-2 py-0.5 dark:bg-neutral-700">inactivo</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-shrink-0">
+                  <button matIconButton (click)="editEstado(e)" title="Editar">
+                    <mat-icon svgIcon="pencil" />
+                  </button>
+                  @if (!e.es_sistema) {
+                    <button matIconButton class="!text-red-500" (click)="removeEstado(e)" title="Eliminar">
+                      <mat-icon svgIcon="trash" />
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Formulario -->
+        <div>
+          <form
+            [formGroup]="estadoForm"
+            (ngSubmit)="saveEstado()"
+            class="sticky top-6 rounded-xl border border-neutral-200 bg-neutral-50/60 p-5 dark:border-neutral-700 dark:bg-neutral-800/40"
+          >
+            <div class="mb-4 flex items-center gap-2 border-b border-neutral-200 pb-3 dark:border-neutral-700">
+              <mat-icon svgIcon="plus" class="text-emerald-600" />
+              <span class="font-semibold">{{ editingE() ? 'Editar estado' : 'Nuevo estado' }}</span>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Nombre del estado *</mat-label>
+                <input matInput formControlName="label" placeholder="Ej: Documento ilegible" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Orden</mat-label>
+                <input matInput type="number" formControlName="orden" />
+              </mat-form-field>
+
+              <div class="flex flex-col gap-2">
+                <mat-checkbox formControlName="requiere_comentario">
+                  Pedir explicación (caja de texto)
+                </mat-checkbox>
+                <mat-checkbox formControlName="activo">Activo</mat-checkbox>
+              </div>
+
+              <div class="flex justify-end gap-2 border-t border-neutral-200 pt-4 dark:border-neutral-700">
+                @if (editingE()) {
+                  <button type="button" matButton="text" (click)="cancelE()">Cancelar</button>
+                }
+                <button matButton="filled" type="submit" [disabled]="estadoForm.invalid">
+                  {{ editingE() ? 'Guardar' : 'Agregar' }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </mat-tab>
   </mat-tab-group>
 </div>

@@ -67,7 +67,13 @@ export class CredentialsService {
     const user = this.user;
     if (!user) return false;
     if (user.role === 'admin') return true;
-    if (modulo === 'solicitudes' && (user.role === 'empresa' || user.role === 'independiente')) return true;
+    const modulos = user.modulos as Record<string, unknown> | undefined;
+    const configurado = !!modulos && Object.keys(modulos).length > 0;
+    // Cliente sin checks configurados (dato viejo): conserva el acceso
+    // base. Con checks definidos por el admin, el check manda.
+    if ((user.role === 'empresa' || user.role === 'independiente') && !configurado) {
+      return true;
+    }
     return !!user.modulos?.[modulo as keyof User['modulos']];
   }
 

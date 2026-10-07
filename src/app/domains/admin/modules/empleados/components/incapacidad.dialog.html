@@ -110,6 +110,19 @@
       <mat-hint>Déjalo vacío si EPS/ARL aún no ha liquidado o reconocido el valor.</mat-hint>
     </mat-form-field>
 
+    <div class="rounded-xl border border-sky-200 bg-sky-50/50 px-4 py-3 sm:col-span-2 dark:border-sky-900 dark:bg-sky-950/30">
+      <mat-checkbox formControlName="notificar_trabajador">
+        ¿Deseas reportar esta información al trabajador?
+      </mat-checkbox>
+      @if (form.controls.notificar_trabajador.value) {
+        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+          Se enviará un correo a
+          <strong>{{ data.empleado.email || 'el correo registrado del trabajador' }}</strong>
+          con las fechas y días de la incapacidad.
+        </p>
+      }
+    </div>
+
     @if (form.controls.tipo.value === 'comun') {
       <div class="rounded-xl bg-neutral-50 px-4 py-3 text-xs leading-5 text-neutral-600 sm:col-span-2 dark:bg-neutral-800 dark:text-neutral-300">
         Como referencia general, los primeros dos días de incapacidad común están a cargo del empleador y desde el tercero corresponde el reconocimiento a EPS, sujeto a requisitos y validación. La regla efectiva se calcula con los parámetros de nómina vigentes.

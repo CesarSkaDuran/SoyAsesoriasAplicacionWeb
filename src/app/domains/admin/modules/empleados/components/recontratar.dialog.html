@@ -27,6 +27,15 @@
         <mat-option value="otro">Otro</mat-option>
       </mat-select>
     </mat-form-field>
+    @if (form.controls.tipo_contrato.value === 'fijo') {
+      <mat-form-field appearance="outline" class="sm:col-span-2">
+        <mat-label>Fecha de terminación del nuevo contrato</mat-label>
+        <input matInput formControlName="fecha_terminacion" [matDatepicker]="terminacionPicker" />
+        <mat-datepicker-toggle matIconSuffix [for]="terminacionPicker" />
+        <mat-datepicker #terminacionPicker />
+        <mat-hint>30 días antes del vencimiento se envía correo de aviso</mat-hint>
+      </mat-form-field>
+    }
     <mat-form-field appearance="outline">
       <mat-label>Nuevo salario mensual</mat-label>
       <input matInput type="number" min="0.01" formControlName="salario_base" />

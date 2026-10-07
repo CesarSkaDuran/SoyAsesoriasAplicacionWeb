@@ -41,6 +41,8 @@ export default class EmpleadoDetailPage {
   private snack = inject(MatSnackBar);
 
   empleado = signal<Empleado | null>(null);
+  fotoUrl = signal<string | null>(null);
+  uploadingFoto = signal(false);
   beneficiarios = signal<any[]>([]);
   documentos = signal<Documento[]>([]);
   incapacidades = signal<any[]>([]);
@@ -159,9 +161,54 @@ export default class EmpleadoDetailPage {
         this.incapacidades.set(r.incapacidades || []);
         this.periodos.set(r.periodos || []);
         this.loading.set(false);
+        this.loadFoto();
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  // La foto vive en storage privado: se trae como blob autenticado
+  loadFoto() {
+    if (!this.empleado()?.imagen) {
+      this.fotoUrl.set(null);
+      return;
+    }
+    this.api.empleadoFoto(this.empleadoId).subscribe({
+      next: (blob) => {
+        const prev = this.fotoUrl();
+        if (prev) URL.revokeObjectURL(prev);
+        this.fotoUrl.set(URL.createObjectURL(blob));
+      },
+      error: () => this.fotoUrl.set(null),
+    });
+  }
+
+  uploadFoto(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.uploadingFoto.set(true);
+    this.api.uploadEmpleadoFoto(this.empleadoId, file).subscribe({
+      next: () => {
+        this.uploadingFoto.set(false);
+        const e = this.empleado();
+        if (e) this.empleado.set({ ...e, imagen: 'cargada' });
+        this.loadFoto();
+        this.snack.open('Foto actualizada', 'OK', { duration: 2000 });
+      },
+      error: (err) => {
+        this.uploadingFoto.set(false);
+        input.value = '';
+        this.snack.open(err?.error?.error || 'No se pudo subir la foto', 'Cerrar', { duration: 3000 });
+      },
+    });
+  }
+
+  iniciales(e: Empleado): string {
+    return [e.primer_nombre, e.primer_apellido]
+      .filter(Boolean)
+      .map((s) => s!.charAt(0).toUpperCase())
+      .join('') || '?';
   }
 
   nombreCompleto(e: Empleado) {

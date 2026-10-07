@@ -14,7 +14,33 @@
         Volver a empleados
       </a>
       <div class="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div class="flex items-center gap-4">
+          <!-- Foto de perfil -->
+          <div class="relative flex-shrink-0">
+            @if (fotoUrl()) {
+              <img
+                [src]="fotoUrl()"
+                alt="Foto del empleado"
+                class="size-16 rounded-full object-cover ring-2 ring-neutral-200 dark:ring-neutral-700"
+              />
+            } @else {
+              <div class="flex size-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                {{ iniciales(e) }}
+              </div>
+            }
+            <label
+              class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-white shadow ring-1 ring-neutral-200 transition hover:bg-blue-50 dark:bg-neutral-800 dark:ring-neutral-700"
+              title="Cambiar foto"
+            >
+              @if (uploadingFoto()) {
+                <mat-spinner diameter="14" />
+              } @else {
+                <mat-icon svgIcon="camera" class="!size-3.5 text-neutral-500" />
+              }
+              <input type="file" accept="image/*" hidden (change)="uploadFoto($event)" />
+            </label>
+          </div>
+          <div>
           <div class="text-2xl font-bold">{{ nombreCompleto(e) }}</div>
           <div class="flex flex-wrap items-center gap-x-2 text-neutral-500">
             <span>{{ e.tipo_documento }} {{ e.numero_documento }}</span>
@@ -51,6 +77,7 @@
                 {{ estadoLabel(e) }}
               </span>
             }
+          </div>
           </div>
         </div>
         <div class="flex flex-wrap gap-2">
@@ -161,6 +188,15 @@
             <dt class="w-24 shrink-0 text-neutral-500">Tipo</dt>
             <dd class="font-medium text-neutral-800 dark:text-neutral-100">{{ tipoContrato(e.tipo_contrato) }}</dd>
           </div>
+          @if (e.tipo_contrato === 'fijo' && e.fecha_terminacion) {
+            <div class="flex items-start gap-2">
+              <dt class="w-24 shrink-0 text-neutral-500">Terminación</dt>
+              <dd class="font-medium text-neutral-800 dark:text-neutral-100">
+                {{ e.fecha_terminacion | date: 'dd/MM/yyyy' }}
+                <span class="text-xs text-amber-600 dark:text-amber-400">(aviso 30 días antes)</span>
+              </dd>
+            </div>
+          }
           <div class="flex items-start gap-2">
             <dt class="w-24 shrink-0 text-neutral-500">Vinculación</dt>
             <dd class="font-medium capitalize text-neutral-800 dark:text-neutral-100">{{ e.tipo_vinculacion || '—' }}</dd>

@@ -34,6 +34,15 @@ const MODULOS: { key: string; label: string }[] = [
   { key: 'diagnosticos', label: 'Diagnósticos' },
 ];
 
+// Modulos cliente por rol al crear: el usuario nuevo arranca con todo
+// habilitado y el admin desmarca lo que no aplique.
+const MODULOS_CLIENTE: Record<string, string[]> = {
+  empresa: ['home', 'empresas', 'documentos', 'empleados', 'nominas',
+    'planillas', 'servicios', 'pagos', 'solicitudes', 'soportes', 'diagnosticos'],
+  independiente: ['home', 'documentos', 'empleados', 'nominas', 'planillas',
+    'servicios', 'pagos', 'solicitudes', 'soportes', 'diagnosticos', 'independientes'],
+};
+
 @Component({
   selector: 'usuario-form-dialog',
   imports: [
@@ -84,6 +93,30 @@ export class UsuarioFormDialog {
         }))
       )
     );
+
+    // Al editar, precargar los checks guardados: sin esto el form nace
+    // con todo en falso y al guardar se borrarian los permisos.
+    if (this.data.usuario) {
+      this.api.usuario(this.data.usuario.id).subscribe((r) => {
+        if (!r.modulos) return;
+        const patch: Record<string, boolean> = {};
+        for (const m of MODULOS) patch['mod_' + m.key] = !!r.modulos[m.key];
+        this.form.patchValue(patch);
+      });
+    } else {
+      // Crear: defaults segun el rol elegido (cliente arranca habilitado,
+      // asesor/admin sin checks por defecto).
+      const aplicarDefaults = (role: string) => {
+        const flags = MODULOS_CLIENTE[role] ?? [];
+        const patch: Record<string, boolean> = {};
+        for (const m of MODULOS) patch['mod_' + m.key] = flags.includes(m.key);
+        this.form.patchValue(patch);
+      };
+      aplicarDefaults(this.form.value.role as string);
+      this.form.controls['role'].valueChanges.subscribe((r) =>
+        aplicarDefaults(r as string)
+      );
+    }
   }
 
   save() {

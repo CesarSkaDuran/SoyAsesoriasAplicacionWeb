@@ -361,7 +361,7 @@ export interface LeadHistorial {
 
 // ── Diagnósticos ──────────────────────────────────────────────────────────────
 
-export type DiagnosticoEstado = 'pendiente' | 'en_progreso' | 'logrado' | 'cancelado';
+export type DiagnosticoEstado = 'pendiente' | 'en_progreso' | 'logrado' | 'suspendido' | 'cancelado';
 
 export interface Diagnostico {
   id: number;
@@ -416,6 +416,29 @@ export interface DiagnosticoDocConfig {
   maximo_archivos: number | null;
   orden: number;
   activo: boolean | number;
+}
+
+export interface DiagnosticoDocEstado {
+  id: number;
+  value: string;
+  label: string;
+  requiere_comentario: boolean | number;
+  es_sistema: boolean | number;
+  activo: boolean | number;
+  orden: number;
+}
+
+export interface DiagnosticoEntregable {
+  id: number;
+  diagnostico_id: number;
+  titulo: string | null;
+  ruta_archivo: string;
+  nombre_original: string | null;
+  mime_type: string | null;
+  tamano_bytes: number | null;
+  subido_por: number | null;
+  subido_por_nombre?: string | null;
+  created_at?: string;
 }
 
 export interface DiagnosticoDocumento {

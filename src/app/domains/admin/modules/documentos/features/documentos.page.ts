@@ -1,5 +1,5 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,7 @@ import { CredentialsService } from '@/app/core/authentication/credentials.servic
 import { NotificationsService } from '@/app/core/notifications/notifications.service';
 import { PageHeader } from '@/app/core/ui/page-header';
 import { SearchableSelect } from '@/app/core/ui/searchable-select';
-import { Documento, DocumentoTipo } from '@/app/models/empleado.model';
+import { Documento, DocumentoRequerido, DocumentoTipo } from '@/app/models/empleado.model';
 import { Persona } from '@/app/models/negocio.model';
 import { DocumentoUploadDialog } from '../components/documento-upload.dialog';
 import { DocumentoEditDialog } from '../components/documento-edit.dialog';
@@ -64,6 +64,11 @@ export default class DocumentosPage {
   private dialog = inject(MatDialog);
 
   protected documentos = signal<Documento[]>([]);
+  /** Checklist de obligatorios (parametrizable en Configuración → Maestros). */
+  protected requeridos = signal<DocumentoRequerido[]>([]);
+  protected pendientesObligatorios = computed(
+    () => this.requeridos().filter((r) => !!r.es_obligatorio && !r.cargado).length
+  );
   protected clientes = signal<{ key: string; nombre: string }[]>([]);
   protected tipos = signal<DocumentoTipo[]>([]);
   protected loading = signal(false);
@@ -174,6 +179,33 @@ export default class DocumentosPage {
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
+    });
+
+    this.loadRequeridos(owner);
+  }
+
+  private loadRequeridos(owner: { empresa_id?: number; persona_id?: number; all?: boolean }) {
+    if (owner.all || (!owner.empresa_id && !owner.persona_id)) {
+      this.requeridos.set([]);
+      return;
+    }
+    this.api.documentosRequeridos(owner).subscribe({
+      next: (res) => this.requeridos.set(res.data),
+      error: () => this.requeridos.set([]),
+    });
+  }
+
+  showChecklist = () => !this.ownerId()?.all && this.requeridos().length > 0;
+
+  downloadRequerido(r: DocumentoRequerido) {
+    if (!r.documento_id) return;
+    this.api.downloadDocumento(r.documento_id).subscribe((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = r.documento_nombre || r.nombre;
+      a.click();
+      URL.revokeObjectURL(url);
     });
   }
 

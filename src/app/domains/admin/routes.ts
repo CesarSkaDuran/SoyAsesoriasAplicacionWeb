@@ -111,6 +111,14 @@ const routes: Routes = [
         loadChildren: () => import('./modules/configuracion/routes'),
       },
 
+      // Módulo no habilitado para el usuario (mensaje "solicítalo")
+      {
+        path: 'sin-acceso',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./modules/extras/sin-acceso/sin-acceso.page'),
+      },
+
       // 404
       {
         path: '404',

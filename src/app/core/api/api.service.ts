@@ -7,6 +7,7 @@ import {
   Catalogos,
   ConceptoNomina,
   Documento,
+  DocumentoRequerido,
   DocumentoTipo,
   Empleado,
   HoraExtraInput,
@@ -27,7 +28,9 @@ import {
   CuentaCobro,
   Diagnostico,
   DiagnosticoDocConfig,
+  DiagnosticoDocEstado,
   DiagnosticoDocumento,
+  DiagnosticoEntregable,
   DiagnosticoPregunta,
   Embudo,
   EmbudoResumen,
@@ -232,6 +235,16 @@ export class ApiService {
     return this.http.put<Empleado>(`/empleados/${id}`, data);
   }
 
+  uploadEmpleadoFoto(id: number | string, file: File): Observable<{ ok: boolean; imagen: string }> {
+    const form = new FormData();
+    form.append('foto', file);
+    return this.http.post<{ ok: boolean; imagen: string }>(`/empleados/${id}/foto`, form);
+  }
+
+  empleadoFoto(id: number | string): Observable<Blob> {
+    return this.http.get(`/empleados/${id}/foto`, { responseType: 'blob' });
+  }
+
   recontratarEmpleado(id: number | string, data: RecontratacionInput): Observable<{ empleado: Empleado; periodo_anterior: PeriodoLaboral }> {
     return this.http.post<{ empleado: Empleado; periodo_anterior: PeriodoLaboral }>(`/empleados/${id}/recontratar`, data);
   }
@@ -266,6 +279,14 @@ export class ApiService {
     return this.http.get<{ data: DocumentoTipo[] }>('/documentos/tipos');
   }
 
+  /** Checklist de documentos obligatorios del owner (empresa o independiente). */
+  documentosRequeridos(owner: { empresa_id?: number; persona_id?: number } = {}): Observable<{ data: DocumentoRequerido[] }> {
+    let params = new HttpParams();
+    if (owner.empresa_id) params = params.set('empresa_id', owner.empresa_id);
+    if (owner.persona_id) params = params.set('persona_id', owner.persona_id);
+    return this.http.get<{ data: DocumentoRequerido[] }>('/documentos/requeridos', { params });
+  }
+
   uploadDocumento(
     file: File,
     meta: {
@@ -275,6 +296,7 @@ export class ApiService {
       empleado_id?: number | string;
       persona_id?: number | string;
       servicio_id?: number | string;
+      planilla_id?: number | string;
       tipo_id?: number | string;
       version?: string;
       fecha_emision?: string;
@@ -447,6 +469,14 @@ export class ApiService {
       }
     }
     return this.http.get<Paginated<Planilla>>('/planillas', { params });
+  }
+
+  planilla(
+    id: number | string
+  ): Observable<{ planilla: Planilla; documentos: Documento[] }> {
+    return this.http.get<{ planilla: Planilla; documentos: Documento[] }>(
+      `/planillas/${id}`
+    );
   }
 
   createPlanilla(data: Partial<Planilla>): Observable<{ planilla: Planilla }> {
@@ -645,6 +675,22 @@ export class ApiService {
       }
     }
     return this.http.get<Paginated<Usuario>>('/usuarios', { params });
+  }
+
+  usuario(
+    id: number | string
+  ): Observable<{
+    user: Usuario;
+    empresa: Empresa | null;
+    persona: Persona | null;
+    modulos: Record<string, boolean> | null;
+  }> {
+    return this.http.get<{
+      user: Usuario;
+      empresa: Empresa | null;
+      persona: Persona | null;
+      modulos: Record<string, boolean> | null;
+    }>(`/usuarios/${id}`);
   }
 
   updateUsuario(
@@ -856,6 +902,7 @@ export class ApiService {
       numero_certificado?: string;
       tipo?: string;
       valor?: number;
+      notificar_trabajador?: boolean;
     }
   ): Observable<{ incapacidad: any }> {
     return this.http.post<any>(`/empleados/${empleadoId}/incapacidades`, data);
@@ -1129,10 +1176,10 @@ export class ApiService {
   }
 
   diagnosticoDocumentos(id: number): Observable<{
-    documentos: { config: DiagnosticoDocConfig; documento: DiagnosticoDocumento | null }[];
+    documentos: { config: DiagnosticoDocConfig; archivos: DiagnosticoDocumento[] }[];
   }> {
     return this.http.get<{
-      documentos: { config: DiagnosticoDocConfig; documento: DiagnosticoDocumento | null }[];
+      documentos: { config: DiagnosticoDocConfig; archivos: DiagnosticoDocumento[] }[];
     }>(`/diagnosticos/${id}/documentos`);
   }
 
@@ -1147,8 +1194,35 @@ export class ApiService {
     return this.http.put<{ ok: boolean }>(`/diagnosticos/documentos/${docId}`, { estado, comentarios });
   }
 
+  deleteDiagnosticoDoc(docId: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnosticos/documentos/${docId}`);
+  }
+
   diagnosticoDocDownloadUrl(docId: number): string {
     return `/api/diagnosticos/documentos/${docId}/download`;
+  }
+
+  exportDiagnosticoEntrevista(id: number): Observable<Blob> {
+    return this.http.get(`/diagnosticos/${id}/entrevista/export`, { responseType: 'blob' });
+  }
+
+  diagnosticoEntregables(id: number): Observable<{ data: DiagnosticoEntregable[] }> {
+    return this.http.get<{ data: DiagnosticoEntregable[] }>(`/diagnosticos/${id}/entregables`);
+  }
+
+  uploadDiagnosticoEntregable(id: number, file: File, titulo?: string): Observable<{ id: number }> {
+    const form = new FormData();
+    form.append('archivo', file);
+    if (titulo) form.append('titulo', titulo);
+    return this.http.post<{ id: number }>(`/diagnosticos/${id}/entregables`, form);
+  }
+
+  diagnosticoEntregableDownloadUrl(eid: number): string {
+    return `/api/diagnosticos/entregables/${eid}/download`;
+  }
+
+  deleteDiagnosticoEntregable(eid: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnosticos/entregables/${eid}`);
   }
 
   diagnosticoInforme(id: number): Observable<{ contenido_html: string }> {
@@ -1190,5 +1264,26 @@ export class ApiService {
 
   deleteDiagDocConfig(id: number): Observable<{ ok: boolean }> {
     return this.http.delete<{ ok: boolean }>(`/diagnostico-config/documentos/${id}`);
+  }
+
+  /** Estados de revisión activos (los que ofrece el detalle al staff). */
+  diagnosticoDocEstados(): Observable<{ data: DiagnosticoDocEstado[] }> {
+    return this.http.get<{ data: DiagnosticoDocEstado[] }>('/diagnosticos/doc-estados');
+  }
+
+  diagDocEstados(): Observable<{ data: DiagnosticoDocEstado[] }> {
+    return this.http.get<{ data: DiagnosticoDocEstado[] }>('/diagnostico-config/estados');
+  }
+
+  createDiagDocEstado(data: Partial<DiagnosticoDocEstado>): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>('/diagnostico-config/estados', data);
+  }
+
+  updateDiagDocEstado(id: number, data: Partial<DiagnosticoDocEstado>): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`/diagnostico-config/estados/${id}`, data);
+  }
+
+  deleteDiagDocEstado(id: number): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/diagnostico-config/estados/${id}`);
   }
 }

@@ -20,6 +20,7 @@ export interface DocumentoUploadData {
   empresa_id?: number;
   empleado_id?: number;
   persona_id?: number;
+  planilla_id?: number;
   tipo_id?: number;
 }
 
@@ -84,6 +85,7 @@ export class DocumentoUploadDialog {
         empresa_id: this.data.empresa_id,
         empleado_id: this.data.empleado_id,
         persona_id: this.data.persona_id,
+        planilla_id: this.data.planilla_id,
         tipo_id: this.form.value.tipo_id!,
         version: this.form.value.version || undefined,
         fecha_emision: fecha ? this.fmtFecha(fecha) : undefined,

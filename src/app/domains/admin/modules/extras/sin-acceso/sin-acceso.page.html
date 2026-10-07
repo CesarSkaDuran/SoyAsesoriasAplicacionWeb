@@ -1,0 +1,33 @@
+<div
+  class="flex flex-auto flex-col items-center justify-center p-6 text-center sm:p-10"
+>
+  <mat-icon
+    svgIcon="lock"
+    class="icon-size-16 text-amber-500"
+  ></mat-icon>
+  <div class="mt-4 text-2xl font-bold md:text-4xl">
+    Módulo no habilitado
+  </div>
+  <div class="mt-3 max-w-md font-medium text-neutral-500 md:text-lg">
+    El acceso a <span class="text-neutral-700">"{{ moduloLabel }}"</span> no
+    está habilitado en tu cuenta. Para usarlo debes solicitarlo al
+    administrador.
+  </div>
+
+  <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+    @if (puedeSolicitar) {
+      <a
+        matButton="filled"
+        routerLink="/admin/solicitudes"
+      >
+        Crear solicitud
+      </a>
+    }
+    <a
+      matButton="text"
+      routerLink="/admin"
+    >
+      Volver al inicio
+    </a>
+  </div>
+</div>

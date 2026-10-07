@@ -13,6 +13,8 @@ export interface Empleado {
   email?: string;
   fecha_ingreso?: string;
   fecha_retiro?: string | null;
+  /** Fin del contrato a término fijo; dispara el aviso de 30 días. */
+  fecha_terminacion?: string | null;
   salario_base?: number;
   subsidio_transporte?: number;
   auxilio_transporte_mode?: 'automatico' | 'si' | 'no';
@@ -22,6 +24,7 @@ export interface Empleado {
   tipo_vinculacion?: string;
   observaciones?: string;
   status?: string;
+  imagen?: string | null;
   sucursal_id?: number | null;
   cargo_id?: number | null;
   eps_id?: number | null;
@@ -91,6 +94,7 @@ export interface RecontratacionInput {
   periodo_pago: string;
   salario_integral: boolean;
   salario_menor_motivo?: string;
+  fecha_terminacion?: string;
 }
 
 export interface Documento {
@@ -101,6 +105,7 @@ export interface Documento {
   beneficiado_id?: number | null;
   nomina_id?: number | null;
   servicio_id?: number | null;
+  planilla_id?: number | null;
   tipo_id?: number | null;
   tipo_nombre?: string | null;
   cliente_nombre?: string | null;
@@ -121,6 +126,22 @@ export interface DocumentoTipo {
   descripcion?: string | null;
   orden?: number;
   activo?: boolean;
+}
+
+export interface DocumentoRequerido {
+  id: number;
+  nombre: string;
+  descripcion: string | null;
+  tipo_id: number | null;
+  tipo_nombre?: string | null;
+  es_obligatorio: boolean | number;
+  activo: boolean | number;
+  orden: number;
+  cargado?: boolean;
+  documento_id?: number | null;
+  documento_nombre?: string | null;
+  documento_estatus?: string | null;
+  fecha_carga?: string | null;
 }
 
 export interface Nomina {

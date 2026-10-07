@@ -38,7 +38,10 @@ export const ModuloGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     credentials.role === 'asesor' && !!modulo && credentials.hasModulo(modulo);
 
   if ((adminOnly && !asesorConModulo) || (modulo && !credentials.hasModulo(modulo))) {
-    router.navigate(['/admin/home'], { replaceUrl: true });
+    router.navigate(['/admin/sin-acceso'], {
+      queryParams: modulo ? { m: modulo } : {},
+      replaceUrl: true,
+    });
     return false;
   }
 

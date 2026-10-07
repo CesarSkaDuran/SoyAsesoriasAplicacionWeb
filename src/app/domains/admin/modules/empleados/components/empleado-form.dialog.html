@@ -143,6 +143,22 @@
             <mat-option value="prestacion">Prestación de servicios</mat-option>
           </mat-select>
         </mat-form-field>
+        @if (esFijo) {
+          <mat-form-field>
+            <mat-label>Fecha de terminación del contrato</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerTerminacion"
+              formControlName="fecha_terminacion"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="pickerTerminacion"
+            />
+            <mat-datepicker #pickerTerminacion />
+            <mat-hint>30 días antes del vencimiento se envía correo de aviso</mat-hint>
+          </mat-form-field>
+        }
         <mat-form-field>
           <mat-label>Tipo de vinculación</mat-label>
           <mat-select formControlName="tipo_vinculacion">

@@ -25,18 +25,21 @@ const ESTADO_LABEL: Record<string, string> = {
   pendiente: 'Pendiente',
   en_progreso: 'En progreso',
   logrado: 'Logrado',
+  suspendido: 'Suspendido',
   cancelado: 'Cancelado',
 };
 const ESTADO_COLOR: Record<string, string> = {
   pendiente: 'bg-amber-500 text-white',
   en_progreso: 'bg-sky-500 text-white',
   logrado: 'bg-emerald-500 text-white',
+  suspendido: 'bg-violet-500 text-white',
   cancelado: 'bg-neutral-400 text-white',
 };
 const ESTADO_HEX: Record<string, string> = {
   pendiente: '#f59e0b',
   en_progreso: '#0154f9',
   logrado: '#10b981',
+  suspendido: '#8b5cf6',
   cancelado: '#4b4e56',
 };
 

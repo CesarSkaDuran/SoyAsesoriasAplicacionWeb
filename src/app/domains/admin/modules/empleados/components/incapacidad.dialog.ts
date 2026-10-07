@@ -59,6 +59,8 @@ export class IncapacidadDialog {
     retroactiva: [false],
     numero_certificado: [''],
     valor: [null as number | null],
+    // Checkbox "¿reportar al trabajador?" → el API envía el correo
+    notificar_trabajador: [false],
   });
 
   constructor() {
@@ -143,6 +145,7 @@ export class IncapacidadDialog {
         retroactiva: v.retroactiva ?? false,
         numero_certificado: String(v.numero_certificado ?? '').trim() || undefined,
         valor: v.valor ?? undefined,
+        notificar_trabajador: v.notificar_trabajador ?? false,
       })
       .subscribe({
         next: () => {

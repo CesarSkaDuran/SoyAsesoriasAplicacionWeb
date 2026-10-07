@@ -90,6 +90,8 @@ export class EmpleadoFormDialog {
     email: [this.data.empleado?.email ?? ''],
     fecha_ingreso: [this.data.empleado?.fecha_ingreso ?? null],
     tipo_contrato: [this.data.empleado?.tipo_contrato ?? 'indefinido'],
+    // Fin del contrato a término fijo: obligatoria, dispara aviso 30 días antes
+    fecha_terminacion: [this.toDate(this.data.empleado?.fecha_terminacion)],
     tipo_vinculacion: [this.data.empleado?.tipo_vinculacion ?? 'directa'],
     periodo_pago: [this.data.empleado?.periodo_pago ?? 'mensual'],
     cargo_id: [this.data.empleado?.cargo_id ?? null],
@@ -113,6 +115,9 @@ export class EmpleadoFormDialog {
 
   constructor() {
     if (this.editing && !this.credentials.isAdmin()) this.form.controls.fecha_ingreso.disable();
+    // La fecha de terminación solo aplica (y se exige) a término fijo
+    this.form.controls.tipo_contrato.valueChanges.subscribe(() => this.syncTerminacion());
+    this.syncTerminacion();
     this.api.catalogos().subscribe((cat) => {
       this.cargos.set(cat['cargos'] ?? []);
       this.eps.set(cat['eps'] ?? []);
@@ -124,6 +129,17 @@ export class EmpleadoFormDialog {
       next: ({ parametros }) => this.smmlv.set(Number(parametros.salario_minimo) || 0),
       error: () => {},
     });
+  }
+
+  get esFijo(): boolean {
+    return this.form.controls.tipo_contrato.value === 'fijo';
+  }
+
+  private syncTerminacion() {
+    const c = this.form.controls.fecha_terminacion;
+    if (this.esFijo) c.setValidators([Validators.required]);
+    else c.clearValidators();
+    c.updateValueAndValidity({ emitEvent: false });
   }
 
   private toDate(value?: string | null): Date | null {
@@ -193,11 +209,13 @@ export class EmpleadoFormDialog {
       ...this.form.getRawValue(),
       empresa_id: this.data.empresaId,
     };
-    for (const campo of ['fecha_ingreso', 'fecha_nacimiento'] as const) {
+    for (const campo of ['fecha_ingreso', 'fecha_nacimiento', 'fecha_terminacion'] as const) {
       if (payload[campo] instanceof Date) {
         payload[campo] = (payload[campo] as Date).toISOString().substring(0, 10);
       }
     }
+    // Fuera de término fijo la fecha no aplica: se limpia en el servidor
+    if (payload.tipo_contrato !== 'fijo') payload.fecha_terminacion = null;
 
     const request: Observable<unknown> = this.editing
       ? this.api.updateEmpleado(this.data.empleado!.id, payload)

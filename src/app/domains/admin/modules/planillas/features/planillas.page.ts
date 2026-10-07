@@ -20,6 +20,7 @@ import { SearchableSelect } from '@/app/core/ui/searchable-select';
 import { Planilla } from '@/app/models/negocio.model';
 import { Empresa } from '@/app/models/user.model';
 import { PlanillaDialog } from '../components/planilla.dialog';
+import { PlanillaDocsDialog } from '../components/planilla-docs.dialog';
 
 const STATUS_LABEL: Record<string, string> = {
   generada: 'Generada',
@@ -127,6 +128,13 @@ export default class PlanillasPage {
       .open(PlanillaDialog, { width: '520px', data: { empresas: this.empresas() } })
       .afterClosed()
       .subscribe((ok) => ok && this.load());
+  }
+
+  openDocs(p: Planilla) {
+    this.dialog.open(PlanillaDocsDialog, {
+      width: '620px',
+      data: { planilla: p },
+    });
   }
 
   openEdit(p: Planilla) {

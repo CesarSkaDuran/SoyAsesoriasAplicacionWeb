@@ -56,6 +56,93 @@
         }
       </div>
 
+      <!-- Checklist de documentos obligatorios (configurable en Maestros) -->
+      @if (showChecklist()) {
+        <section class="rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <header class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 px-5 py-4 dark:border-neutral-800">
+            <div class="flex items-center gap-2.5">
+              <span class="flex size-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950">
+                <mat-icon svgIcon="file-check" class="!size-4.5" />
+              </span>
+              <div>
+                <h2 class="text-sm font-semibold">Documentos obligatorios</h2>
+                <p class="text-xs text-neutral-400">Requisitos que debe cargar este cliente</p>
+              </div>
+            </div>
+            @if (pendientesObligatorios()) {
+              <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600 dark:bg-red-950">
+                {{ pendientesObligatorios() }} pendiente(s)
+              </span>
+            } @else {
+              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 dark:bg-emerald-950">
+                Al día
+              </span>
+            }
+          </header>
+          <div class="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 xl:grid-cols-3">
+            @for (r of requeridos(); track r.id) {
+              <article
+                class="flex items-start gap-3 rounded-xl border p-4"
+                [ngClass]="r.cargado ? 'border-emerald-200 bg-emerald-50/40 dark:border-emerald-900 dark:bg-emerald-950/20' : 'border-neutral-200 dark:border-neutral-700'"
+              >
+                <mat-icon
+                  [svgIcon]="r.cargado ? 'circle-check-big' : 'file-text'"
+                  class="mt-0.5 !size-5 flex-shrink-0"
+                  [ngClass]="r.cargado ? 'text-emerald-600' : 'text-neutral-300'"
+                />
+                <div class="min-w-0 flex-1">
+                  <h3 class="text-sm font-semibold">
+                    {{ r.nombre }}
+                    @if (!r.es_obligatorio) {
+                      <span class="ml-1 text-xs font-normal text-neutral-400">(opcional)</span>
+                    }
+                  </h3>
+                  @if (r.descripcion) {
+                    <p class="mt-0.5 line-clamp-2 text-xs text-neutral-400">{{ r.descripcion }}</p>
+                  }
+                  @if (r.cargado) {
+                    <p class="mt-1 text-xs text-neutral-500">
+                      {{ r.documento_nombre }}
+                      @if (r.fecha_carga) {
+                        · {{ r.fecha_carga | date: 'dd/MM/yyyy' }}
+                      }
+                    </p>
+                    @if (r.documento_estatus) {
+                      <span
+                        class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                        [ngClass]="estatusClass(r.documento_estatus)"
+                      >
+                        {{ estatusLabel(r.documento_estatus) }}
+                      </span>
+                    }
+                  }
+                </div>
+                <div class="flex flex-shrink-0 flex-col gap-1">
+                  @if (r.cargado) {
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-800"
+                      (click)="downloadRequerido(r)"
+                    >
+                      <mat-icon svgIcon="eye" class="!size-4" />
+                      Ver
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 hover:text-sky-600"
+                    (click)="openUpload(r.tipo_id ?? undefined)"
+                  >
+                    <mat-icon svgIcon="upload" class="!size-4" />
+                    {{ r.cargado ? 'Actualizar' : 'Subir' }}
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
       @if (loading()) {
         <div class="flex justify-center p-10">
           <mat-spinner />

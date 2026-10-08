@@ -244,6 +244,58 @@ export interface HoraExtraInput {
   fecha?: string;
 }
 
+export interface Festivo {
+  fecha: string;
+  nombre: string;
+}
+
+// GET /nominas/normativa — subconjunto de lectura de nomina_parametros
+// con los valores ya resueltos para hoy y el calendario del año.
+export interface Normativa {
+  vigencia: number;
+  salario_minimo: number;
+  auxilio_transporte: number;
+  auxilio_tope_smmlv: number;
+  uvt: number;
+  jornada_cortes?: CorteFecha[] | string | null;
+  dominical_cortes?: CorteFecha[] | string | null;
+  extra_diurna_pct?: number;
+  extra_nocturna_pct?: number;
+  recargo_nocturno_pct?: number;
+  extras_max_diarias?: number;
+  extras_max_semanales?: number;
+  fuente_normativa?: string | null;
+  jornada_semanal: number;
+  horas_mes: number;
+  dominical_pct: number;
+}
+
+export interface NormativaResponse {
+  normativa: Normativa;
+  vigencias: number[];
+  festivos: Festivo[];
+}
+
+export interface ValorHoraConcepto {
+  concepto: string;
+  recargo_pct: number | null;
+  factor: number;
+  valor: number;
+}
+
+export interface ValorHoraResponse {
+  salario: number;
+  fecha: string;
+  vigencia: number;
+  jornada_semanal: number;
+  horas_mes: number;
+  dominical_pct: number;
+  valor_hora: number;
+  es_no_laboral: boolean;
+  motivo_no_laboral: string | null;
+  conceptos: ValorHoraConcepto[];
+}
+
 export interface ConceptoNomina {
   id: number;
   nombre: string;

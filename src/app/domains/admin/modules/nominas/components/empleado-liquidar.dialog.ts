@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { ApiService } from '@/app/core/api/api.service';
 import { DialogHeader } from '@/app/core/ui/dialog-header';
 import {
   ConceptoNomina,
@@ -132,10 +133,13 @@ function corteVigente(cortes: CorteFecha[] | string | null | undefined, key: 'ho
 export class EmpleadoLiquidarDialog {
   private fb = inject(FormBuilder);
   private ref = inject(MatDialogRef<EmpleadoLiquidarDialog>);
+  private api = inject(ApiService);
 
   data = inject<DialogData>(MAT_DIALOG_DATA, { optional: true }) ?? ({} as DialogData);
   horaTipos = HORA_TIPOS;
   errorMsg = signal('');
+  // fecha → nombre del festivo, para el aviso de día no laboral en las filas
+  festivosMap = signal<Map<string, string>>(new Map());
 
   form = this.fb.group({
     dias_laborados: [this.data.input?.dias_laborados ?? this.data.diasPeriodo ?? 30],
@@ -178,6 +182,23 @@ export class EmpleadoLiquidarDialog {
       )
     ),
   });
+
+  constructor() {
+    // Festivos del año del período (y el siguiente por períodos que cruzan
+    // diciembre→enero) para el aviso de día no laboral en las filas de horas.
+    const anio = Number(String(this.data.fechaInicio || '').slice(0, 4))
+      || new Date().getFullYear();
+    for (const a of [anio, anio + 1]) {
+      this.api.festivosNomina(a).subscribe({
+        next: (res) => {
+          const map = new Map(this.festivosMap());
+          for (const f of res.data) map.set(f.fecha, f.nombre);
+          this.festivosMap.set(map);
+        },
+        error: () => undefined, // el aviso de festivo es opcional
+      });
+    }
+  }
 
   get horas(): FormArray {
     return this.form.get('horas') as FormArray;
@@ -290,6 +311,29 @@ export class EmpleadoLiquidarDialog {
 
   totalHorasTipadas(): number {
     return this.horas.controls.reduce((t, _, i) => t + this.valorHoraRow(i), 0);
+  }
+
+  // Aviso cuando el tipo de hora no cuadra con el día: tipo ordinario en
+  // domingo/festivo, o tipo dominical/festivo en día hábil. Es orientativo;
+  // el backend genera la alerta definitiva al liquidar.
+  avisoNoLaboral(index: number): string | null {
+    const row = this.horas.at(index)?.value;
+    const fecha = String(row?.fecha || this.data.fechaInicio || '').slice(0, 10);
+    if (!fecha || !row?.tipo) return null;
+    const festivo = this.festivosMap().get(fecha);
+    const esDomingo = new Date(`${fecha}T00:00:00Z`).getUTCDay() === 0;
+    const esNoLaboral = !!festivo || esDomingo;
+    const tiposDescanso = new Set([
+      'dominical', 'festiva', 'nocturna_dominical',
+      'extra_diurna_dominical', 'extra_nocturna_dominical',
+    ]);
+    if (esNoLaboral && !tiposDescanso.has(row.tipo)) {
+      return `${fecha} es ${festivo || 'domingo'}: probablemente corresponde un tipo dominical/festivo.`;
+    }
+    if (!esNoLaboral && tiposDescanso.has(row.tipo)) {
+      return `${fecha} es día hábil: verifica que el tipo dominical/festivo sea correcto.`;
+    }
+    return null;
   }
 
   bajoMinimo(): boolean {

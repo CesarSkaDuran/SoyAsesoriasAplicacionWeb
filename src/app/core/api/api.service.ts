@@ -10,6 +10,7 @@ import {
   DocumentoRequerido,
   DocumentoTipo,
   Empleado,
+  Festivo,
   HoraExtraInput,
   Incapacidad,
   IngresoConceptoInput,
@@ -17,12 +18,14 @@ import {
   Nomina,
   NominaDetalle,
   NominaParametros,
+  NormativaResponse,
   Paginated,
   PilaEstado,
   PeriodoLaboral,
   PersonaIdentidad,
   ContratacionResponse,
   RecontratacionInput,
+  ValorHoraResponse,
 } from '@/app/models/empleado.model';
 import {
   CuentaCobro,
@@ -766,6 +769,25 @@ export class ApiService {
       `/nominas/parametros/${vigencia}`,
       data
     );
+  }
+
+  // Consulta normativa: valores vigentes + festivos del año (solo lectura)
+  nominaNormativa(vigencia?: number): Observable<NormativaResponse> {
+    const params: Record<string, number> = {};
+    if (vigencia) params['vigencia'] = vigencia;
+    return this.http.get<NormativaResponse>('/nominas/normativa', { params });
+  }
+
+  festivosNomina(anio?: number): Observable<{ data: Festivo[] }> {
+    const params: Record<string, number> = {};
+    if (anio) params['anio'] = anio;
+    return this.http.get<{ data: Festivo[] }>('/nominas/festivos', { params });
+  }
+
+  valorHoraNomina(salario: number, fecha?: string): Observable<ValorHoraResponse> {
+    const params: Record<string, string | number> = { salario };
+    if (fecha) params['fecha'] = fecha;
+    return this.http.get<ValorHoraResponse>('/nominas/valor-hora', { params });
   }
 
   createNomina(data: {

@@ -85,6 +85,13 @@ export const NAVIGATION: NavigationItem[] = [
         modulo: 'nominas',
       },
       {
+        id: 'nomina/normativa',
+        label: 'Normativa',
+        icon: 'scale',
+        route: '/admin/nominas/normativa',
+        modulo: 'nominas',
+      },
+      {
         id: 'nomina/planillas',
         label: 'Planillas',
         icon: 'file-check',

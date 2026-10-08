@@ -114,6 +114,12 @@
                 Valor estimado: {{ valorHoraRow(i) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
                 · sin fecha usa el inicio del período
               </div>
+              @if (avisoNoLaboral(i); as aviso) {
+                <div class="col-span-4 -mt-1 flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300">
+                  <mat-icon svgIcon="calendar-days" class="!h-4 !w-4 text-sm" />
+                  {{ aviso }}
+                </div>
+              }
             </div>
           }
           @if (horas.length) {
